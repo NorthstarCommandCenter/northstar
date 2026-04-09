@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northstar — Retirement Projection</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0B2545;--navy2:#1B3A6B;
+  --teal:#0D7377;--teal2:#14A1A6;--tealsoft:#E8F7F7;
+  --p1:#1565C0;--p1soft:#E3F0FF;--p1mid:#90BBF0;
+  --p2:#6A1B9A;--p2soft:#F3E8FD;--p2mid:#C599E8;
+  --surf:#F5F6F8;--white:#FFFFFF;
+  --bdr:#DDE1E7;--bdr2:#C5CAD3;
+  --txt:#1A1E2E;--txt2:#4A5568;--txt3:#9AA3B2;
+  --green:#1A7A2A;--greensoft:#E8F5EB;
+  --amber:#B54708;--ambersoft:#FEF3EA;
+  --red:#9B1C1C;--redsoft:#FEE8E8;
+  --sh:0 1px 4px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shb:0 2px 8px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.07);
+}
+
+body{font-family:'DM Sans',sans-serif;background:var(--surf);color:var(--txt);font-size:13.5px;line-height:1.5;min-height:100vh;}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,#1a4080 100%);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.2);}
+.header-brand{display:flex;align-items:center;gap:12px;}
+.header-star{width:36px;height:36px;background:var(--teal);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(13,115,119,.5);}
+.header-star svg{width:18px;height:18px;fill:white;}
+.header-title{font-family:'Libre Baskerville',serif;font-size:18px;color:white;letter-spacing:-.2px;}
+.header-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:1px;}
+.header-actions{display:flex;gap:8px;align-items:center;}
+.header-date{font-size:11px;color:rgba(255,255,255,.4);margin-right:8px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.btn-white{background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.2);}
+.btn-white:hover{background:rgba(255,255,255,.18);}
+.btn-run{background:linear-gradient(180deg,var(--teal2),var(--teal));color:white;border-color:#0a5e61;box-shadow:var(--shb);padding:10px 24px;font-size:13px;font-weight:600;border-radius:7px;}
+.btn-run:hover{background:linear-gradient(180deg,#18b5ba,var(--teal2));transform:translateY(-1px);box-shadow:0 4px 12px rgba(13,115,119,.3);}
+.btn-p2{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.btn-p2.showing{background:var(--p2soft);color:var(--p2);border:1px solid var(--p2mid);}
+.btn-p2.hiding{background:var(--surf);color:var(--txt2);border:1px solid var(--bdr2);}
+
+/* LAYOUT */
+.page{max-width:1300px;margin:0 auto;padding:20px 24px 40px;}
+
+/* INFO BAR */
+.info-bar{background:white;border:1px solid var(--bdr);border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:var(--sh);display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.info-bar input{flex:1;min-width:200px;padding:8px 12px;border:1.5px solid var(--bdr);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--txt);outline:none;transition:border-color .15s;}
+.info-bar input:focus{border-color:var(--teal);}
+.info-bar input::placeholder{color:var(--txt3);}
+.info-bar-actions{display:flex;gap:8px;align-items:center;margin-left:auto;}
+
+/* SHARED */
+.shared-panel{background:white;border:1px solid var(--bdr);border-top:3px solid var(--teal);border-radius:10px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--sh);}
+.panel-title{font-size:11px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.panel-title::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--teal);}
+.shared-panel .f label{min-height:28px;display:flex;align-items:flex-end;margin-bottom:3px;}
+.shared-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:end;}
+
+/* PERSON PANELS */
+.persons-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.persons-grid.single{grid-template-columns:1fr 480px;}
+.person-panel{background:white;border:1px solid var(--bdr);border-radius:10px;padding:16px 18px;box-shadow:var(--sh);}
+.person-panel.p1{border-top:3px solid var(--p1);}
+.person-panel.p2{border-top:3px solid var(--p2);}
+.person-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.person-dot{width:11px;height:11px;border-radius:50%;}
+.person-dot.p1{background:var(--p1);}
+.person-dot.p2{background:var(--p2);}
+.person-name-lbl{font-size:12px;font-weight:600;}
+.person-name-lbl.p1{color:var(--p1);}
+.person-name-lbl.p2{color:var(--p2);}
+.person-name-input{border:none;border-bottom:2px solid var(--bdr);padding:3px 6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--txt);outline:none;background:transparent;flex:1;transition:border-color .15s;}
+.person-name-input:focus{border-bottom-color:var(--teal);}
+.person-name-input::placeholder{color:var(--txt3);font-weight:400;}
+
+/* FIELD GROUPS */
+.fg-title{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin:12px 0 7px;padding-bottom:4px;border-bottom:1px solid #EBEDF0;}
+.fg-title:first-of-type{margin-top:0;}
+.fg{display:grid;gap:8px;}
+.fg-2{grid-template-columns:1fr 1fr;}
+.fg-3{grid-template-columns:1fr 1fr 1fr;}
+.f{display:flex;flex-direction:column;gap:3px;position:relative;}
+.f label{font-size:11px;font-weight:500;color:var(--txt2);}
+.f input.plain{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12.5px;color:var(--txt);outline:none;transition:border-color .15s;background:white;width:100%;}
+.f input.plain:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(13,115,119,.08);}
+.f input.plain::placeholder{color:var(--txt3);}
+.f-hint{font-size:10px;color:var(--txt3);}
+.inline-age{display:inline-flex;align-items:center;gap:5px;margin-top:3px;font-size:11px;color:var(--txt2);}
+.inline-age input{width:52px;padding:4px 7px;border:1.5px solid var(--bdr);border-radius:5px;font-family:'DM Sans',sans-serif;font-size:11px;outline:none;}
+.inline-age input:focus{border-color:var(--teal);}
+/* SAVINGS CONTRIBUTION */
+.savings-row{display:flex;align-items:center;gap:8px;margin-top:2px;}
+.savings-row .plain{flex:1;}
+.infl-toggle{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;border:1px solid var(--bdr2);background:var(--surf);color:var(--txt2);}
+.infl-toggle.on{background:var(--tealsoft);border-color:var(--teal);color:var(--teal);}
+.infl-toggle:hover{border-color:var(--teal);color:var(--teal);}
+.infl-badge{font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700;}
+.infl-toggle.on .infl-badge{background:var(--teal);color:white;}
+.infl-toggle .infl-badge{background:var(--bdr2);color:var(--txt2);}
+
+/* MONTHLY CONVERTER */
+.income-wrap{position:relative;display:flex;align-items:center;gap:4px;}
+.income-wrap input.plain{flex:1;}
+.conv-btn{width:26px;height:26px;border-radius:5px;border:1px solid var(--bdr2);background:var(--surf);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all .15s;color:var(--txt2);}
+.conv-btn:hover{background:var(--tealsoft);border-color:var(--teal);color:var(--teal);}
+.conv-popover{position:absolute;top:calc(100% + 4px);right:0;z-index:1000;background:white;border:1px solid var(--bdr2);border-radius:9px;box-shadow:0 8px 28px rgba(0,0,0,.13),0 2px 8px rgba(0,0,0,.07);width:240px;display:none;animation:popIn .15s ease;}
+.conv-popover.open{display:block;}
+.conv-head{padding:9px 12px 7px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
+.conv-title{font-size:11px;font-weight:600;color:var(--navy);}
+.conv-close{width:18px;height:18px;border-radius:3px;border:none;background:var(--surf);cursor:pointer;font-size:13px;color:var(--txt2);display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.conv-close:hover{background:var(--bdr);}
+.conv-body{padding:10px 12px;}
+.conv-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.conv-row label{font-size:11px;color:var(--txt2);white-space:nowrap;min-width:60px;}
+.conv-row input{flex:1;padding:6px 9px;border:1.5px solid var(--bdr);border-radius:5px;font-family:inherit;font-size:12px;color:var(--txt);outline:none;}
+.conv-row input:focus{border-color:var(--teal);}
+.conv-result{background:var(--tealsoft);border:1px solid var(--teal);border-radius:6px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.conv-result-lbl{font-size:11px;color:var(--teal);}
+.conv-result-val{font-size:15px;font-weight:700;color:var(--teal);}
+.conv-use-btn{width:100%;padding:7px;border-radius:5px;border:none;background:linear-gradient(180deg,var(--teal2),var(--teal));color:white;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;}
+.conv-use-btn:hover{background:linear-gradient(180deg,#18b5ba,var(--teal2));}
+.conv-note{font-size:10px;color:var(--txt3);margin-top:5px;text-align:center;}
+
+
+/* ══════════════════════════════════════
+   ASSET INPUT — expandable spreadsheet
+══════════════════════════════════════ */
+.asset-wrap{position:relative;}
+.asset-display{display:flex;align-items:center;border:1.5px solid var(--bdr);border-radius:6px;background:white;overflow:hidden;transition:border-color .15s;cursor:pointer;}
+.asset-display:hover{border-color:var(--bdr2);}
+.asset-display.has-items{border-color:var(--teal);background:var(--tealsoft);}
+.asset-display.open{border-color:var(--teal);box-shadow:0 0 0 2px rgba(13,115,119,.1);}
+.asset-val{flex:1;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:12.5px;color:var(--txt);background:transparent;border:none;outline:none;cursor:pointer;}
+.asset-val.placeholder{color:var(--txt3);}
+.asset-expand-btn{padding:0 10px;height:100%;display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--teal);border-left:1px solid var(--bdr);background:rgba(13,115,119,.04);white-space:nowrap;cursor:pointer;transition:background .15s;}
+.asset-expand-btn:hover{background:rgba(13,115,119,.1);}
+.asset-count{background:var(--teal);color:white;border-radius:10px;padding:1px 5px;font-size:9px;font-weight:700;margin-left:2px;}
+
+/* POPOVER */
+.asset-popover{position:absolute;top:calc(100% + 4px);left:0;z-index:999;background:white;border:1px solid var(--bdr2);border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.14),0 2px 8px rgba(0,0,0,.08);width:340px;display:none;animation:popIn .15s ease;}
+.asset-popover.open{display:block;}
+@keyframes popIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+.pop-header{padding:10px 14px 8px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
+.pop-title{font-size:11px;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:6px;}
+.pop-close{width:20px;height:20px;border-radius:4px;border:none;background:var(--surf);cursor:pointer;font-size:14px;color:var(--txt2);display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;}
+.pop-close:hover{background:var(--bdr);}
+.pop-body{padding:10px 14px;}
+.pop-row{display:grid;grid-template-columns:1fr 120px 24px;gap:6px;align-items:center;margin-bottom:6px;}
+.pop-row input{padding:6px 9px;border:1.5px solid var(--bdr);border-radius:5px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--txt);outline:none;transition:border-color .15s;width:100%;}
+.pop-row input:focus{border-color:var(--teal);}
+.pop-row input::placeholder{color:var(--txt3);}
+.pop-del{width:24px;height:24px;border-radius:4px;border:none;background:transparent;cursor:pointer;color:var(--txt3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.pop-del:hover{background:var(--redsoft);color:var(--red);}
+.pop-add-row{display:flex;justify-content:flex-start;margin-top:4px;}
+.pop-add-btn{padding:5px 10px;border-radius:5px;border:1px dashed var(--bdr2);background:transparent;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--txt2);cursor:pointer;transition:all .12s;}
+.pop-add-btn:hover{border-color:var(--teal);color:var(--teal);background:var(--tealsoft);}
+.pop-footer{padding:8px 14px 10px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
+.pop-total-lbl{font-size:11px;color:var(--txt2);}
+.pop-total-val{font-size:15px;font-weight:700;color:var(--navy);}
+.pop-done{padding:6px 14px;border-radius:5px;border:none;background:linear-gradient(180deg,var(--teal2),var(--teal));color:white;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;box-shadow:var(--sh);}
+.pop-done:hover{background:linear-gradient(180deg,#18b5ba,var(--teal2));}
+.pop-col-hdr{display:grid;grid-template-columns:1fr 120px 24px;gap:6px;margin-bottom:4px;}
+.pop-col-hdr span{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;padding:0 2px;}
+
+/* OUTPUT */
+.output-section{display:flex;flex-direction:column;gap:14px;}
+.sustain-card{border-radius:12px;padding:20px 24px;box-shadow:var(--shb);}
+.sustain-card.green{background:linear-gradient(135deg,#1a7a2a 0%,#2d9e3d 100%);}
+.sustain-card.amber{background:linear-gradient(135deg,#b54708 0%,#d96a1a 100%);}
+.sustain-card.red{background:linear-gradient(135deg,#9b1c1c 0%,#c0392b 100%);}
+.sustain-top{display:flex;align-items:flex-start;gap:18px;margin-bottom:12px;}
+.sustain-emoji{font-size:36px;line-height:1;flex-shrink:0;}
+.sustain-rating{font-family:'Libre Baskerville',serif;font-size:21px;font-weight:700;color:white;margin-bottom:3px;}
+.sustain-sub{font-size:11px;color:rgba(255,255,255,.7);}
+.sustain-body{font-size:13px;color:rgba(255,255,255,.9);line-height:1.7;margin-bottom:14px;}
+.kn-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;}
+.kn{background:rgba(255,255,255,.15);border-radius:8px;padding:10px;text-align:center;}
+.kn-lbl{font-size:10px;color:rgba(255,255,255,.72);margin-bottom:3px;line-height:1.3;}
+.kn-val{font-size:15px;font-weight:700;color:white;}
+.output-card{background:white;border:1px solid var(--bdr);border-radius:10px;padding:16px 18px;box-shadow:var(--sh);}
+.oc-title{font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
+.chart-wrap{height:230px;position:relative;}
+.tbl-scroll{max-height:290px;overflow-y:auto;border:1px solid var(--bdr);border-radius:8px;}
+.rtbl{width:100%;border-collapse:collapse;font-size:11.5px;}
+.rtbl thead th{background:var(--navy);color:white;padding:7px 10px;text-align:right;font-size:10.5px;font-weight:600;letter-spacing:.03em;position:sticky;top:0;}
+.rtbl thead th:first-child{text-align:left;}
+.rtbl tbody td{padding:5px 10px;text-align:right;border-bottom:1px solid #F0F2F5;}
+.rtbl tbody td:first-child{text-align:left;font-weight:500;color:var(--txt2);}
+.rtbl tbody tr:nth-child(even) td{background:#FAFBFC;}
+.rtbl tbody tr.dep td{color:var(--red);font-weight:600;}
+.rtbl tbody tr.milestone td{background:#F0F7FF;}
+.rtbl tbody tr.milestone td:first-child{color:var(--teal);font-weight:600;}
+.summary-card{background:linear-gradient(135deg,#EFF6FF,#E8F7F7);border:1px solid #B8D4EE;border-radius:10px;padding:16px 20px;box-shadow:var(--sh);}
+.summary-title{font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;}
+.summary-text{font-size:13px;color:var(--navy2);line-height:1.8;}
+
+
+/* PENSION WIDGET */
+.pension-wrap{position:relative;}
+.pension-display{display:flex;align-items:center;border:1.5px solid var(--bdr);border-radius:6px;background:white;overflow:hidden;transition:border-color .15s;cursor:pointer;}
+.pension-display:hover{border-color:var(--bdr2);}
+.pension-display.has-items{border-color:var(--p1);background:var(--p1soft);}
+.pension-display.open{border-color:var(--teal);box-shadow:0 0 0 2px rgba(13,115,119,.1);}
+.pension-val{flex:1;padding:7px 10px;font-family:"DM Sans",sans-serif;font-size:12.5px;color:var(--txt);background:transparent;border:none;outline:none;cursor:pointer;}
+.pension-val.placeholder{color:var(--txt3);}
+.pension-expand-btn{padding:0 10px;height:100%;display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--p1);border-left:1px solid var(--bdr);background:rgba(21,101,192,.04);white-space:nowrap;cursor:pointer;transition:background .15s;}
+.pension-expand-btn:hover{background:rgba(21,101,192,.1);}
+.pension-popover{position:absolute;top:calc(100% + 4px);left:0;z-index:999;background:white;border:1px solid var(--bdr2);border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.14);width:420px;display:none;animation:popIn .15s ease;}
+.pension-popover.open{display:block;}
+.pension-row{display:grid;grid-template-columns:1fr 90px 56px 56px 24px;gap:5px;align-items:center;margin-bottom:6px;}
+.pension-row input{padding:6px 8px;border:1.5px solid var(--bdr);border-radius:5px;font-family:inherit;font-size:12px;color:var(--txt);outline:none;transition:border-color .15s;width:100%;}
+.pension-row input:focus{border-color:var(--teal);}
+.pension-row input::placeholder{color:var(--txt3);}
+.pension-infl-lbl{font-size:10px;color:var(--txt2);text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:2px;}
+.pension-infl-lbl input[type=checkbox]{accent-color:var(--teal);width:13px;height:13px;cursor:pointer;}
+
+/* PLANNING FLAGS */
+.flag-strip{display:flex;flex-direction:column;gap:6px;margin-top:0;}
+.flag{border-radius:7px;padding:9px 13px;font-size:11.5px;line-height:1.6;display:flex;align-items:flex-start;gap:8px;}
+.flag.warn{background:#FEF3EA;border:1px solid #f9c7a8;color:#7a3800;}
+.flag.info{background:#EFF6FC;border:1px solid #CCE4F7;color:#004e8c;}
+.flag.tip{background:#E8F5EB;border:1px solid #a7d5a5;color:#0a5a0a;}
+.flag-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.disclaimer{font-size:10.5px;color:var(--txt3);line-height:1.6;padding:4px 2px;}
+.empty{text-align:center;padding:60px 30px;color:var(--txt3);}
+.empty-icon{font-size:48px;margin-bottom:12px;opacity:.3;}
+.empty-text{font-size:14px;font-weight:500;margin-bottom:4px;color:var(--txt2);}
+.empty-sub{font-size:12px;}
+
+@media print{
+  .header{background:var(--navy)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .info-bar-actions,.btn-run,.btn-p2,.btn-white,.persons-grid,.shared-panel,.info-bar .btn,.asset-expand-btn,.asset-popover{display:none!important;}
+  .sustain-card{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .page{padding:0;}
+  .tbl-scroll{max-height:none;overflow:visible;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+    <div>
+      <div class="header-title">Northstar — Retirement Projection</div>
+      <div class="header-sub">ALG Wealth · Andrew Louis Glen · Confidential</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <span class="header-date" id="hdr-date"></span>
+    <button class="btn btn-white" onclick="clearAll()">✕ Clear</button>
+    <button class="btn btn-white" onclick="window.print()">🖨 Print</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- INFO BAR -->
+  <div class="info-bar">
+    <input id="f-family" placeholder="Client name — e.g. Henwood, Mitch and Maya" style="flex:2;">
+    <input id="f-projdate" placeholder="Projection date — e.g. March 2026" style="flex:1;">
+    <div class="info-bar-actions">
+      <button class="btn-p2 showing" id="p2-btn" onclick="toggleP2()">👥 Hide second person</button>
+      <button class="btn-run" onclick="run()">▶ Run Projection</button>
+    </div>
+  </div>
+
+  <!-- SHARED -->
+  <div class="shared-panel">
+    <div class="panel-title">Shared household assumptions</div>
+    <div class="shared-grid">
+      <div class="f"><label>Income Needed Today's $</label><input class="plain" id="s-need" placeholder="80,000"></div>
+      <div class="f"><label>Plan To Age</label><input class="plain" id="s-life" placeholder="90"></div>
+      <div class="f"><label>Investment Return % After Fees</label><input class="plain" id="s-ret" placeholder="5"></div>
+      <div class="f"><label>Inflation %</label><input class="plain" id="s-infl" placeholder="2.5"></div>
+      <div class="f"><label>Rental / Real Estate Income / yr</label><input class="plain" id="s-rental" placeholder="0"></div>
+      <div class="f" style="grid-column:span 2;">
+        <label>Expected Inheritances</label>
+        <div class="asset-wrap" id="aw-inherit"></div>
+      </div>
+    </div>
+    <!-- SECOND ROW: Major expenses + estate goal -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 200px;gap:10px;margin-top:10px;align-items:end;">
+      <div class="f">
+        <label>Major planned expenses in retirement</label>
+        <div class="asset-wrap" id="aw-expenses"></div>
+        <div class="f-hint">e.g. home renovation, helping a child, car, travel — click to itemize</div>
+      </div>
+      <div class="f">
+        <label>Home equity (current value)</label>
+        <input class="plain" id="s-home" placeholder="0">
+        <div class="f-hint">Grows at inflation rate automatically · <span style="display:inline-flex;align-items:center;gap:4px;">Downsizing? &nbsp;
+          <input type="checkbox" id="s-downsize" onchange="toggleDownsize()" style="width:14px;height:14px;cursor:pointer;accent-color:var(--teal);">
+        </span></div>
+      </div>
+      <div class="f" id="downsize-fields" style="display:none;">
+        <label>Net proceeds from sale</label>
+        <input class="plain" id="s-home-proceeds" placeholder="0">
+        <div class="f-hint">Enter net proceeds in today's dollars — inflated to sale year · Sale age: <input type="text" id="s-home-age" placeholder="75" style="width:44px;padding:3px 6px;border:1.5px solid var(--bdr);border-radius:5px;font-size:11px;outline:none;margin-left:4px;"></div>
+      </div>
+    </div>
+    <!-- THIRD ROW: Spending phases + estate goal -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-top:10px;align-items:end;">
+      <div class="f">
+        <label>Early retirement spending / yr (today's $)</label>
+        <input class="plain" id="s-spend1" placeholder="Same as income needed">
+        <div class="f-hint">Leave blank to use Income Needed above</div>
+      </div>
+      <div class="f">
+        <label>Spending steps down at age</label>
+        <input class="plain" id="s-spend-age" placeholder="e.g. 78">
+        <div class="f-hint">Go-Go years end / Slow-Go years begin</div>
+      </div>
+      <div class="f">
+        <label>Reduced spending / yr from that age</label>
+        <input class="plain" id="s-spend2" placeholder="e.g. 60,000">
+        <div class="f-hint">In today's dollars — we'll inflate it</div>
+      </div>
+      <div class="f">
+        <label>Target estate / legacy goal</label>
+        <input class="plain" id="s-estate-goal" placeholder="0">
+        <div class="f-hint">Amount to leave at age <input type="text" id="s-estate-age" placeholder="90" style="width:40px;padding:3px 6px;border:1.5px solid var(--bdr);border-radius:5px;font-size:11px;outline:none;margin-left:2px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERSON COLUMNS -->
+  <div class="persons-grid" id="persons-grid">
+
+    <!-- PERSON 1 -->
+    <div class="person-panel p1" id="p1-panel">
+      <div class="person-head">
+        <div class="person-dot p1"></div>
+        <div class="person-name-lbl p1">Person 1 —</div>
+        <input class="person-name-input" id="a-name" placeholder="Enter name">
+      </div>
+
+      <div class="fg-title">Basic information</div>
+      <div class="fg fg-3">
+        <div class="f"><label>Current age</label><input class="plain" id="a-age" placeholder="52"></div>
+        <div class="f"><label>Retirement age</label><input class="plain" id="a-ret" placeholder="65"></div>
+        <div class="f"><label>Years to retirement</label><input class="plain" id="a-ytr" placeholder="auto" readonly style="background:#F5F6F8;color:var(--txt3);"></div>
+      </div>
+
+
+      <div class="fg-title">Annual savings contributions (until retirement)</div>
+      <div class="f">
+        <label>Annual amount saved / invested</label>
+        <div class="savings-row">
+          <input class="plain" id="a-save" placeholder="e.g. 25,000">
+          <button class="infl-toggle" id="a-save-infl" onclick="toggleInfl('a')" title="Toggle inflation adjustment on contributions">
+            <span id="a-save-infl-lbl">Flat</span>
+            <span class="infl-badge" id="a-save-infl-badge">No inflation</span>
+          </button>
+        </div>
+        <div class="f-hint" id="a-save-hint">Contributions stay flat each year until retirement</div>
+      </div>
+
+      <div class="fg-title">Registered &amp; investment assets — click any field to itemize accounts</div>
+      <div class="fg fg-2">
+        <div class="f"><label>RRSP / RRIF</label><div class="asset-wrap" id="aw-a-rrsp"></div></div>
+        <div class="f"><label>Spousal RRSP / RRIF</label><div class="asset-wrap" id="aw-a-sprrsp"></div></div>
+      </div>
+      <div class="fg fg-2">
+        <div class="f"><label>LRIF / LIRA</label><div class="asset-wrap" id="aw-a-lrif"></div></div>
+        <div class="f"><label>TFSA</label><div class="asset-wrap" id="aw-a-tfsa"></div></div>
+      </div>
+      <div class="f"><label>Non-registered investments</label><div class="asset-wrap" id="aw-a-nonreg"></div></div>
+      <div class="f"><label>Real estate (cottage, rental, investment property)</label><div class="asset-wrap" id="aw-a-realestate"></div></div>
+
+      <div class="fg-title">Guaranteed income (annual, today's $)</div>
+      <div class="fg fg-2">
+        <div class="f"><label>CPP / yr</label><div class="income-wrap">
+        <input class="plain" id="a-cpp" placeholder="0">
+        <button class="conv-btn" onclick="openConv(event,'a-cpp')" title="Monthly to annual converter">🧮</button>
+        <div class="conv-popover" id="cp-a-cpp">
+          <div class="conv-head">
+            <div class="conv-title">Monthly → Annual</div>
+            <button class="conv-close" onclick="closeConv('a-cpp')">✕</button>
+          </div>
+          <div class="conv-body">
+            <div class="conv-row">
+              <label>Monthly $</label>
+              <input type="text" id="cm-a-cpp" placeholder="e.g. 747.36" oninput="calcConv('a-cpp')">
+            </div>
+            <div class="conv-result">
+              <div class="conv-result-lbl">Annual amount</div>
+              <div class="conv-result-val" id="cr-a-cpp">/bin/sh</div>
+            </div>
+            <button class="conv-use-btn" onclick="useConv('a-cpp')">Use this amount ✓</button>
+            <div class="conv-note">Monthly × 12 = annual · click to populate field</div>
+          </div>
+        </div>
+      </div><div class="inline-age">Start age <input id="a-cpp-age" placeholder="65"></div></div>
+        <div class="f"><label>OAS / yr</label><div class="income-wrap">
+        <input class="plain" id="a-oas" placeholder="0">
+        <button class="conv-btn" onclick="openConv(event,'a-oas')" title="Monthly to annual converter">🧮</button>
+        <div class="conv-popover" id="cp-a-oas">
+          <div class="conv-head">
+            <div class="conv-title">Monthly → Annual</div>
+            <button class="conv-close" onclick="closeConv('a-oas')">✕</button>
+          </div>
+          <div class="conv-body">
+            <div class="conv-row">
+              <label>Monthly $</label>
+              <input type="text" id="cm-a-oas" placeholder="e.g. 747.36" oninput="calcConv('a-oas')">
+            </div>
+            <div class="conv-result">
+              <div class="conv-result-lbl">Annual amount</div>
+              <div class="conv-result-val" id="cr-a-oas">/bin/sh</div>
+            </div>
+            <button class="conv-use-btn" onclick="useConv('a-oas')">Use this amount ✓</button>
+            <div class="conv-note">Monthly × 12 = annual · click to populate field</div>
+          </div>
+        </div>
+      </div><div class="inline-age">Start age <input id="a-oas-age" placeholder="65"></div></div>
+      </div>
+      <div class="f"><label>Defined benefit pension(s)</label>
+        <div class="pension-wrap" id="pw-a">
+          <div class="pension-display" id="pd-a" onclick="openPension('a')">
+            <div class="pension-val placeholder" id="pv-a">No pension entered</div>
+            <div class="pension-expand-btn" id="peb-a">🏦 Add pension plan</div>
+          </div>
+          <div class="pension-popover" id="pp-a">
+            <div class="pop-header">
+              <div class="pop-title">🏦 Defined Benefit Pensions — <span id="pp-a-name">Person 1</span></div>
+              <button class="pop-close" onclick="closePension('a')">✕</button>
+            </div>
+            <div class="pop-body">
+              <div style="display:grid;grid-template-columns:1fr 90px 56px 56px 24px;gap:5px;margin-bottom:4px;">
+                <span style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;">Plan name</span>
+                <span style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;text-align:right;">Annual $</span>
+                <span style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;text-align:center;">Start</span>
+                <span style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;text-align:center;">Indexed</span>
+                <span></span>
+              </div>
+              <div id="pension-rows-a"></div>
+              <div class="pop-add-row"><button class="pop-add-btn" onclick="addPensionRow('a')">+ Add pension plan</button></div>
+            </div>
+            <div class="pop-footer">
+              <div><div class="pop-total-lbl">Total annual pension</div><div class="pop-total-val" id="pension-total-a">$0</div></div>
+              <button class="pop-done" onclick="closePension('a')">Done ✓</button>
+            </div>
+          </div>
+        </div>
+        <div class="f-hint">Enter each plan separately · check Indexed if adjusted for inflation each year</div>
+      </div>
+
+      <div class="fg-title">Employment &amp; other income</div>
+      <div class="fg fg-2">
+        <div class="f"><label>Employment / self-employed / biz / yr</label><div class="income-wrap">
+        <input class="plain" id="a-emp" placeholder="0">
+        <button class="conv-btn" onclick="openConv(event,'a-emp')" title="Monthly to annual converter">🧮</button>
+        <div class="conv-popover" id="cp-a-emp">
+          <div class="conv-head">
+            <div class="conv-title">Monthly → Annual</div>
+            <button class="conv-close" onclick="closeConv('a-emp')">✕</button>
+          </div>
+          <div class="conv-body">
+            <div class="conv-row">
+              <label>Monthly $</label>
+              <input type="text" id="cm-a-emp" placeholder="e.g. 747.36" oninput="calcConv('a-emp')">
+            </div>
+            <div class="conv-result">
+              <div class="conv-result-lbl">Annual amount</div>
+              <div class="conv-result-val" id="cr-a-emp">/bin/sh</div>
+            </div>
+            <button class="conv-use-btn" onclick="useConv('a-emp')">Use this amount ✓</button>
+            <div class="conv-note">Monthly × 12 = annual · click to populate field</div>
+          </div>
+        </div>
+      </div><div class="inline-age">Until age <input id="a-emp-age" placeholder="65"></div></div>
+        <div class="f"><label>Part-time income in retirement / yr</label><div class="income-wrap">
+        <input class="plain" id="a-pt" placeholder="0">
+        <button class="conv-btn" onclick="openConv(event,'a-pt')" title="Monthly to annual converter">🧮</button>
+        <div class="conv-popover" id="cp-a-pt">
+          <div class="conv-head">
+            <div class="conv-title">Monthly → Annual</div>
+            <button class="conv-close" onclick="closeConv('a-pt')">✕</button>
+          </div>
+          <div class="conv-body">
+            <div class="conv-row">
+              <label>Monthly $</label>
+              <input type="text" id="cm-a-pt" placeholder="e.g. 747.36" oninput="calcConv('a-pt')">
+            </div>
+            <div class="conv-result">
+              <div class="conv-result-lbl">Annual amount</div>
+              <div class="conv-result-val" id="cr-a-pt">/bin/sh</div>
+            </div>
+            <button class="conv-use-btn" onclick="useConv('a-pt')">Use this amount ✓</button>
+            <div class="conv-note">Monthly × 12 = annual · click to populate field</div>
+          </div>
+        </div>
+      </div><div class="inline-age">Until age <input id="a-pt-age" placeholder="70"></div></div>
+      </div>
+    </div>
+
+    <!-- PERSON 2 -->
+    <div class="person-panel p2" id="p2-panel">
+      <div class="person-head">
+        <div class="person-dot p2"></div>
+        <div class="person-name-lbl p2">Person 2 —</div>
+        <input class="person-name-input" id="b-name" placeholder="Enter name">
+      </div>
+
+      <div class="fg-title">Basic information</div>
+      <div class="fg fg-3">
+        <div class="f"><label>Current age</label><input class="plain" id="b-age" placeholder="49"></div>
+        <div class="f"><label>Retirement age</label><input class="plain" id="b-ret" placeholder="62"></div>
+        <div class="f"><label>Years to retirement</label><input class="plain" id="b-ytr" placeholder="auto" readonly style="background:#F5F6F8;color:var(--txt3);"></div>
+      </div>
+
+
+      <div class="fg-title">Annual savings contributions (until retirement)</div>
+      <div class="f">
+        <label>Annual amount saved / invested</label>
+        <div class="savings-row">
+          <input class="plain" id="b-save" placeholder="e.g. 25,000">
+          <button class="infl-toggle" id="b-save-infl" onclick="toggleInfl('b')" title="Toggle inflation adjustment on contributions">
+            <span id="b-save-infl-lbl">Flat</span>
+            <span class="infl-badge" id="b-save-infl-badge">No inflation</span>
+          </button>
+        </div>
+        <div class="f-hint" id="b-save-hint">Contributions stay flat each year until retirement</div>
+      </div>
+
+      <div class="fg-title">Registered &amp; investment assets — click any field to itemize accounts</div>
+      <div class="fg fg-2">
+        <div class="f"><label>RRSP / RRIF</label><div class="asset-wrap" id="aw-b-rrsp"></div></div>
+        <div class="f"><label>Spousal RRSP / RRIF</label><div class="asset-wrap" id="aw-b-sprrsp"></div></div>
+      </div>
+      <div class="fg fg-2">
+        <div class="f"><label>LRIF / LIRA</label><div class="asset-wrap" id="aw-b-lrif"></div></div>
+        <div class="f"><label>TFSA</label><div class="asset-wrap" id="aw-b-tfsa"></div></div>
+      </div>
+      <div class="f"><label>Real estate (cottage, rental, investment property)</label><div class="asset-wrap" id="aw-b-realestate"></div></div>
+      <div class="f"><label>Non-registered investments</label><div class="asset-wrap" id="aw-b-nonreg"></div></div>
+
+      <div class="fg-title">Guaranteed income (annual, today's $)</div>
+      <div class="fg fg-2">
+        <div class="f"><label>CPP / yr</label><div class="income-wrap">
+        <input class="plain" id="b-cpp" placeholder="0">
+        <button class="conv-btn" onclick="openConv(event,'b-cpp')" title="Monthly to annual converter">🧮</button>
+        <div class="conv-popover" id="cp-b-cpp">
+          <div class="conv-head">
+            <div class="conv-title">Monthly → Annual</div>
+            <button class="conv-close" onclick="closeConv('b-cpp')">✕</button>
+          </div>
+          <div class="conv-body">
+            <div class="conv-row">
+              <label>Monthly $</label>
+              <input type="text" id="cm-b-cpp" placeholder="e.g. 747.36" oninput="calcConv('b-cpp')">
+            </div>
+            <div class="conv-result">
+              <div class="conv-result-lbl">Annual amount</div>
+              <div class="conv-result-val" id="cr-b-cpp">/bin/sh</div>
+            </div>
+            <button class="conv-use-btn" onclick="useConv('b-cpp')">Use this amount ✓</button>
+            <div class="conv-note">Monthly × 12 = annual · click to populate field</div>
+          </div>
+        </div>
+      </div><div class="inline-age">Start age <input id="b-cpp-age" placeholder="65"></div></div>
+        <div class="f"><label>OAS / yr</label><div class="income-wrap">
+        <input class="plain" id="b-oas" placeholder="0">
+        <button class="conv-btn" onclick="openConv(event,'b-oas')" title="Monthly to annual converter">🧮</button>
+        <div class="conv-popover" id="cp-b-oas">
+          <div class="conv-head">
+            <div class="conv-title">Monthly → Annual</div>
+            <button class="conv-close" onclick="closeConv('b-oas')">✕</button>
+          </div>
+          <div class="conv-body">
+            <div class="conv-row">
+              <label>Monthly $</label>
+              <input type="text" id="cm-b-oas" placeholder="e.g. 747.36" oninput="calcConv('b-oas')">
+            </div>
+            <div class="conv-result">
+              <div class="conv-result-lbl">Annual amount</div>
+              <div class="conv-result-val" id="cr-b-oas">/bin/sh</div>
+            </div>
+            <button class="conv-use-btn" onclick="useConv('b-oas')">Use this amount ✓</button>
+            <div class="conv-note">Monthly × 12 = annual · click to populate field</div>
+          </div>
+        </div>
+      </div><div class="inline-age">Start age <input id="b-oas-age" placeholder="65"></div></div>
+      </div>
+      <div class="f"><label>Defined benefit pension(s)</label>
+        <div class="pension-wrap" id="pw-b">
+          <div class="pension-display" id="pd-b" onclick="openPension('b')">
+            <div class="pension-val placeholder" id="pv-b">No pension entered</div>
+            <div class="pension-expand-btn" id="peb-b">🏦 Add pension plan</div>
+          </div>
+          <div class="pension-popover" id="pp-b">
+            <div class="pop-header">
+              <div class="pop-title">🏦 Defined Benefit Pensions — <span id="pp-b-name">Person 2</span></div>
+              <button class="pop-close" onclick="closePension('b')">✕</button>
+            </div>
+            <div class="pop-body">
+              <div style="display:grid;grid-template-columns:1fr 90px 56px 56px 24px;gap:5px;margin-bottom:4px;">
+                <span style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;">Plan name</span>
+                <span style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;text-align:right;">Annual $</span>
+                <span style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;text-align:center;">Start</span>
+                <span style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;text-align:center;">Indexed</span>
+                <span></span>
+              </div>
+              <div id="pension-rows-b"></div>
+              <div class="pop-add-row"><button class="pop-add-btn" onclick="addPensionRow('b')">+ Add pension plan</button></div>
+            </div>
+            <div class="pop-footer">
+              <div><div class="pop-total-lbl">Total annual pension</div><div class="pop-total-val" id="pension-total-b">$0</div></div>
+              <button class="pop-done" onclick="closePension('b')">Done ✓</button>
+            </div>
+          </div>
+        </div>
+        <div class="f-hint">Enter each plan separately · check Indexed if adjusted for inflation each year</div>
+      </div>
+
+      <div class="fg-title">Employment &amp; other income</div>
+      <div class="fg fg-2">
+        <div class="f"><label>Employment / self-employed / biz / yr</label><div class="income-wrap">
+        <input class="plain" id="b-emp" placeholder="0">
+        <button class="conv-btn" onclick="openConv(event,'b-emp')" title="Monthly to annual converter">🧮</button>
+        <div class="conv-popover" id="cp-b-emp">
+          <div class="conv-head">
+            <div class="conv-title">Monthly → Annual</div>
+            <button class="conv-close" onclick="closeConv('b-emp')">✕</button>
+          </div>
+          <div class="conv-body">
+            <div class="conv-row">
+              <label>Monthly $</label>
+              <input type="text" id="cm-b-emp" placeholder="e.g. 747.36" oninput="calcConv('b-emp')">
+            </div>
+            <div class="conv-result">
+              <div class="conv-result-lbl">Annual amount</div>
+              <div class="conv-result-val" id="cr-b-emp">/bin/sh</div>
+            </div>
+            <button class="conv-use-btn" onclick="useConv('b-emp')">Use this amount ✓</button>
+            <div class="conv-note">Monthly × 12 = annual · click to populate field</div>
+          </div>
+        </div>
+      </div><div class="inline-age">Until age <input id="b-emp-age" placeholder="62"></div></div>
+        <div class="f"><label>Part-time income in retirement / yr</label><div class="income-wrap">
+        <input class="plain" id="b-pt" placeholder="0">
+        <button class="conv-btn" onclick="openConv(event,'b-pt')" title="Monthly to annual converter">🧮</button>
+        <div class="conv-popover" id="cp-b-pt">
+          <div class="conv-head">
+            <div class="conv-title">Monthly → Annual</div>
+            <button class="conv-close" onclick="closeConv('b-pt')">✕</button>
+          </div>
+          <div class="conv-body">
+            <div class="conv-row">
+              <label>Monthly $</label>
+              <input type="text" id="cm-b-pt" placeholder="e.g. 747.36" oninput="calcConv('b-pt')">
+            </div>
+            <div class="conv-result">
+              <div class="conv-result-lbl">Annual amount</div>
+              <div class="conv-result-val" id="cr-b-pt">/bin/sh</div>
+            </div>
+            <button class="conv-use-btn" onclick="useConv('b-pt')">Use this amount ✓</button>
+            <div class="conv-note">Monthly × 12 = annual · click to populate field</div>
+          </div>
+        </div>
+      </div><div class="inline-age">Until age <input id="b-pt-age" placeholder="68"></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- OUTPUT -->
+  <div id="output">
+    <div class="empty">
+      <div class="empty-icon">📈</div>
+      <div class="empty-text">Ready to project</div>
+      <div class="empty-sub">Fill in the details above and click Run Projection</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// ── INIT ──
+document.getElementById('hdr-date').textContent = new Date().toLocaleDateString('en-CA',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+
+let p2on = true;
+let chartInst = null;
+
+// Store for each asset widget: { rows:[{desc,amount}], total }
+const assetData = {};
+const ASSET_FIELDS = ['a-rrsp','a-sprrsp','a-lrif','a-tfsa','a-nonreg','a-realestate','b-rrsp','b-sprrsp','b-lrif','b-tfsa','b-nonreg','b-realestate','inherit','expenses'];
+
+// Labels for popover titles
+const ASSET_LABELS = {
+  'a-rrsp':'RRSP / RRIF — Person 1','a-sprrsp':'Spousal RRSP / RRIF — Person 1',
+  'a-lrif':'LRIF / LIRA — Person 1','a-tfsa':'TFSA — Person 1',
+  'a-nonreg':'Non-registered — Person 1',
+  'b-rrsp':'RRSP / RRIF — Person 2','b-sprrsp':'Spousal RRSP / RRIF — Person 2',
+  'b-lrif':'LRIF / LIRA — Person 2','b-tfsa':'TFSA — Person 2',
+  'b-nonreg':'Non-registered — Person 2',
+  'inherit':'Expected Inheritances',
+  'expenses':'Major Planned Expenses in Retirement',
+  'a-realestate':'Real Estate Assets — Person 1',
+  'b-realestate':'Real Estate Assets — Person 2'
+};
+
+// ── BUILD ASSET WIDGETS ──
+function buildAssetWidgets(){
+  ASSET_FIELDS.forEach(id => {
+    assetData[id] = { rows:[], total:0 };
+    const wrap = document.getElementById('aw-'+id);
+    if(!wrap) return;
+    const isInherit = id === 'inherit' || id === 'expenses';
+  const isRealEstate2 = id === 'a-realestate' || id === 'b-realestate';
+    const isRealEstate = id === 'a-realestate' || id === 'b-realestate';
+    const expandLabel = id==='inherit' ? '💰 Add inheritances' : id==='expenses' ? '💸 Add expenses' : isRealEstate ? '🏠 Add property' : '✦ Add accounts';
+    wrap.innerHTML = `
+      <div class="asset-display" id="ad-${id}" onclick="openPop('${id}')">
+        <div class="asset-val placeholder" id="av-${id}">${isInherit ? 'None entered' : '0'}</div>
+        <div class="asset-expand-btn" id="aeb-${id}">
+          ${expandLabel} <span class="asset-count" id="ac-${id}" style="display:none">0</span>
+        </div>
+      </div>
+      <div class="asset-popover" id="pop-${id}" style="${isInherit ? 'width:400px;' : ''}">
+        <div class="pop-header">
+          <div class="pop-title">${id==='inherit'?'💰':id==='expenses'?'💸':isRealEstate?'🏠':'📊'} ${ASSET_LABELS[id]}</div>
+          <button class="pop-close" onclick="closePop('${id}')">✕</button>
+        </div>
+        <div class="pop-body">
+          <div class="pop-col-hdr" style="${isInherit ? 'grid-template-columns:1fr 100px 80px 24px;' : ''}">
+            <span>${isInherit ? 'Source / description' : 'Account / description'}</span>
+            <span style="text-align:right">Amount ($)</span>
+            ${isInherit ? '<span style="text-align:center">Year</span>' : ''}
+            <span></span>
+          </div>
+          ${isRealEstate?'<div style="font-size:10px;color:#B54708;background:#FEF3EA;border:1px solid #f9c7a8;border-radius:5px;padding:6px 9px;margin-bottom:8px;">🏠 Enter current market value of each property. Values grow at the inflation rate in the projection. <strong>Tax implications (capital gains, depreciation recapture) are not modelled</strong> — review with a tax professional.</div>':''}
+          <div id="pop-rows-${id}"></div>
+          <div class="pop-add-row">
+            <button class="pop-add-btn" onclick="addRow('${id}')">+ Add ${id==='inherit'?'inheritance':id==='expenses'?'expense':isRealEstate?'property':'account'}</button>
+          </div>
+        </div>
+        <div class="pop-footer">
+          <div>
+            <div class="pop-total-lbl">${id==='inherit'?'Total expected':id==='expenses'?'Total expenses':isRealEstate?'Total property value':'Total'}</div>
+            <div class="pop-total-val" id="pt-${id}">$0</div>
+          </div>
+          <button class="pop-done" onclick="closePop('${id}')">Done ✓</button>
+        </div>
+      </div>`;
+    // Start with 1 empty row
+    addRow(id);
+  });
+}
+
+let activePopId = null;
+
+function openPop(id){
+  // Close any other open pop
+  if(activePopId && activePopId !== id) closePop(activePopId);
+  activePopId = id;
+  document.getElementById('pop-'+id).classList.add('open');
+  document.getElementById('ad-'+id).classList.add('open');
+}
+
+function closePop(id){
+  document.getElementById('pop-'+id).classList.remove('open');
+  document.getElementById('ad-'+id).classList.remove('open');
+  if(activePopId === id) activePopId = null;
+  recalcTotal(id);
+}
+
+// Close popover when clicking outside
+document.addEventListener('click', e => {
+  if(!activePopId) return;
+  const pop = document.getElementById('pop-'+activePopId);
+  const disp = document.getElementById('ad-'+activePopId);
+  if(pop && !pop.contains(e.target) && !disp.contains(e.target)){
+    closePop(activePopId);
+  }
+});
+
+function addRow(id){
+  const container = document.getElementById('pop-rows-'+id);
+  const rowId = 'r' + Date.now() + Math.floor(Math.random()*1000);
+  const isInherit = id === 'inherit' || id === 'expenses';
+  const isRealEstate2 = id === 'a-realestate' || id === 'b-realestate';
+  const div = document.createElement('div');
+  div.className = 'pop-row';
+  div.id = rowId;
+  if(isInherit){
+    div.style.gridTemplateColumns = '1fr 100px 80px 24px';
+    div.innerHTML = `
+      <input type="text" placeholder="e.g. Maya's parents estate" oninput="recalcTotal('${id}')">
+      <input type="text" placeholder="0" style="text-align:right" oninput="recalcTotal('${id}')">
+      <input type="text" placeholder="2030" style="text-align:center" oninput="recalcTotal('${id}')">
+      <button class="pop-del" onclick="delRow('${rowId}','${id}')" title="Remove">×</button>`;
+  } else {
+    div.innerHTML = `
+      <input type="text" placeholder="e.g. RRSP at Manulife" oninput="recalcTotal('${id}')">
+      <input type="text" placeholder="0" style="text-align:right" oninput="recalcTotal('${id}')">
+      <button class="pop-del" onclick="delRow('${rowId}','${id}')" title="Remove">×</button>`;
+  }
+  container.appendChild(div);
+  // Attach currency format to amount field
+  const amtInput = div.querySelectorAll('input')[1];
+  amtInput.addEventListener('blur', function(){
+    const n = parseFloat(this.value.replace(/[$,\s]/g,''));
+    if(!isNaN(n) && n > 0) this.value = '$' + n.toLocaleString('en-CA', {minimumFractionDigits:2, maximumFractionDigits:2});
+    recalcTotal(id);
+  });
+  amtInput.addEventListener('focus', function(){
+    const n = parseFloat(this.value.replace(/[$,\s]/g,''));
+    if(!isNaN(n) && n > 0) this.value = n; else this.value = '';
+    this.select();
+  });
+  div.querySelector('input').focus();
+}
+
+function delRow(rowId, id){
+  const el = document.getElementById(rowId);
+  if(el) el.remove();
+  recalcTotal(id);
+}
+
+function recalcTotal(id){
+  const container = document.getElementById('pop-rows-'+id);
+  if(!container) return;
+  const rows = container.querySelectorAll('.pop-row');
+  const isInherit = id === 'inherit' || id === 'expenses';
+  const isRealEstate2 = id === 'a-realestate' || id === 'b-realestate';
+  let total = 0;
+  let count = 0;
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const amt = parseFloat((inputs[1]?.value||'').replace(/[$,\s]/g,''))||0;
+    total += amt;
+    if(amt > 0) count++;
+  });
+
+  assetData[id].total = total;
+  const totalEl = document.getElementById('pt-'+id);
+  if(totalEl) totalEl.textContent = '$'+Math.round(total).toLocaleString('en-CA');
+
+  const avEl = document.getElementById('av-'+id);
+  const adEl = document.getElementById('ad-'+id);
+  const acEl = document.getElementById('ac-'+id);
+  const aebEl = document.getElementById('aeb-'+id);
+
+  if(avEl){
+    if(id==='inherit'){
+      avEl.textContent = count > 0 ? `${count} inheritance${count!==1?'s':''} · ${fmt(total)} total` : 'None entered';
+    } else if(id==='expenses'){
+      avEl.textContent = count > 0 ? `${count} expense${count!==1?'s':''} · ${fmt(total)} total` : 'None entered';
+    } else if(id==='a-realestate'||id==='b-realestate'){
+      avEl.textContent = count > 0 ? `${count} propert${count!==1?'ies':'y'} · ${fmt(total)} total` : 'No properties entered';
+    } else {
+      avEl.textContent = '$'+Math.round(total).toLocaleString('en-CA');
+    }
+    avEl.classList.toggle('placeholder', total === 0 && !isInherit);
+  }
+  if(adEl) adEl.classList.toggle('has-items', total > 0 || (isInherit && count > 0) || (id==='expenses' && count > 0) || ((id==='a-realestate'||id==='b-realestate') && count > 0));
+  if(acEl){
+    acEl.style.display = count > 0 ? '' : 'none';
+    acEl.textContent = count;
+  }
+  if(aebEl){
+    const baseLabel = id==='inherit' ? '💰 Add inheritances' : id==='expenses' ? '💸 Add expenses' : (id==='a-realestate'||id==='b-realestate') ? '🏠 Add property' : '✦ Add accounts';
+    aebEl.innerHTML = count > 0
+      ? `${id==='inherit'?'💰':id==='expenses'?'💸':(id==='a-realestate'||id==='b-realestate')?'🏠':'✦'} ${count} ${id==='inherit'?'inheritance':id==='expenses'?'expense':(id==='a-realestate'||id==='b-realestate')?'propert'+( count!==1?'ies':'y'):'account'}${(id!=='a-realestate'&&id!=='b-realestate'&&count!==1)?'s':''} <span class="asset-count">${count}</span>`
+      : `${baseLabel} <span class="asset-count" style="display:none">${count}</span>`;
+  }
+}
+
+function getAssetTotal(id){
+  return assetData[id]?.total || 0;
+}
+
+// Returns map of {year: totalAmount} for all inheritance entries
+function getInheritancesByYear(){
+  const map = {};
+  const container = document.getElementById('pop-rows-inherit');
+  if(!container) return map;
+  container.querySelectorAll('.pop-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const amt = parseFloat((inputs[1]?.value||'').replace(/[$,\s]/g,''))||0;
+    const yr = parseInt(inputs[2]?.value||'0')||0;
+    if(amt > 0 && yr > 0){
+      map[yr] = (map[yr]||0) + amt;
+    }
+  });
+  return map;
+}
+
+// ── YTR AUTO CALC ──
+function autoYTR(){
+  const aAge=pv('a-age'), aRet=pv('a-ret');
+  const bAge=pv('b-age'), bRet=pv('b-ret');
+  if(aAge>0&&aRet>0) document.getElementById('a-ytr').value = Math.max(aRet-aAge,0)+' years';
+  if(bAge>0&&bRet>0) document.getElementById('b-ytr').value = Math.max(bRet-bAge,0)+' years';
+}
+['a-age','a-ret','b-age','b-ret'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener('input',autoYTR);
+});
+
+// ── TOGGLE P2 ──
+function toggleP2(){
+  p2on=!p2on;
+  document.getElementById('p2-panel').style.display=p2on?'':'none';
+  const grid=document.getElementById('persons-grid');
+  grid.className=p2on?'persons-grid':'persons-grid single';
+  const btn=document.getElementById('p2-btn');
+  btn.textContent=p2on?'👥 Hide second person':'👤 Add second person';
+  btn.className=p2on?'btn-p2 showing':'btn-p2 hiding';
+}
+
+// ── CLEAR ──
+function clearAll(){
+  document.querySelectorAll('input:not([readonly])').forEach(i=>i.value='');
+  document.getElementById('a-ytr').value='';
+  document.getElementById('b-ytr').value='';
+  // Reset pension widgets
+  resetPension('a'); resetPension('b');
+  // Reset all asset widgets
+  ASSET_FIELDS.forEach(id=>{
+    assetData[id]={rows:[],total:0};
+    const rows=document.getElementById('pop-rows-'+id);
+    if(rows) rows.innerHTML='';
+    addRow(id);
+    recalcTotal(id);
+  });
+  document.getElementById('output').innerHTML=`<div class="empty"><div class="empty-icon">📈</div><div class="empty-text">Ready to project</div><div class="empty-sub">Fill in the details above and click Run Projection</div></div>`;
+  // ── PLANNING FLAGS ──
+  const flags = [];
+  // OAS clawback warning (2025 threshold ~$90,997)
+  const oasClawbackThreshold = 91000;
+  const aCpp = pv('a-cpp'); const aOas = pv('a-oas'); const aDbpTotal = (pensionData['a']||[]).reduce((s,p)=>s+p.amt,0);
+  const bCpp = pv('b-cpp'); const bOas = pv('b-oas'); const bDbpTotal = p2on?(pensionData['b']||[]).reduce((s,p)=>s+p.amt,0):0;
+  const earlyGuarPerPerson = Math.max(aCpp+aOas+aDbpTotal, bCpp+bOas+bDbpTotal);
+  const earlyDrawdown = rows[0]?.drawdown || 0;
+  const estimatedIncomePerPerson = earlyGuarPerPerson + (earlyDrawdown / (p2on ? 2 : 1));
+  if(estimatedIncomePerPerson > oasClawbackThreshold) {
+    flags.push({type:'warn', icon:'⚠️', text:`<strong>OAS Clawback Risk:</strong> Estimated individual income in early retirement may exceed the OAS clawback threshold (~$91,000). Large RRIF withdrawals can trigger clawback at 15¢ per dollar above this threshold. Review drawdown strategy and income splitting opportunities with your advisor.`});
+  }
+  // RRIF conversion — flag if RRSP holder is within 10 years of 71
+  const aRrsp = getAssetTotal('a-rrsp') + getAssetTotal('a-sprrsp');
+  const bRrsp = p2on ? getAssetTotal('b-rrsp') + getAssetTotal('b-sprrsp') : 0;
+  if(aRrsp > 0 && aAge >= 61 && aAge <= 71) flags.push({type:'info', icon:'ℹ️', text:`<strong>RRSP → RRIF Conversion (${aName}):</strong> RRSPs must convert to RRIFs by age 71. Mandatory minimum withdrawals begin immediately and increase with age — this may push taxable income higher than planned and affect OAS, GIS, and means-tested benefits. Plan the conversion and withdrawal strategy carefully.`});
+  if(p2on && bRrsp > 0 && bAge >= 61 && bAge <= 71) flags.push({type:'info', icon:'ℹ️', text:`<strong>RRSP → RRIF Conversion (${bName}):</strong> Same note as above — RRSP must convert to RRIF by age 71 with mandatory minimum withdrawals.`});
+  // Real estate tax caveat
+  const hasRealEstate = getAssetTotal('a-realestate') > 0 || getAssetTotal('b-realestate') > 0;
+  if(hasRealEstate){
+    flags.push({type:'warn', icon:'🏠', text:`<strong>Real Estate — Tax Disclaimer:</strong> Investment properties and recreational properties (cottages, rental homes) are included at current market value and grown at the inflation rate. <strong>This projection does not model capital gains tax, depreciation recapture, land transfer tax, or any other real estate tax implications.</strong> These can be significant — particularly for properties with large unrealized gains. We strongly recommend reviewing the tax consequences of selling or transferring these properties with a qualified tax professional or accountant before making any decisions.`});
+  }
+  // Pension indexing note
+  const hasNonIndexed = [...(pensionData['a']||[]),...(pensionData['b']||[])].some(p=>!p.indexed);
+  if(hasNonIndexed) flags.push({type:'info', icon:'🏦', text:`<strong>Non-Indexed Pension(s):</strong> One or more pension plans are not indexed to inflation. In today's dollars, the real purchasing power of a non-indexed pension declines each year. This is reflected in the projection — the nominal pension amount stays flat while living costs rise.`});
+  // Estate goal flag
+  if(estateGoal > 0) {
+    flags.push({type: estateGoalMet ? 'tip' : 'warn', icon: estateGoalMet ? '🎯' : '⚠️', text:`<strong>Legacy Goal:</strong> Target of ${fmt(estateGoal)} at age ${estateGoalAge}. Projected estate at that age: <strong>${fmt(estateAtGoalAge)}</strong>. ${estateGoalMet ? 'On track to meet this goal on current assumptions.' : 'Current projection falls short of this goal. Consider adjusting savings, spending, or insurance coverage.'}`});
+  }
+  // Spending phase note
+  if(pv('s-spend-age') > 0 && pv('s-spend2') > 0) {
+    flags.push({type:'tip', icon:'📊', text:`<strong>Two-Phase Spending:</strong> Early retirement spending of ${fmt(spend1)}/yr steps down to ${fmt(spend2)}/yr at age ${spendAge}. This reflects the Go-Go / Slow-Go retirement spending pattern and improves projection accuracy.`});
+  }
+  // Downsizing flag
+  if(downsizing) {
+    flags.push({type:'tip', icon:'🏠', text:`<strong>Home Downsizing:</strong> Net proceeds of ${fmt(homeProceedsToday)} today (${fmt(homeProceeds)} inflation-adjusted to age ${homeAge}) from home sale are included in the projection. Ensure the amount is realistic after real estate fees, taxes, and replacement housing costs.`});
+  }
+  // Major expenses
+  if(totalExpenses > 0) {
+    flags.push({type:'info', icon:'💸', text:`<strong>Major Planned Expenses:</strong> ${fmt(totalExpenses)} in lump-sum withdrawals are modelled across the retirement period. These are applied in the specific years entered and reduce the asset pool in those years.`});
+  }
+  const flagStrip = document.getElementById('flag-strip');
+  if(flagStrip) flagStrip.innerHTML = flags.map(f=>`<div class="flag ${f.type}"><span class="flag-icon">${f.icon}</span><span>${f.text}</span></div>`).join('');
+
+  if(chartInst){chartInst.destroy();chartInst=null;}
+}
+
+// ── HELPERS ──
+function pv(id){const el=document.getElementById(id);if(!el)return 0;const r=(el.value||'').replace(/[$,%,\s,]/g,'');return parseFloat(r)||0;}
+function sv(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+function fmt(n){return '$'+Math.round(n).toLocaleString('en-CA');}
+function fmtK(n){const a=Math.abs(n);if(a>=1000000)return '$'+(n/1000000).toFixed(1)+'M';if(a>=1000)return '$'+Math.round(n/1000)+'K';return '$'+Math.round(n);}
+
+// ── MAIN RUN ──
+function run(){
+  const family=sv('f-family')||'Client';
+  const needToday=pv('s-need')||80000;
+  const lifeAge=pv('s-life')||90;
+  const rate=(pv('s-ret')||5)/100;
+  const infl=(pv('s-infl')||2.5)/100;
+  const rental=pv('s-rental');
+  const inheritsByYear = getInheritancesByYear();
+  const expensesByYear = getExpensesByYear();
+
+  // Spending phases
+  const spend1 = parseCurrency(document.getElementById('s-spend1')?.value||'') || needToday;
+  const spendAge = pv('s-spend-age') || 999;
+  const spend2 = parseCurrency(document.getElementById('s-spend2')?.value||'') || spend1;
+
+  // Home equity / downsize
+  const homeVal = parseCurrency(document.getElementById('s-home')?.value||'');
+  const homeProceedsToday = parseCurrency(document.getElementById('s-home-proceeds')?.value||'');
+  const homeAge = pv('s-home-age') || 0;
+  const downsizing = document.getElementById('s-downsize')?.checked && homeProceedsToday > 0 && homeAge > 0;
+  const homeAgeAbsolute = homeAge;
+  // Inflate home proceeds from today to sale year
+  const yrsToSale = Math.max(homeAge - aAge, 0);
+  const homeProceeds = downsizing ? homeProceedsToday * Math.pow(1+infl, yrsToSale) : 0;
+
+  // Estate / legacy goal
+  const estateGoal = parseCurrency(document.getElementById('s-estate-goal')?.value||'');
+  const estateGoalAge = pv('s-estate-age') || lifeAge;
+
+
+  const aAge=pv('a-age')||52;
+  const aRet=pv('a-ret')||65;
+  const aName=sv('a-name')||'Person 1';
+
+  const bAge=p2on?(pv('b-age')||49):0;
+  const bRet=p2on?(pv('b-ret')||62):0;
+  const bName=p2on?(sv('b-name')||'Person 2'):'';
+
+  const firstRet=p2on?Math.min(aRet,bRet):aRet;
+  const ageDiff=p2on?(aAge-bAge):0;
+
+  // Grow assets to firstRet
+  const aYrs=Math.max(firstRet-aAge,0);
+  const bYrs=p2on?Math.max(firstRet-bAge,0):0;
+  const aGrow=Math.pow(1+rate,aYrs);
+  const bGrow=Math.pow(1+rate,bYrs);
+
+  // Savings contributions — compounded to firstRet
+  const aSave = parseCurrency(document.getElementById('a-save')?.value||'');
+  const bSave = p2on ? parseCurrency(document.getElementById('b-save')?.value||'') : 0;
+  const aSaveFV = calcSavingsFV(aSave, aYrs, rate, savingsInflAdj['a'], infl);
+  const bSaveFV = p2on ? calcSavingsFV(bSave, bYrs, rate, savingsInflAdj['b'], infl) : 0;
+
+  // Home equity added to assets only if NOT downsizing (it'll come in as proceeds at sale age)
+  // If not downsizing, we don't include home equity in liquid assets — it's noted separately
+  // Real estate grows at inflation rate (not investment return)
+  const aRealEstateNow = getAssetTotal('a-realestate');
+  const bRealEstateNow = p2on ? getAssetTotal('b-realestate') : 0;
+  const aRealEstateFV = aRealEstateNow * Math.pow(1+infl, aYrs);
+  const bRealEstateFV = bRealEstateNow * Math.pow(1+infl, bYrs);
+
+  let startAssets=0;
+  startAssets+=(getAssetTotal('a-rrsp')+getAssetTotal('a-sprrsp')+getAssetTotal('a-lrif')+getAssetTotal('a-tfsa')+getAssetTotal('a-nonreg'))*aGrow;
+  startAssets+=aSaveFV;
+  startAssets+=aRealEstateFV;
+  if(p2on){
+    startAssets+=(getAssetTotal('b-rrsp')+getAssetTotal('b-sprrsp')+getAssetTotal('b-lrif')+getAssetTotal('b-tfsa')+getAssetTotal('b-nonreg'))*bGrow;
+    startAssets+=bSaveFV;
+    startAssets+=bRealEstateFV;
+  }
+
+  // Year-by-year
+  const rows=[];
+  let assets=startAssets;
+  let depleted=false;
+  let depletedAge=null;
+
+  for(let aAgeNow=firstRet;aAgeNow<=lifeAge;aAgeNow++){
+    const bAgeNow=p2on?(aAgeNow-ageDiff):0;
+    const yr=new Date().getFullYear()+(aAgeNow-aAge);
+    const inflFactor=Math.pow(1+infl,aAgeNow-firstRet);
+    const spendBase = aAgeNow >= spendAge ? spend2 : spend1;
+    const incomeNeed=spendBase*inflFactor;
+
+    let guar=rental;
+    if(aAgeNow>=(pv('a-cpp-age')||65)) guar+=pv('a-cpp');
+    if(aAgeNow>=(pv('a-oas-age')||65)) guar+=pv('a-oas');
+    guar += getPensionIncome('a', aAgeNow, aAgeNow-firstRet, infl);
+    if(aAgeNow<=(pv('a-emp-age')||65)) guar+=pv('a-emp');
+    if(aAgeNow<=(pv('a-pt-age')||70)&&aAgeNow>=aRet) guar+=pv('a-pt');
+
+    if(p2on){
+      if(bAgeNow>=(pv('b-cpp-age')||65)) guar+=pv('b-cpp');
+      if(bAgeNow>=(pv('b-oas-age')||65)) guar+=pv('b-oas');
+      guar += getPensionIncome('b', bAgeNow, bAgeNow-firstRet, infl);
+      if(bAgeNow<=(pv('b-emp-age')||62)) guar+=pv('b-emp');
+      if(bAgeNow<=(pv('b-pt-age')||68)&&bAgeNow>=bRet) guar+=pv('b-pt');
+    }
+
+    if(inheritsByYear[yr]) assets += inheritsByYear[yr];
+    if(expensesByYear[yr]) assets = Math.max(0, assets - expensesByYear[yr]);
+    if(downsizing && aAgeNow === homeAgeAbsolute) assets += homeProceeds;
+
+    const openAssets=assets;
+    const drawdown=Math.max(incomeNeed-guar,0);
+    if(!depleted) assets=assets*(1+rate)-drawdown;
+    if(assets<0&&!depleted){depleted=true;depletedAge=aAgeNow;assets=0;}
+
+    const isMilestone=(aAgeNow===aRet)||(p2on&&aAgeNow===(bRet+ageDiff))||(aAgeNow===65)||(p2on&&bAgeNow===65);
+    rows.push({aAge:aAgeNow,bAge:Math.round(bAgeNow),yr,incomeNeed:Math.round(incomeNeed),guar:Math.round(guar),drawdown:Math.round(Math.max(drawdown,0)),assets:Math.round(Math.max(assets,0)),open:Math.round(openAssets),isDep:depleted&&depletedAge===aAgeNow,isMilestone});
+  }
+
+  const finalAssets=rows[rows.length-1].assets;
+  const totalExpenses = Object.values(expensesByYear).reduce((a,b)=>a+b, 0);
+  // Estate goal check
+  const estateGoalMet = estateGoal > 0 ? finalAssets >= estateGoal : null;
+  const estateGoalRow = estateGoal > 0 ? rows.find(r=>r.aAge===Math.round(estateGoalAge)) : null;
+  const estateAtGoalAge = estateGoalRow ? estateGoalRow.assets : finalAssets;
+
+  const peakGuar=Math.max(...rows.map(r=>r.guar));
+  const openingAssets=rows[0]?.open||0;
+
+  let rClass,rIcon,rVerdict,rBody;
+  if(!depletedAge){
+    rClass='green';rIcon='✅';rVerdict='Fully Sustainable';
+    rBody=`${family}'s retirement income is projected to be fully sustainable to age ${lifeAge}. Based on a ${pv('s-ret')||5}% investment return and ${pv('s-infl')||2.5}% inflation, the estimated household estate value remaining at age ${lifeAge} is <strong>${fmt(finalAssets)}</strong>. The plan is on track — continue reviewing annually and after any major life change.`;
+  } else if(depletedAge>=lifeAge-7){
+    rClass='amber';rIcon='⚠️';rVerdict='Marginally Sustainable';
+    rBody=`${family}'s assets are projected to last to age <strong>${depletedAge}</strong> — approximately ${lifeAge-depletedAge} year${lifeAge-depletedAge!==1?'s':''} short of the planning horizon of age ${lifeAge}. The plan is close but carries meaningful risk. Consider increasing savings, delaying CPP or OAS, adjusting the drawdown strategy, or reviewing the investment return assumption.`;
+  } else {
+    rClass='red';rIcon='🔴';rVerdict='Shortfall Identified';
+    rBody=`${family}'s assets are projected to be depleted at age <strong>${depletedAge}</strong> — <strong>${lifeAge-depletedAge} years</strong> short of the planning horizon of age ${lifeAge}. A meaningful adjustment to the plan is needed. Options include increasing savings now, reducing planned retirement income, working longer, delaying CPP and OAS, or adjusting the investment strategy.`;
+  }
+
+  const tableHTML=rows.map(r=>`
+    <tr class="${r.isDep?'dep':r.isMilestone?'milestone':''}">
+      <td>${r.aAge}${p2on&&r.bAge>0?` / ${r.bAge}`:''}</td>
+      <td>${r.yr}</td>
+      <td>${fmt(r.incomeNeed)}</td>
+      <td>${fmt(r.guar)}</td>
+      <td style="color:${r.drawdown>0?'#9B1C1C':'#1A7A2A'}">${r.drawdown>0?fmt(r.drawdown):'—'}</td>
+      <td style="font-weight:600;color:${r.assets===0?'#9B1C1C':r.assets<100000?'#B54708':'#1A2E4A'}">${r.assets===0?'Depleted':fmt(r.assets)}</td>
+    </tr>`).join('');
+
+  const retAgesStr=p2on?`${aName}: ${aRet} / ${bName}: ${bRet}`:`Age ${aRet}`;
+  const aSaveNote = aSave>0 ? ` ${aName} is contributing ${fmt(aSave)}/year${savingsInflAdj['a']?' (inflation-adjusted)':' (flat)'} to savings until retirement, growing to ${fmtK(aSaveFV)} by retirement.` : '';
+  const bSaveNote = p2on&&bSave>0 ? ` ${bName} is contributing ${fmt(bSave)}/year${savingsInflAdj['b']?' (inflation-adjusted)':' (flat)'} to savings until retirement, growing to ${fmtK(bSaveFV)} by retirement.` : '';
+  const summary=`${family}${p2on?` — ${aName} (age ${aAge}) and ${bName} (age ${bAge}) —`:` — age ${aAge} —`} plan to retire at ${retAgesStr}. The household will need approximately ${fmt(needToday)} per year in today's dollars.${aSaveNote}${bSaveNote} Combined assets at the first retirement date are estimated at ${fmt(openingAssets)}, supported by guaranteed income of approximately ${fmt(peakGuar)} per year at peak from CPP, OAS${(pensionData['a']?.length||0)||(pensionData['b']?.length||0)?', and pension':''} sources.${depletedAge?` Based on current projections, household assets are expected to be depleted at ${p2on?`${aName}'s`:''} age ${depletedAge}. A review of the savings rate, retirement timing, and drawdown strategy is recommended.`:` The projection shows ${fmt(finalAssets)} remaining at age ${lifeAge} — the plan appears sustainable on current assumptions. Review annually and after any major life event.`}`;
+
+  document.getElementById('output').innerHTML=`
+    <div class="output-section">
+      <div class="sustain-card ${rClass}">
+        <div class="sustain-top">
+          <div class="sustain-emoji">${rIcon}</div>
+          <div>
+            <div class="sustain-rating">${rVerdict}</div>
+            <div class="sustain-sub">Retirement sustainability rating · ${family}</div>
+          </div>
+        </div>
+        <div class="sustain-body">${rBody}</div>
+        <div class="kn-strip">
+          <div class="kn"><div class="kn-lbl">Assets at retirement</div><div class="kn-val">${fmtK(openingAssets)}</div></div>
+          <div class="kn"><div class="kn-lbl">Annual income needed</div><div class="kn-val">${fmtK(needToday)}</div></div>
+          <div class="kn"><div class="kn-lbl">Peak guaranteed income</div><div class="kn-val">${fmtK(peakGuar)}/yr</div></div>
+          <div class="kn"><div class="kn-lbl">Retirement ${p2on?'ages':'age'}</div><div class="kn-val">${retAgesStr}</div></div>
+          <div class="kn"><div class="kn-lbl">${depletedAge?'Depleted at age':'Estate at age '+lifeAge}</div><div class="kn-val" style="color:${depletedAge?'#ffcdd2':'#c8e6c9'}">${depletedAge||fmtK(finalAssets)}</div></div>
+          ${estateGoal>0?`<div class="kn"><div class="kn-lbl">Legacy goal at age ${estateGoalAge}</div><div class="kn-val" style="color:${estateGoalMet?'#c8e6c9':'#ffcdd2'}">${fmtK(estateAtGoalAge)} / ${fmtK(estateGoal)}</div></div>`:''}
+        </div>
+      </div>
+      <div class="output-card">
+        <div class="oc-title">Asset balance through retirement <span style="font-weight:400;color:var(--txt3);">Chart view</span></div>
+        <div class="chart-wrap"><canvas id="retChart"></canvas></div>
+      </div>
+      <div class="output-card">
+        <div class="oc-title">Year-by-year projection ${p2on?`<span style="font-size:10px;font-weight:400;">${aName}'s age / ${bName}'s age shown</span>`:''}
+        <span style="font-weight:400;color:var(--txt3);font-size:10px;">Teal rows = milestone ages</span></div>
+        <div class="tbl-scroll">
+          <table class="rtbl">
+            <thead><tr>
+              <th style="text-align:left;">Age${p2on?' (both)':''}</th>
+              <th>Year</th><th>Income needed</th><th>Guaranteed</th><th>From assets</th><th>Asset balance</th>
+            </tr></thead>
+            <tbody>${tableHTML}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-title">📋 Plain-language summary — client file record</div>
+        <div class="summary-text">${summary}</div>
+      </div>
+      <!-- PLANNING FLAGS -->
+      <div class="flag-strip" id="flag-strip"></div>
+
+      <div class="disclaimer">This projection assumes a constant ${pv('s-ret')||5}% annual return and ${pv('s-infl')||2.5}% inflation. For planning purposes only — not a guarantee of future performance. Review annually.</div>
+    </div>`;
+
+  // ── PLANNING FLAGS ──
+  const flags = [];
+  // OAS clawback warning (2025 threshold ~$90,997)
+  const oasClawbackThreshold = 91000;
+  const aCpp = pv('a-cpp'); const aOas = pv('a-oas'); const aDbpTotal = (pensionData['a']||[]).reduce((s,p)=>s+p.amt,0);
+  const bCpp = pv('b-cpp'); const bOas = pv('b-oas'); const bDbpTotal = p2on?(pensionData['b']||[]).reduce((s,p)=>s+p.amt,0):0;
+  const earlyGuarPerPerson = Math.max(aCpp+aOas+aDbpTotal, bCpp+bOas+bDbpTotal);
+  const earlyDrawdown = rows[0]?.drawdown || 0;
+  const estimatedIncomePerPerson = earlyGuarPerPerson + (earlyDrawdown / (p2on ? 2 : 1));
+  if(estimatedIncomePerPerson > oasClawbackThreshold) {
+    flags.push({type:'warn', icon:'⚠️', text:`<strong>OAS Clawback Risk:</strong> Estimated individual income in early retirement may exceed the OAS clawback threshold (~$91,000). Large RRIF withdrawals can trigger clawback at 15¢ per dollar above this threshold. Review drawdown strategy and income splitting opportunities with your advisor.`});
+  }
+  // RRIF conversion — flag if RRSP holder is within 10 years of 71
+  const aRrsp = getAssetTotal('a-rrsp') + getAssetTotal('a-sprrsp');
+  const bRrsp = p2on ? getAssetTotal('b-rrsp') + getAssetTotal('b-sprrsp') : 0;
+  if(aRrsp > 0 && aAge >= 61 && aAge <= 71) flags.push({type:'info', icon:'ℹ️', text:`<strong>RRSP → RRIF Conversion (${aName}):</strong> RRSPs must convert to RRIFs by age 71. Mandatory minimum withdrawals begin immediately and increase with age — this may push taxable income higher than planned and affect OAS, GIS, and means-tested benefits. Plan the conversion and withdrawal strategy carefully.`});
+  if(p2on && bRrsp > 0 && bAge >= 61 && bAge <= 71) flags.push({type:'info', icon:'ℹ️', text:`<strong>RRSP → RRIF Conversion (${bName}):</strong> Same note as above — RRSP must convert to RRIF by age 71 with mandatory minimum withdrawals.`});
+  // Real estate tax caveat
+  const hasRealEstate = getAssetTotal('a-realestate') > 0 || getAssetTotal('b-realestate') > 0;
+  if(hasRealEstate){
+    flags.push({type:'warn', icon:'🏠', text:`<strong>Real Estate — Tax Disclaimer:</strong> Investment properties and recreational properties (cottages, rental homes) are included at current market value and grown at the inflation rate. <strong>This projection does not model capital gains tax, depreciation recapture, land transfer tax, or any other real estate tax implications.</strong> These can be significant — particularly for properties with large unrealized gains. We strongly recommend reviewing the tax consequences of selling or transferring these properties with a qualified tax professional or accountant before making any decisions.`});
+  }
+  // Pension indexing note
+  const hasNonIndexed = [...(pensionData['a']||[]),...(pensionData['b']||[])].some(p=>!p.indexed);
+  if(hasNonIndexed) flags.push({type:'info', icon:'🏦', text:`<strong>Non-Indexed Pension(s):</strong> One or more pension plans are not indexed to inflation. In today's dollars, the real purchasing power of a non-indexed pension declines each year. This is reflected in the projection — the nominal pension amount stays flat while living costs rise.`});
+  // Estate goal flag
+  if(estateGoal > 0) {
+    flags.push({type: estateGoalMet ? 'tip' : 'warn', icon: estateGoalMet ? '🎯' : '⚠️', text:`<strong>Legacy Goal:</strong> Target of ${fmt(estateGoal)} at age ${estateGoalAge}. Projected estate at that age: <strong>${fmt(estateAtGoalAge)}</strong>. ${estateGoalMet ? 'On track to meet this goal on current assumptions.' : 'Current projection falls short of this goal. Consider adjusting savings, spending, or insurance coverage.'}`});
+  }
+  // Spending phase note
+  if(pv('s-spend-age') > 0 && pv('s-spend2') > 0) {
+    flags.push({type:'tip', icon:'📊', text:`<strong>Two-Phase Spending:</strong> Early retirement spending of ${fmt(spend1)}/yr steps down to ${fmt(spend2)}/yr at age ${spendAge}. This reflects the Go-Go / Slow-Go retirement spending pattern and improves projection accuracy.`});
+  }
+  // Downsizing flag
+  if(downsizing) {
+    flags.push({type:'tip', icon:'🏠', text:`<strong>Home Downsizing:</strong> Net proceeds of ${fmt(homeProceedsToday)} today (${fmt(homeProceeds)} inflation-adjusted to age ${homeAge}) from home sale are included in the projection. Ensure the amount is realistic after real estate fees, taxes, and replacement housing costs.`});
+  }
+  // Major expenses
+  if(totalExpenses > 0) {
+    flags.push({type:'info', icon:'💸', text:`<strong>Major Planned Expenses:</strong> ${fmt(totalExpenses)} in lump-sum withdrawals are modelled across the retirement period. These are applied in the specific years entered and reduce the asset pool in those years.`});
+  }
+  const flagStrip = document.getElementById('flag-strip');
+  if(flagStrip) flagStrip.innerHTML = flags.map(f=>`<div class="flag ${f.type}"><span class="flag-icon">${f.icon}</span><span>${f.text}</span></div>`).join('');
+
+  if(chartInst){chartInst.destroy();chartInst=null;}
+  const ctx=document.getElementById('retChart').getContext('2d');
+  chartInst=new Chart(ctx,{type:'line',data:{labels:rows.map(r=>r.aAge),datasets:[
+    {label:'Asset balance',data:rows.map(r=>r.assets),borderColor:'#0D7377',backgroundColor:'rgba(13,115,119,.07)',fill:true,borderWidth:2.5,tension:.35,pointRadius:0,pointHoverRadius:5},
+    {label:'Income needed',data:rows.map(r=>r.incomeNeed),borderColor:'#9B1C1C',borderDash:[6,3],borderWidth:2,fill:false,tension:.35,pointRadius:0,pointHoverRadius:5},
+    {label:'Guaranteed income',data:rows.map(r=>r.guar),borderColor:'#1A7A2A',borderDash:[3,3],borderWidth:1.5,fill:false,tension:.35,pointRadius:0,pointHoverRadius:5},
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11,family:'DM Sans'},padding:16,color:'#4A5568'}},
+    tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmtK(c.parsed.y)}`},bodyFont:{family:'DM Sans'},titleFont:{family:'DM Sans'}}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:10,family:'DM Sans'},maxTicksLimit:12,color:'#9AA3B2'},title:{display:true,text:`${aName}'s age`,font:{size:10,family:'DM Sans'},color:'#9AA3B2'}},
+    y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10,family:'DM Sans'},callback:v=>fmtK(v),color:'#9AA3B2'}}}}});
+}
+
+
+
+
+
+// ── PENSION WIDGET ──
+const pensionData = {a:[], b:[]};
+let activePensionId = null;
+
+function openPension(person){
+  if(activePensionId && activePensionId !== person) closePension(activePensionId);
+  activePensionId = person;
+  document.getElementById('pp-'+person).classList.add('open');
+  document.getElementById('pd-'+person).classList.add('open');
+  // Sync name label
+  const name = document.getElementById(person+'-name')?.value || (person==='a'?'Person 1':'Person 2');
+  const lbl = document.getElementById('pp-'+person+'-name');
+  if(lbl) lbl.textContent = name;
+}
+
+function closePension(person){
+  document.getElementById('pp-'+person).classList.remove('open');
+  document.getElementById('pd-'+person).classList.remove('open');
+  if(activePensionId === person) activePensionId = null;
+  recalcPension(person);
+}
+
+function addPensionRow(person){
+  const container = document.getElementById('pension-rows-'+person);
+  const rowId = 'pr'+Date.now()+Math.floor(Math.random()*1000);
+  const div = document.createElement('div');
+  div.className = 'pension-row';
+  div.id = rowId;
+  div.innerHTML = `
+    <input type="text" placeholder="e.g. BC Teachers Pension" oninput="recalcPension('${person}')">
+    <input type="text" placeholder="0" style="text-align:right" oninput="recalcPension('${person}')">
+    <input type="text" placeholder="65" style="text-align:center" oninput="recalcPension('${person}')">
+    <label class="pension-infl-lbl" title="Indexed to inflation"><input type="checkbox" onchange="recalcPension('${person}')"> CPI</label>
+    <button class="pop-del" onclick="delRow('${rowId}','pension-${person}')" title="Remove">×</button>`;
+  container.appendChild(div);
+  // Currency format on amount
+  const amt = div.querySelectorAll('input')[1];
+  amt.addEventListener('blur', function(){
+    const n = parseFloat(this.value.replace(/[$,\s]/g,''));
+    if(!isNaN(n)&&n>0) this.value = '$'+n.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});
+    recalcPension(person);
+  });
+  amt.addEventListener('focus', function(){
+    const n = parseFloat(this.value.replace(/[$,\s]/g,''));
+    if(!isNaN(n)&&n>0) this.value = n; else this.value='';
+    this.select();
+  });
+  div.querySelector('input').focus();
+}
+
+function recalcPension(person){
+  const container = document.getElementById('pension-rows-'+person);
+  if(!container) return;
+  const rows = container.querySelectorAll('.pension-row');
+  let total = 0; let count = 0;
+  pensionData[person] = [];
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const name = inputs[0]?.value||'';
+    const amt = parseFloat((inputs[1]?.value||'').replace(/[$,\s]/g,''))||0;
+    const startAge = parseInt(inputs[2]?.value||'65')||65;
+    const indexed = inputs[3]?.checked || false;
+    if(amt > 0){
+      total += amt; count++;
+      pensionData[person].push({name, amt, startAge, indexed});
+    }
+  });
+  // Update display
+  const pvEl = document.getElementById('pv-'+person);
+  const pdEl = document.getElementById('pd-'+person);
+  const pebEl = document.getElementById('peb-'+person);
+  const ptEl = document.getElementById('pension-total-'+person);
+  if(pvEl){
+    pvEl.textContent = count > 0
+      ? `${count} plan${count!==1?'s':''} · $${Math.round(total).toLocaleString('en-CA')}/yr total`
+      : 'No pension entered';
+    pvEl.classList.toggle('placeholder', count===0);
+  }
+  if(pdEl) pdEl.classList.toggle('has-items', count>0);
+  if(pebEl) pebEl.textContent = count>0 ? `🏦 ${count} plan${count!==1?'s':''}` : '🏦 Add pension plan';
+  if(ptEl) ptEl.textContent = '$'+Math.round(total).toLocaleString('en-CA');
+}
+
+// Close pension popover on outside click
+document.addEventListener('click', e => {
+  if(!activePensionId) return;
+  const pop = document.getElementById('pp-'+activePensionId);
+  const disp = document.getElementById('pd-'+activePensionId);
+  if(pop&&!pop.contains(e.target)&&!disp.contains(e.target)) closePension(activePensionId);
+});
+
+// Helper to get pension income for a person at a given age (with optional indexing)
+function getPensionIncome(person, ageNow, yrsInRet, infl){
+  let total = 0;
+  (pensionData[person]||[]).forEach(p => {
+    if(ageNow >= p.startAge){
+      const yrsDrawing = ageNow - p.startAge;
+      total += p.indexed ? p.amt * Math.pow(1+infl, yrsDrawing) : p.amt;
+    }
+  });
+  return total;
+}
+
+// Reset pension widget
+function resetPension(person){
+  const container = document.getElementById('pension-rows-'+person);
+  if(container) container.innerHTML = '';
+  pensionData[person] = [];
+  recalcPension(person);
+}
+
+// ── DOWNSIZE TOGGLE ──
+function toggleDownsize(){
+  const on = document.getElementById('s-downsize').checked;
+  document.getElementById('downsize-fields').style.display = on ? '' : 'none';
+}
+
+// Returns map of {year: totalAmount} for all planned expenses
+function getExpensesByYear(){
+  const map = {};
+  const container = document.getElementById('pop-rows-expenses');
+  if(!container) return map;
+  container.querySelectorAll('.pop-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const amt = parseFloat((inputs[1]?.value||'').replace(/[$,\s]/g,''))||0;
+    const yr = parseInt(inputs[2]?.value||'0')||0;
+    if(amt > 0 && yr > 0){
+      map[yr] = (map[yr]||0) + amt;
+    }
+  });
+  return map;
+}
+
+// ── SAVINGS INFLATION TOGGLE ──
+const savingsInflAdj = {a: false, b: false};
+
+function toggleInfl(person){
+  savingsInflAdj[person] = !savingsInflAdj[person];
+  const on = savingsInflAdj[person];
+  const infl = pv('s-infl') || 2.5;
+  const btn = document.getElementById(person+'-save-infl');
+  const lbl = document.getElementById(person+'-save-infl-lbl');
+  const badge = document.getElementById(person+'-save-infl-badge');
+  const hint = document.getElementById(person+'-save-hint');
+  btn.className = on ? 'infl-toggle on' : 'infl-toggle';
+  lbl.textContent = on ? 'Inflation adj.' : 'Flat';
+  badge.textContent = on ? '+'+infl+'%/yr' : 'No inflation';
+  hint.textContent = on
+    ? 'Contributions increase by '+infl+'% each year to keep pace with inflation'
+    : 'Contributions stay flat each year until retirement';
+}
+
+// Calculate future value of contributions growing to retirement
+// with optional inflation adjustment on the contribution amount
+function calcSavingsFV(annualSave, yrsToRet, rate, inflAdj, infl){
+  if(!annualSave || yrsToRet <= 0) return 0;
+  let fv = 0;
+  for(let yr = 0; yr < yrsToRet; yr++){
+    const contrib = inflAdj ? annualSave * Math.pow(1 + infl, yr) : annualSave;
+    // Each contribution grows for the remaining years to retirement
+    fv += contrib * Math.pow(1 + rate, yrsToRet - yr);
+  }
+  return fv;
+}
+
+// ── MONTHLY CONVERTER ──
+let activeConvId = null;
+
+function openConv(e, id){
+  e.stopPropagation();
+  if(activeConvId && activeConvId !== id) closeConv(activeConvId);
+  activeConvId = id;
+  document.getElementById('cp-'+id).classList.add('open');
+  setTimeout(()=>{ const el=document.getElementById('cm-'+id); if(el){el.focus();el.select();} }, 50);
+}
+
+function closeConv(id){
+  const pop = document.getElementById('cp-'+id);
+  if(pop) pop.classList.remove('open');
+  if(activeConvId === id) activeConvId = null;
+}
+
+function calcConv(id){
+  const monthly = parseFloat((document.getElementById('cm-'+id)?.value||'').replace(/[$,\s]/g,''))||0;
+  const annual = monthly * 12;
+  const el = document.getElementById('cr-'+id);
+  if(el) el.textContent = '$' + annual.toLocaleString('en-CA', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function useConv(id){
+  const monthly = parseFloat((document.getElementById('cm-'+id)?.value||'').replace(/[$,\s]/g,''))||0;
+  const annual = Math.round(monthly * 12);
+  const field = document.getElementById(id);
+  if(field){ field.value = annual; field.dispatchEvent(new Event('input')); }
+  closeConv(id);
+}
+
+// Close converter when clicking outside
+document.addEventListener('click', e => {
+  if(!activeConvId) return;
+  const pop = document.getElementById('cp-'+activeConvId);
+  if(pop && !pop.contains(e.target)){
+    const btn = e.target.closest('.conv-btn');
+    if(!btn) closeConv(activeConvId);
+  }
+});
+
+
+// ── CURRENCY FORMATTING ──
+function fmtCurrency(val){
+  const n = parseFloat((val||'').toString().replace(/[$,\s]/g,''));
+  if(isNaN(n)||n===0) return '';
+  return '$' + n.toLocaleString('en-CA', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function fmtCurrencyWhole(val){
+  const n = parseFloat((val||'').toString().replace(/[$,\s]/g,''));
+  if(isNaN(n)||n===0) return '';
+  return '$' + Math.round(n).toLocaleString('en-CA');
+}
+
+function parseCurrency(val){
+  return parseFloat((val||'').toString().replace(/[$,\s]/g,''))||0;
+}
+
+function attachCurrencyFormat(id, decimals){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('blur', function(){
+    if(!this.value.trim()) return;
+    this.value = decimals ? fmtCurrency(this.value) : fmtCurrencyWhole(this.value);
+  });
+  el.addEventListener('focus', function(){
+    // Strip formatting on focus so user can edit raw number
+    const raw = parseCurrency(this.value);
+    if(raw !== 0) this.value = raw;
+    else this.value = '';
+    this.select();
+  });
+}
+
+function attachCurrencyFormatAll(){
+  // Income fields — show 2 decimals (CPP, OAS, pension, emp, pt)
+  const incomeFields = [
+    'a-cpp','a-oas','a-dbp','a-emp','a-pt',
+    'b-cpp','b-oas','b-dbp','b-emp','b-pt',
+    's-need','s-rental','a-save','b-save',
+    's-home','s-home-proceeds','s-spend1','s-spend2','s-estate-goal'
+    // a-dbp and b-dbp are now pension popovers, not plain inputs
+  ];
+  incomeFields.forEach(id => attachCurrencyFormat(id, true));
+
+  // Inline age fields and pct fields — no currency formatting
+  // Return/inflation fields also no currency
+}
+
+// Also format the asset widget display total nicely (already done via toLocaleString)
+// Override useConv to write formatted value
+const _origUseConv = useConv;
+// Patch useConv to also format the field after populating
+function useConv(id){
+  const monthly = parseCurrency(document.getElementById('cm-'+id)?.value||'');
+  const annual = monthly * 12;
+  const field = document.getElementById(id);
+  if(field){
+    field.value = '$' + annual.toLocaleString('en-CA', {minimumFractionDigits:2, maximumFractionDigits:2});
+    field.dispatchEvent(new Event('input'));
+  }
+  closeConv(id);
+}
+
+
+// ── BOOTSTRAP ──
+buildAssetWidgets();
+attachCurrencyFormatAll();
+// Sync infl toggle hint if inflation changes
+document.getElementById('s-infl')?.addEventListener('input', function(){
+  if(savingsInflAdj['a']) toggleInfl('a'), toggleInfl('a');
+  if(savingsInflAdj['b']) toggleInfl('b'), toggleInfl('b');
+});
+</script>
+</body>
+</html>

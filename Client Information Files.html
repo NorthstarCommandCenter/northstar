@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northstar — Client Information File</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0B2545;--navy2:#1B3A6B;--navylight:#2a4a7f;
+  --gold:#B8860B;--gold2:#D4A017;--goldsoft:#FDF6E3;--goldmid:#F0D080;
+  --surf:#F7F8FA;--white:#FFFFFF;
+  --bdr:#DDE1E7;--bdr2:#C5CAD3;
+  --txt:#1A1E2E;--txt2:#4A5568;--txt3:#9AA3B2;
+  --p1:#1565C0;--p1soft:#E3F0FF;
+  --p2:#6A1B9A;--p2soft:#F3E8FD;
+  --green:#1A7A2A;--greensoft:#E8F5EB;
+  --sh:0 1px 4px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shb:0 2px 12px rgba(0,0,0,.1),0 1px 4px rgba(0,0,0,.07);
+  --shlg:0 8px 32px rgba(0,0,0,.12),0 2px 8px rgba(0,0,0,.06);
+}
+
+body{font-family:'DM Sans',sans-serif;background:var(--surf);color:var(--txt);font-size:13px;min-height:100vh;}
+
+/* ── HEADER ── */
+.header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 55%,var(--navylight) 100%);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(0,0,0,.25);position:sticky;top:0;z-index:100;}
+.header-left{display:flex;align-items:center;gap:14px;}
+.star-mark{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(184,134,11,.4);}
+.star-mark svg{width:20px;height:20px;fill:white;}
+.header-brand{display:flex;flex-direction:column;}
+.header-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:white;font-weight:600;letter-spacing:.3px;line-height:1.1;}
+.header-sub{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-top:1px;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.header-secure{display:flex;align-items:center;gap:6px;background:rgba(184,134,11,.15);border:1px solid rgba(184,134,11,.3);border-radius:6px;padding:5px 11px;font-size:11px;color:var(--goldmid);font-weight:500;}
+.btn-hdr{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-family:'DM Sans',sans-serif;transition:all .15s;}
+.btn-hdr:hover{background:rgba(255,255,255,.15);}
+.btn-hdr.gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:white;border-color:var(--gold);box-shadow:0 2px 8px rgba(184,134,11,.3);}
+.btn-hdr.gold:hover{background:linear-gradient(180deg,#e0b020,var(--gold2));}
+
+/* ── CLIENT IDENTITY BAR ── */
+.identity-bar{background:white;border-bottom:1px solid var(--bdr);padding:14px 32px;display:flex;align-items:center;gap:20px;box-shadow:var(--sh);}
+.id-field{display:flex;flex-direction:column;gap:3px;}
+.id-field label{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;}
+.id-field input{border:none;border-bottom:2px solid var(--bdr);padding:4px 0;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--txt);outline:none;background:transparent;min-width:180px;transition:border-color .15s;}
+.id-field input:focus{border-bottom-color:var(--gold);}
+.id-field input::placeholder{color:var(--txt3);font-weight:400;}
+.id-sep{width:1px;height:36px;background:var(--bdr);flex-shrink:0;}
+.id-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--surf);color:var(--txt2);white-space:nowrap;}
+.id-badge.gold-star{background:var(--goldsoft);border-color:var(--goldmid);color:var(--gold);}
+.id-badge.silver-star{background:#F0F0F0;border-color:#C0C0C0;color:#707070;}
+.id-badge.bronze-star{background:#FDF0E8;border-color:#D4956A;color:#8B4513;}
+.id-updated{font-size:10px;color:var(--txt3);margin-left:auto;white-space:nowrap;}
+
+/* ── TABS ── */
+.tabs-bar{background:white;border-bottom:2px solid var(--bdr);padding:0 32px;display:flex;gap:0;overflow-x:auto;}
+.tab{padding:14px 20px;font-size:12px;font-weight:500;color:var(--txt2);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.tab:hover{color:var(--navy);background:var(--surf);}
+.tab.on{color:var(--navy);border-bottom-color:var(--gold);font-weight:600;}
+.tab-icon{font-size:14px;}
+.tab-count{background:var(--navy);color:white;border-radius:10px;padding:1px 6px;font-size:9px;font-weight:700;}
+
+/* ── MAIN CONTENT ── */
+.content{max-width:1200px;margin:0 auto;padding:24px 32px 48px;}
+
+/* ── SECTION CARDS ── */
+.section-card{background:white;border:1px solid var(--bdr);border-radius:12px;margin-bottom:20px;box-shadow:var(--sh);}
+.section-head{padding:14px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FAFBFC,white);}
+.section-icon{font-size:18px;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--navy);}
+.section-sub{font-size:11px;color:var(--txt3);margin-left:auto;}
+.section-body{padding:20px;}
+
+/* ── TWO COLUMN LAYOUT ── */
+.two-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;align-items:start;}
+.col-panel{padding:0 18px 0 0;min-width:0;width:100%;box-sizing:border-box;}
+.col-panel:last-child{padding:0 0 0 18px;border-left:1px solid var(--bdr);min-width:0;width:100%;box-sizing:border-box;}
+.col-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid;}
+.col-head.p1{border-color:var(--p1);}
+.col-head.p2{border-color:var(--p2);}
+.col-dot{width:10px;height:10px;border-radius:50%;}
+.col-dot.p1{background:var(--p1);}
+.col-dot.p2{background:var(--p2);}
+.col-panel *{box-sizing:border-box;max-width:100%;}
+.col-panel input,.col-panel select,.col-panel textarea{width:100%;}
+.col-name.p1{color:var(--p1);}
+.col-name.p2{color:var(--p2);}
+
+/* ── FIELDS ── */
+.fg{display:grid;gap:10px;margin-bottom:12px;min-width:0;}
+.fg-2{grid-template-columns:1fr 1fr;}
+.fg-3{grid-template-columns:1fr 1fr 1fr;}
+.f{display:flex;flex-direction:column;gap:3px;}
+.f label{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;}
+.f input,.f select,.f textarea{padding:8px 10px;border:1.5px solid var(--bdr);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12.5px;color:var(--txt);outline:none;transition:border-color .15s;background:white;width:100%;max-width:100%;box-sizing:border-box;}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(184,134,11,.08);}
+.f input::placeholder,.f textarea::placeholder{color:var(--txt3);}
+.f textarea{resize:vertical;min-height:60px;line-height:1.5;}
+.f select{cursor:pointer;}
+.f-full{grid-column:1/-1;}
+
+/* ── SUBSECTION ── */
+.subsec{font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid #EBEDF0;}
+.subsec:first-child{margin-top:0;}
+
+/* ── ASSET / LIABILITY TABLE ── */
+.al-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px;}
+.al-table th{background:var(--navy);color:white;padding:7px 10px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.04em;}
+.al-table th:last-child{text-align:right;width:120px;}
+.al-table td{padding:7px 10px;border-bottom:1px solid #F0F2F5;vertical-align:middle;}
+.al-table td:last-child{text-align:right;font-weight:600;}
+.al-table tr:nth-child(even) td{background:#FAFBFC;}
+.al-table input{border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--txt);outline:none;width:100%;padding:2px 0;}
+.al-table input.right{text-align:right;font-weight:600;}
+.al-table input::placeholder{color:var(--txt3);}
+.al-total{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--navy);color:white;border-radius:0 0 6px 6px;font-size:12px;font-weight:600;}
+.copy-btn{font-size:9.5px;font-weight:700;color:var(--p2,#6A1B9A);cursor:pointer;padding:2px 7px;border-radius:4px;border:1px solid var(--p2,#6A1B9A);background:var(--p2soft,#F3E8FD);transition:all .12s;white-space:nowrap;}
+.copy-btn:hover{background:var(--p2,#6A1B9A);color:white;}display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:5px;border:1px dashed var(--bdr2);background:transparent;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--txt2);cursor:pointer;margin-top:6px;transition:all .12s;}
+.al-add-btn:hover{border-color:var(--gold);color:var(--gold);background:var(--goldsoft);}
+.al-del{width:22px;height:22px;border:none;background:transparent;cursor:pointer;color:var(--txt3);font-size:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;}
+.al-del:hover{background:var(--surf);color:var(--red);}
+
+/* NET WORTH SUMMARY */
+.nw-strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px;}
+.nw-card{border-radius:8px;padding:14px 16px;text-align:center;}
+.nw-card.assets{background:var(--greensoft);border:1px solid #a7d5a5;}
+.nw-card.liabs{background:#FEE8E8;border:1px solid #f5b9bc;}
+.nw-card.net{background:linear-gradient(135deg,var(--navy),var(--navy2));border:1px solid var(--navylight);}
+.nw-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.nw-card.assets .nw-lbl{color:var(--green);}
+.nw-card.liabs .nw-lbl{color:#9B1C1C;}
+.nw-card.net .nw-lbl{color:rgba(255,255,255,.7);}
+.nw-val{font-size:18px;font-weight:700;}
+.nw-card.assets .nw-val{color:var(--green);}
+.nw-card.liabs .nw-val{color:#9B1C1C;}
+.nw-card.net .nw-val{color:white;}
+
+/* INSURANCE ROWS */
+.ins-row{display:grid;grid-template-columns:1.4fr 0.8fr 0.8fr 1fr 0.8fr 1fr;gap:8px;margin-bottom:8px;align-items:end;}
+.ins-head{display:grid;grid-template-columns:1.4fr 0.8fr 0.8fr 1fr 0.8fr 1fr;gap:8px;margin-bottom:4px;}
+.ins-head span{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;padding:0 2px;}
+
+/* ACCOUNT ROWS */
+.acct-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 80px;gap:8px;margin-bottom:8px;align-items:end;}
+.acct-head{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 80px;gap:8px;margin-bottom:4px;}
+.acct-head span{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;padding:0 2px;}
+
+/* CONFIDENTIAL WATERMARK */
+.confidential-bar{text-align:center;padding:5px;font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.1em;border-top:1px solid var(--bdr);}
+
+/* PRINT */
+@media print{
+  .header{position:relative;background:var(--navy)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .tabs-bar,.btn-hdr,.al-add-btn,.al-del,.header-right{display:none!important;}
+  .identity-bar{position:relative;}
+  .tab-panel{display:block!important;}
+  .section-card{break-inside:avoid;margin-bottom:14px;box-shadow:none;border:1px solid var(--bdr);}
+  .nw-card{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .nw-card.net{background:var(--navy)!important;}
+  .content{padding:16px;}
+  body{font-size:11px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="star-mark"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+    <div class="header-brand">
+      <div class="header-title">Northstar Client File</div>
+      <div class="header-sub">ALG Wealth · Confidential · SharePoint Vault</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-secure">🔒 Secure — Vault Document</div>
+    <button class="btn-hdr" onclick="window.print()">🖨 Print / Save PDF</button>
+    <button class="btn-hdr" onclick="clearAll()">✕ Clear</button>
+    <button class="btn-hdr gold">✓ Save to Vault</button>
+  </div>
+</div>
+
+<!-- IDENTITY BAR -->
+<div class="identity-bar">
+  <div class="id-field">
+    <label>Client family name</label>
+    <input id="id-family" placeholder="e.g. Harper" oninput="updateTitle()">
+  </div>
+  <div class="id-sep"></div>
+  <div class="id-field">
+    <label>File number</label>
+    <input id="id-filenum" placeholder="e.g. ALG-2024-047" style="min-width:140px;">
+  </div>
+  <div class="id-sep"></div>
+  <div class="id-field">
+    <label>Advisor</label>
+    <input id="id-advisor" placeholder="Andrew Glen" style="min-width:130px;">
+  </div>
+  <div class="id-sep"></div>
+  <div class="id-field">
+    <label>Client tier</label>
+    <select id="id-tier" onchange="updateTier()" style="min-width:110px;border:none;border-bottom:2px solid var(--bdr);border-radius:0;padding:4px 0;font-size:14px;font-weight:600;">
+      <option value="">— Select —</option>
+      <option value="gold">★ Gold</option>
+      <option value="silver">★ Silver</option>
+      <option value="bronze">★ Bronze</option>
+    </select>
+  </div>
+  <div class="id-sep"></div>
+  <div class="id-field">
+    <label>Client since</label>
+    <input id="id-since" placeholder="e.g. January 2019" style="min-width:120px;">
+  </div>
+  <div class="id-sep"></div>
+  <div class="id-field">
+    <label>Last updated</label>
+    <input id="id-updated" placeholder="e.g. March 2026" style="min-width:120px;">
+  </div>
+  <div class="id-updated" id="id-date-display"></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <div class="tab on" onclick="showTab('personal',this)"><span class="tab-icon">👤</span>Personal & Contact</div>
+  <div class="tab" onclick="showTab('employment',this)"><span class="tab-icon">💼</span>Employment & Income</div>
+  <div class="tab" onclick="showTab('assets',this)"><span class="tab-icon">📊</span>Assets & Liabilities</div>
+  <div class="tab" onclick="showTab('insurance',this)"><span class="tab-icon">🛡️</span>Insurance</div>
+  <div class="tab" onclick="showTab('estate',this)"><span class="tab-icon">📜</span>Estate & Legal</div>
+  <div class="tab" onclick="showTab('notes',this)"><span class="tab-icon">📝</span>Notes & Goals</div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════ PERSONAL & CONTACT ══════════════ -->
+<div id="tab-personal" class="tab-panel">
+
+  <div class="section-card">
+    <div class="section-head"><span class="section-icon">👤</span><div class="section-title">Personal Information</div><div class="section-sub">KYC — Identity & Contact</div></div>
+    <div class="section-body">
+      <div class="two-col">
+        <!-- PERSON 1 -->
+        <div class="col-panel">
+          <div class="col-head p1"><div class="col-dot p1"></div><div class="col-name p1">Client — Person 1</div></div>
+          <div class="subsec">Legal name & identity</div>
+          <div class="fg fg-3">
+            <div class="f"><label>First name</label><input id="p1-first" oninput="refreshOwnerSelects()" placeholder="Daniel"></div>
+            <div class="f"><label>Middle name</label><input id="p1-mid" placeholder=""></div>
+            <div class="f"><label>Last name</label><input id="p1-last" placeholder="Harper"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Preferred name</label><input id="p1-pref" oninput="refreshOwnerSelects()" placeholder="Daniel"></div>
+            <div class="f"><label>Previous / maiden name</label><input id="p1-prevname" placeholder="e.g. Daniel Reynolds"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Date of birth</label><input id="p1-dob" placeholder="e.g. e.g. June 12, 1975"></div>
+            <div class="f"><label>Gender</label><select id="p1-gender"><option value="">—</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option></select></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f">
+              <label>SIN</label>
+              <div style="position:relative;width:100%;">
+                <input id="p1-sin" placeholder="000 - 000 - 000" type="password"
+                  style="padding-right:34px;width:100%;padding:7px 34px 7px 9px;border:1.5px solid var(--bdr);border-radius:6px;font-family:inherit;font-size:12.5px;color:var(--txt);outline:none;">
+                <button type="button" onclick="toggleSIN('p1-sin',this)"
+                  style="position:absolute;right:7px;top:50%;transform:translateY(-50%);border:none;background:none;cursor:pointer;color:var(--txt3);font-size:14px;padding:0;line-height:1;">👁</button>
+              </div>
+            </div>
+            <div class="f"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Place of birth</label><input id="p1-pob" placeholder="City, Province/Country"></div>
+            <div class="f"><label>Citizenship</label><input id="p1-citizen" placeholder="Canadian"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Canadian residency status</label><select id="p1-residency"><option value="">—</option><option>Canadian citizen</option><option>Permanent resident</option><option>Temporary resident</option><option>Work permit</option><option>Study permit</option><option>Other</option></select></div>
+            <div class="f"><label>Years resident in Canada</label><input id="p1-cdn-yrs" placeholder="e.g. 40 years"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Marital status</label><select id="p1-marital"><option value="">—</option><option>Married</option><option>Common-law</option><option>Single</option><option>Divorced</option><option>Widowed</option><option>Separated</option></select></div>
+            <div class="f"><label>Language preference</label><select id="p1-lang"><option>English</option><option>French</option><option>Other</option></select></div>
+          </div>
+          <div class="subsec">Contact information</div>
+          <div class="fg">
+            <div class="f"><label>Home / physical address</label><input id="p1-addr" placeholder="123 Lakeview Drive"></div>
+          </div>
+          <div class="fg fg-3">
+            <div class="f"><label>City</label><input id="p1-city" placeholder="West Kelowna"></div>
+            <div class="f"><label>Province</label><input id="p1-prov" placeholder="BC"></div>
+            <div class="f"><label>Postal code</label><input id="p1-postal" placeholder="V1Z 0A1"></div>
+          </div>
+          <div class="fg" style="margin-bottom:4px;">
+            <label style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <input type="checkbox" id="p1-mail-diff" onchange="toggleMail('p1')" style="width:14px;height:14px;accent-color:var(--gold);cursor:pointer;">
+              Mailing address is different from physical address
+            </label>
+          </div>
+          <div id="p1-mail-fields" style="display:none;">
+            <div class="fg">
+              <div class="f"><label>Mailing address</label><input id="p1-mailaddr" placeholder="PO Box or different street address"></div>
+            </div>
+            <div class="fg fg-3">
+              <div class="f"><label>City</label><input id="p1-mailcity" placeholder=""></div>
+              <div class="f"><label>Province</label><input id="p1-mailprov" placeholder="BC"></div>
+              <div class="f"><label>Postal code</label><input id="p1-mailpostal" placeholder=""></div>
+            </div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Best phone number</label><input id="p1-phone" placeholder="250-555-0100" oninput="fmtPhone(this)"></div>
+            <div class="f"><label>Best email</label><input id="p1-email" placeholder="daniel@email.com"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Secondary phone</label><input id="p1-phone2" placeholder="Optional" oninput="fmtPhone(this)"></div>
+            <div class="f"><label>Secondary email</label><input id="p1-email2" placeholder="Optional"></div>
+          </div>
+          <div class="fg">
+            <div class="f">
+              <label>Preferred contact method</label>
+              <div style="display:flex;gap:8px;margin-top:4px;" id="p1-contact-pref">
+                <button class="pref-btn" onclick="setPref('p1','Email',this)" style="flex:1;padding:7px;border-radius:6px;border:1.5px solid var(--bdr);background:white;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;color:var(--txt2);transition:all .12s;">📧 Email</button>
+                <button class="pref-btn" onclick="setPref('p1','Call',this)" style="flex:1;padding:7px;border-radius:6px;border:1.5px solid var(--bdr);background:white;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;color:var(--txt2);transition:all .12s;">📞 Call</button>
+                <button class="pref-btn" onclick="setPref('p1','Text',this)" style="flex:1;padding:7px;border-radius:6px;border:1.5px solid var(--bdr);background:white;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;color:var(--txt2);transition:all .12s;">💬 Text</button>
+              </div>
+              <input type="hidden" id="p1-pref-contact" value="">
+            </div>
+          </div>
+          <div class="subsec">Government ID</div>
+          <div class="fg fg-2">
+            <div class="f"><label>ID type</label><select id="p1-idtype"><option value="">—</option><option>Driver's licence</option><option>Passport</option><option>PR Card</option><option>Other</option></select></div>
+            <div class="f"><label>ID number</label><input id="p1-idnum" placeholder=""></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>ID expiry</label><input id="p1-idexp" placeholder="e.g. Oct 2027"></div>
+            <div class="f"><label>ID issuing province / country</label><input id="p1-idprov" placeholder="BC"></div>
+          </div>
+        </div>
+
+        <!-- PERSON 2 -->
+        <div class="col-panel">
+          <div class="col-head p2"><div class="col-dot p2"></div><div class="col-name p2">Spouse / Partner — Person 2</div></div>
+
+          <!-- SAME HOUSEHOLD TOGGLE -->
+          <div style="background:var(--p2soft,#F3E8FD);border:1.5px solid var(--p2mid,#C599E8);border-radius:8px;padding:10px 13px;margin-bottom:12px;display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;">
+            <input type="checkbox" id="p2-same-household" onchange="applySameHousehold()" style="width:16px;height:16px;accent-color:var(--p2,#6A1B9A);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#6A1B9A;cursor:pointer;" onclick="document.getElementById('p2-same-household').click();applySameHousehold()">Same household as Person 1</div>
+              <div style="font-size:10.5px;color:var(--txt2);margin-top:1px;">Copies address and mailing address — all other fields are filled in separately</div>
+            </div>
+          </div>
+
+          <div class="subsec">Legal name & identity</div>
+          <div class="fg fg-3">
+            <div class="f"><label>First name</label><input id="p2-first" oninput="refreshOwnerSelects()" placeholder="Olivia"></div>
+            <div class="f"><label>Middle name</label><input id="p2-mid" placeholder=""></div>
+            <div class="f"><label>Last name</label><input id="p2-last" placeholder="Harper"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Preferred name</label><input id="p2-pref" oninput="refreshOwnerSelects()" placeholder="Olivia"></div>
+            <div class="f"><label>Previous / maiden name</label><input id="p2-prevname" placeholder="e.g. Olivia Thornton"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Date of birth</label><input id="p2-dob" placeholder="e.g. e.g. March 3, 1978"></div>
+            <div class="f"><label>Gender</label><select id="p2-gender"><option value="">—</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option></select></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f">
+              <label>SIN</label>
+              <div style="position:relative;width:100%;">
+                <input id="p2-sin" placeholder="000 - 000 - 000" type="password"
+                  style="padding-right:34px;width:100%;padding:7px 34px 7px 9px;border:1.5px solid var(--bdr);border-radius:6px;font-family:inherit;font-size:12.5px;color:var(--txt);outline:none;">
+                <button type="button" onclick="toggleSIN('p2-sin',this)"
+                  style="position:absolute;right:7px;top:50%;transform:translateY(-50%);border:none;background:none;cursor:pointer;color:var(--txt3);font-size:14px;padding:0;line-height:1;">👁</button>
+              </div>
+            </div>
+            <div class="f"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Place of birth</label><input id="p2-pob" placeholder="City, Province/Country"></div>
+            <div class="f"><label>Citizenship</label><input id="p2-citizen" placeholder="Canadian"></div>
+          </div>
+
+          <!-- COPYABLE: residency, marital, language -->
+          <div class="fg fg-2">
+            <div class="f">
+              <label>Canadian residency status</label>
+              <select id="p2-residency"><option value="">—</option><option>Canadian citizen</option><option>Permanent resident</option><option>Temporary resident</option><option>Work permit</option><option>Study permit</option><option>Other</option></select>
+            </div>
+            <div class="f">
+              <label>Years resident in Canada</label>
+              <input id="p2-cdn-yrs" placeholder="e.g. 38 years">
+            </div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f">
+              <label style="display:flex;align-items:center;justify-content:space-between;">
+                Marital status
+                <span class="copy-btn" onclick="copyField('p1-marital','p2-marital',true)" title="Copy from Person 1">⬅ Copy</span>
+              </label>
+              <select id="p2-marital"><option value="">—</option><option>Married</option><option>Common-law</option><option>Single</option><option>Divorced</option><option>Widowed</option><option>Separated</option></select>
+            </div>
+            <div class="f">
+              <label>Language preference</label>
+              <select id="p2-lang"><option>English</option><option>French</option><option>Other</option></select>
+            </div>
+          </div>
+
+          <div class="subsec">Contact information</div>
+
+          <!-- ADDRESS COPY BLOCK -->
+          <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:7px;padding:10px 12px;margin-bottom:10px;box-sizing:border-box;width:100%;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:10.5px;font-weight:700;color:var(--txt2);">Home / physical address</span>
+              <button onclick="copyAddress()" style="padding:4px 10px;border-radius:5px;border:1px solid var(--p2,#6A1B9A);background:var(--p2soft,#F3E8FD);font-family:inherit;font-size:10.5px;font-weight:700;color:var(--p2,#6A1B9A);cursor:pointer;">⬅ Copy address from Person 1</button>
+            </div>
+            <div class="fg">
+              <div class="f"><input id="p2-addr" placeholder="Leave blank if same as Person 1"></div>
+            </div>
+            <div class="fg fg-3">
+              <div class="f"><label>City</label><input id="p2-city" placeholder=""></div>
+              <div class="f"><label>Province</label><input id="p2-prov" placeholder=""></div>
+              <div class="f"><label>Postal code</label><input id="p2-postal" placeholder=""></div>
+            </div>
+          </div>
+
+          <div class="fg" style="margin-bottom:4px;">
+            <label style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <input type="checkbox" id="p2-mail-diff" onchange="toggleMail('p2')" style="width:14px;height:14px;accent-color:var(--gold);cursor:pointer;">
+              Mailing address is different from physical address
+            </label>
+          </div>
+          <div id="p2-mail-fields" style="display:none;">
+            <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:5px;">
+              <button onclick="copyMailingAddress()" style="padding:4px 10px;border-radius:5px;border:1px solid var(--p2,#6A1B9A);background:var(--p2soft,#F3E8FD);font-family:inherit;font-size:10.5px;font-weight:700;color:var(--p2,#6A1B9A);cursor:pointer;">⬅ Copy mailing address from Person 1</button>
+            </div>
+            <div class="fg">
+              <div class="f"><label>Mailing address</label><input id="p2-mailaddr" placeholder="PO Box or different street address"></div>
+            </div>
+            <div class="fg fg-3">
+              <div class="f"><label>City</label><input id="p2-mailcity" placeholder=""></div>
+              <div class="f"><label>Province</label><input id="p2-mailprov" placeholder=""></div>
+              <div class="f"><label>Postal code</label><input id="p2-mailpostal" placeholder=""></div>
+            </div>
+          </div>
+
+          <div class="fg fg-2">
+            <div class="f"><label>Best phone number</label><input id="p2-phone" placeholder="250-555-0101" oninput="fmtPhone(this)"></div>
+            <div class="f"><label>Best email</label><input id="p2-email" placeholder="olivia@email.com"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Secondary phone</label><input id="p2-phone2" placeholder="Optional" oninput="fmtPhone(this)"></div>
+            <div class="f"><label>Secondary email</label><input id="p2-email2" placeholder="Optional"></div>
+          </div>
+          <div class="fg">
+            <div class="f">
+              <label>Preferred contact method</label>
+              <div style="display:flex;gap:8px;margin-top:4px;" id="p2-contact-pref">
+                <button class="pref-btn" onclick="setPref('p2','Email',this)" style="flex:1;padding:7px;border-radius:6px;border:1.5px solid var(--bdr);background:white;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;color:var(--txt2);transition:all .12s;">📧 Email</button>
+                <button class="pref-btn" onclick="setPref('p2','Call',this)" style="flex:1;padding:7px;border-radius:6px;border:1.5px solid var(--bdr);background:white;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;color:var(--txt2);transition:all .12s;">📞 Call</button>
+                <button class="pref-btn" onclick="setPref('p2','Text',this)" style="flex:1;padding:7px;border-radius:6px;border:1.5px solid var(--bdr);background:white;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;color:var(--txt2);transition:all .12s;">💬 Text</button>
+              </div>
+              <input type="hidden" id="p2-pref-contact" value="">
+            </div>
+          </div>
+          <div class="subsec">Government ID</div>
+          <div class="fg fg-2">
+            <div class="f"><label>ID type</label><select id="p2-idtype"><option value="">—</option><option>Driver's licence</option><option>Passport</option><option>PR Card</option><option>Other</option></select></div>
+            <div class="f"><label>ID number</label><input id="p2-idnum" placeholder=""></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>ID expiry</label><input id="p2-idexp" placeholder="e.g. Oct 2027"></div>
+            <div class="f"><label>ID issuing province / country</label><input id="p2-idprov" placeholder="BC"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-head"><span class="section-icon">👨‍👩‍👧</span><div class="section-title">Children & Dependants</div></div>
+    <div class="section-body">
+      <div class="fg fg-2" style="margin-bottom:4px;">
+        <div class="f">
+          <label>Number of children</label>
+          <select id="fam-numchildren" onchange="buildChildRows()" style="padding:7px 9px;border:1.5px solid var(--bdr);border-radius:6px;font-family:inherit;font-size:12.5px;color:var(--txt);outline:none;background:white;width:100%;">
+            <option value="0">— Select —</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+            <option>5</option><option>6</option><option>7</option><option>8</option>
+            <option>9</option><option>10</option>
+          </select>
+        </div>
+        <div class="f"><label>Other dependants (not children)</label><input id="fam-other-deps" placeholder="e.g. 1 parent, 1 sibling"></div>
+      </div>
+
+      <div id="children-grid" style="display:none;margin-bottom:12px;">
+        <div style="display:grid;grid-template-columns:2fr 1.4fr 70px 100px;gap:8px;margin-bottom:5px;padding:0 2px;">
+          <span style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;">Full name</span>
+          <span style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;">Date of birth</span>
+          <span style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;">Age</span>
+          <span style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;">Dependent?</span>
+        </div>
+        <div id="children-rows"></div>
+      </div>
+
+      <div class="fg fg-2">
+        <div class="f"><label>Emergency contact name</label><input id="emerg-name" placeholder="Full name"></div>
+        <div class="f"><label>Emergency contact phone</label><input id="emerg-phone" placeholder="250-555-0300"></div>
+      </div>
+      <div class="fg fg-2">
+        <div class="f"><label>Emergency contact relationship</label><input id="emerg-rel" placeholder="e.g. Adult daughter, sibling"></div>
+        <div class="f"><label>Emergency contact email</label><input id="emerg-email" placeholder=""></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-head"><span class="section-icon">🏠</span><div class="section-title">Primary Residence</div></div>
+    <div class="section-body">
+      <div class="fg fg-2" style="margin-bottom:10px;">
+        <div class="f"><label>Ownership status</label>
+          <select id="res-own"><option value="">—</option><option>Own — mortgage free</option><option>Own — with mortgage</option><option>Rent</option><option>Other</option></select>
+        </div>
+        <div class="f"><label>Estimated market value</label>
+          <input id="res-val" placeholder="$0" oninput="fmtCurrency(this)" style="padding:7px 9px;border:1.5px solid var(--bdr);border-radius:6px;font-family:inherit;font-size:12.5px;color:var(--txt);outline:none;width:100%;">
+        </div>
+      </div>
+
+      <div class="subsec">Mortgages & property debt</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed;" id="mortgage-table">
+          <thead>
+            <tr>
+              <th style="background:var(--navy);color:white;padding:6px 6px;text-align:left;font-size:9.5px;font-weight:600;width:16%;">Lender</th>
+              <th style="background:var(--navy);color:white;padding:6px 6px;text-align:left;font-size:9.5px;font-weight:600;width:14%;">Type</th>
+              <th style="background:var(--navy);color:white;padding:6px 6px;text-align:right;font-size:9.5px;font-weight:600;width:10%;">Limit</th>
+              <th style="background:var(--navy);color:white;padding:6px 6px;text-align:right;font-size:9.5px;font-weight:600;width:10%;">Balance</th>
+              <th style="background:var(--navy);color:white;padding:6px 6px;text-align:left;font-size:9.5px;font-weight:600;width:13%;">Frequency</th>
+              <th style="background:var(--navy);color:white;padding:6px 6px;text-align:right;font-size:9.5px;font-weight:600;width:10%;">Payment</th>
+              <th style="background:var(--navy);color:white;padding:6px 6px;text-align:right;font-size:9.5px;font-weight:600;width:10%;">Monthly</th>
+              <th style="background:var(--navy);color:white;padding:6px 6px;text-align:left;font-size:9.5px;font-weight:600;width:13%;">Renewal</th>
+              <th style="background:var(--navy);color:white;padding:6px 4px;width:4%;"></th>
+            </tr>
+          </thead>
+          <tbody id="mortgage-tbody"></tbody>
+          <tfoot>
+            <tr id="mortgage-total-row" style="display:none;">
+              <td colspan="3" style="padding:6px 6px;font-weight:700;color:var(--navy);background:#EFF6FC;font-size:10px;">Total property debt</td>
+              <td style="padding:6px 6px;text-align:right;font-weight:700;color:var(--navy);background:#EFF6FC;font-size:11px;" id="mortgage-total-bal">$0</td>
+              <td style="background:#EFF6FC;"></td>
+              <td style="background:#EFF6FC;"></td>
+              <td style="padding:6px 6px;text-align:right;font-weight:700;color:var(--navy);background:#EFF6FC;font-size:11px;" id="mortgage-total-monthly">$0<span style="font-size:9px;font-weight:400;">/mo</span></td>
+              <td colspan="2" style="background:#EFF6FC;font-size:9.5px;color:var(--txt2);padding:6px 6px;">combined/mo</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <button class="al-add-btn" onclick="addMortgageRow()" style="margin-top:6px;">+ Add mortgage / line of credit</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════ EMPLOYMENT & INCOME ══════════════ -->
+<div id="tab-employment" class="tab-panel" style="display:none;">
+  <div class="section-card">
+    <div class="section-head"><span class="section-icon">💼</span><div class="section-title">Employment & Income</div><div class="section-sub">Current & prior employment</div></div>
+    <div class="section-body">
+      <div class="two-col">
+        <div class="col-panel">
+          <div class="col-head p1"><div class="col-dot p1"></div><div class="col-name p1" id="emp-p1-name">Person 1</div></div>
+          <div class="subsec">Current employment</div>
+          <div class="fg fg-2">
+            <div class="f"><label>Employment status</label><select id="p1-empstatus"><option value="">—</option><option>Employed — full time</option><option>Employed — part time</option><option>Self-employed</option><option>Business owner</option><option>Retired</option><option>Not employed</option></select></div>
+            <div class="f"><label>Occupation / title</label><input id="p1-occ" placeholder="e.g. Senior Engineer"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Employer name</label><input id="p1-employer" placeholder="e.g. Kelowna General Hospital"></div>
+            <div class="f"><label>Industry</label><input id="p1-industry" placeholder="e.g. Healthcare"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Years with employer</label><input id="p1-empyrs" placeholder="e.g. 12 years"></div>
+            <div class="f"><label>Expected retirement age</label><input id="p1-retage" placeholder="e.g. 65"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Employer address</label><input id="p1-empaddr" placeholder=""></div>
+            <div class="f"><label>Work phone</label><input id="p1-workph" placeholder=""></div>
+          </div>
+          <div class="subsec">Income</div>
+          <div class="fg fg-2">
+            <div class="f"><label>Annual employment income</label><input id="p1-income" placeholder="e.g. $145,000"></div>
+            <div class="f"><label>Bonus / variable income</label><input id="p1-bonus" placeholder="e.g. $15,000 avg"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Self-employed / business income</label><input id="p1-bizinc" placeholder="e.g. $0"></div>
+            <div class="f"><label>Rental / other income</label><input id="p1-otherinc" placeholder="e.g. $18,000/yr"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Dividend / investment income</label><input id="p1-divinc" placeholder=""></div>
+            <div class="f"><label>Pension income (current)</label><input id="p1-pensioninc" placeholder=""></div>
+          </div>
+          <div class="subsec">Group benefits</div>
+          <div class="fg fg-2">
+            <div class="f"><label>Group benefits provider</label><input id="p1-grpben" placeholder="e.g. Manulife Group"></div>
+            <div class="f"><label>Policy / plan number</label><input id="p1-grpnum" placeholder=""></div>
+          </div>
+          <div class="fg fg-3">
+            <div class="f"><label>Life coverage</label><input id="p1-grplife" placeholder="e.g. 2× salary"></div>
+            <div class="f"><label>LTD coverage</label><input id="p1-grpltd" placeholder="e.g. 66% to age 65"></div>
+            <div class="f"><label>Extended health</label><select id="p1-grpeh"><option value="">—</option><option>Yes</option><option>No</option></select></div>
+          </div>
+          <div class="subsec">Pension plan</div>
+          <div class="fg fg-2">
+            <div class="f"><label>Pension type</label><select id="p1-penstype"><option value="">—</option><option>Defined benefit (DB)</option><option>Defined contribution (DC)</option><option>DCPP / Group RRSP</option><option>None</option></select></div>
+            <div class="f"><label>Years of service</label><input id="p1-pensyrs" placeholder="e.g. 12 years"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Estimated pension at retirement</label><input id="p1-pensamt" placeholder="e.g. $42,000/yr"></div>
+            <div class="f"><label>Indexed to inflation?</label><select id="p1-pensidx"><option value="">—</option><option>Yes — fully indexed</option><option>Partial indexing</option><option>No — flat benefit</option></select></div>
+          </div>
+        </div>
+
+        <div class="col-panel">
+          <div class="col-head p2"><div class="col-dot p2"></div><div class="col-name p2" id="emp-p2-name">Person 2</div></div>
+          <div class="subsec">Current employment</div>
+          <div class="fg fg-2">
+            <div class="f"><label>Employment status</label><select id="p2-empstatus"><option value="">—</option><option>Employed — full time</option><option>Employed — part time</option><option>Self-employed</option><option>Business owner</option><option>Retired</option><option>Not employed</option></select></div>
+            <div class="f"><label>Occupation / title</label><input id="p2-occ" placeholder="e.g. Teacher"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Employer name</label><input id="p2-employer" placeholder="e.g. School District 23"></div>
+            <div class="f"><label>Industry</label><input id="p2-industry" placeholder="e.g. Education"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Years with employer</label><input id="p2-empyrs" placeholder="e.g. 8 years"></div>
+            <div class="f"><label>Expected retirement age</label><input id="p2-retage" placeholder="e.g. 62"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Employer address</label><input id="p2-empaddr" placeholder=""></div>
+            <div class="f"><label>Work phone</label><input id="p2-workph" placeholder=""></div>
+          </div>
+          <div class="subsec">Income</div>
+          <div class="fg fg-2">
+            <div class="f"><label>Annual employment income</label><input id="p2-income" placeholder="e.g. $82,000"></div>
+            <div class="f"><label>Bonus / variable income</label><input id="p2-bonus" placeholder="e.g. $0"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Self-employed / business income</label><input id="p2-bizinc" placeholder="e.g. $0"></div>
+            <div class="f"><label>Rental / other income</label><input id="p2-otherinc" placeholder="e.g. $0"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Dividend / investment income</label><input id="p2-divinc" placeholder=""></div>
+            <div class="f"><label>Pension income (current)</label><input id="p2-pensioninc" placeholder=""></div>
+          </div>
+          <div class="subsec">Group benefits</div>
+          <div class="fg fg-2">
+            <div class="f"><label>Group benefits provider</label><input id="p2-grpben" placeholder=""></div>
+            <div class="f"><label>Policy / plan number</label><input id="p2-grpnum" placeholder=""></div>
+          </div>
+          <div class="fg fg-3">
+            <div class="f"><label>Life coverage</label><input id="p2-grplife" placeholder=""></div>
+            <div class="f"><label>LTD coverage</label><input id="p2-grpltd" placeholder=""></div>
+            <div class="f"><label>Extended health</label><select id="p2-grpeh"><option value="">—</option><option>Yes</option><option>No</option></select></div>
+          </div>
+          <div class="subsec">Pension plan</div>
+          <div class="fg fg-2">
+            <div class="f"><label>Pension type</label><select id="p2-penstype"><option value="">—</option><option>Defined benefit (DB)</option><option>Defined contribution (DC)</option><option>DCPP / Group RRSP</option><option>None</option></select></div>
+            <div class="f"><label>Years of service</label><input id="p2-pensyrs" placeholder="e.g. 8 years"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Estimated pension at retirement</label><input id="p2-pensamt" placeholder="e.g. $28,000/yr"></div>
+            <div class="f"><label>Indexed to inflation?</label><select id="p2-pensidx"><option value="">—</option><option>Yes — fully indexed</option><option>Partial indexing</option><option>No — flat benefit</option></select></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ASSETS & LIABILITIES ══════════════ -->
+<div id="tab-assets" class="tab-panel" style="display:none;">
+  <div class="section-card">
+    <div class="section-head"><span class="section-icon">📊</span><div class="section-title">Assets & Liabilities — Net Worth Summary</div><div class="section-sub">All values in today's dollars</div></div>
+    <div class="section-body">
+
+      <div class="subsec">Assets</div>
+      <table class="al-table" id="asset-table" style="font-size:11.5px;">
+        <thead><tr>
+          <th>Description</th>
+          <th>Owner</th>
+          <th>Account / asset type</th>
+          <th>Institution · account #</th>
+          <th>Beneficiary</th>
+          <th style="text-align:right;width:110px;">Value</th>
+          <th style="width:28px;"></th>
+        </tr></thead>
+        <tbody id="asset-tbody"></tbody>
+      </table>
+      <button class="al-add-btn" onclick="addAssetRow()">+ Add asset</button>
+
+      <div class="subsec" style="margin-top:20px;">Liabilities</div>
+      <table class="al-table" id="liab-table">
+        <thead><tr><th>Liability description</th><th>Holder</th><th>Type</th><th style="text-align:right;width:140px;">Balance owing</th><th style="width:30px;"></th></tr></thead>
+        <tbody id="liab-tbody"></tbody>
+      </table>
+      <button class="al-add-btn" onclick="addLiabRow()">+ Add liability</button>
+
+      <div class="nw-strip" id="nw-strip">
+        <div class="nw-card assets"><div class="nw-lbl">Total assets</div><div class="nw-val" id="nw-assets">$0</div></div>
+        <div class="nw-card liabs"><div class="nw-lbl">Total liabilities</div><div class="nw-val" id="nw-liabs">$0</div></div>
+        <div class="nw-card net"><div class="nw-lbl">Net worth</div><div class="nw-val" id="nw-net">$0</div></div>
+      </div>
+
+      <div class="subsec" style="margin-top:20px;">Investment profile — snapshot</div>
+      <div class="fg fg-3">
+        <div class="f"><label id="lbl-p1-risk">Person 1 — FIT profile</label>
+          <select id="p1-risk"><option value="">—</option><option>Ultra-Conservative</option><option>Conservative</option><option>Conservative Balanced</option><option>Balanced</option><option>Balanced Growth</option><option>Growth</option><option>Growth Plus</option></select>
+        </div>
+        <div class="f"><label id="lbl-p2-risk">Person 2 — FIT profile</label>
+          <select id="p2-risk"><option value="">—</option><option>Ultra-Conservative</option><option>Conservative</option><option>Conservative Balanced</option><option>Balanced</option><option>Balanced Growth</option><option>Growth</option><option>Growth Plus</option></select>
+        </div>
+        <div class="f"><label>Investment time horizon</label><input id="inv-horizon" placeholder="e.g. 20 years to retirement"></div>
+      </div>
+      <div class="fg">
+        <div class="f"><label>Beneficiary notes or concerns to flag</label>
+          <textarea id="ben-notes" placeholder="e.g. RRSP — Olivia named as primary beneficiary, children contingent. TFSA — review naming. Life insurance — confirm aligns with estate plan intent..."></textarea>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ INSURANCE ══════════════ -->
+<div id="tab-insurance" class="tab-panel" style="display:none;">
+  <div class="section-card">
+    <div class="section-head"><span class="section-icon">🛡️</span><div class="section-title">Insurance Coverage</div><div class="section-sub">Personal policies — all types</div></div>
+    <div class="section-body">
+      <div class="subsec">Life insurance</div>
+      <div class="ins-head"><span>Policy / plan</span><span>Owner</span><span>Insured</span><span>Type</span><span>Coverage</span><span>Provider · policy #</span></div>
+      <div id="life-ins-rows"></div>
+      <button class="al-add-btn" onclick="addInsRow('life')">+ Add life policy</button>
+
+      <div class="subsec" style="margin-top:18px;">Critical illness insurance</div>
+      <div class="ins-head"><span>Policy / plan</span><span>Owner</span><span>Insured</span><span>Type</span><span>Coverage</span><span>Provider · policy #</span></div>
+      <div id="ci-ins-rows"></div>
+      <button class="al-add-btn" onclick="addInsRow('ci')">+ Add CI policy</button>
+
+      <div class="subsec" style="margin-top:18px;">Disability insurance</div>
+      <div class="ins-head"><span>Policy / plan</span><span>Owner</span><span>Insured</span><span>Benefit / month</span><span>Elimination period</span><span>Benefit period · provider</span></div>
+      <div id="di-ins-rows"></div>
+      <button class="al-add-btn" onclick="addInsRow('di')">+ Add disability policy</button>
+
+      <div class="subsec" style="margin-top:18px;">Other insurance</div>
+      <div class="fg">
+        <div class="f"><label>Notes on other coverage (home, auto, umbrella, travel, etc.)</label><textarea id="ins-other" placeholder="e.g. Home insurance with Intact — $1.2M dwelling coverage. Auto — ICBC + Intact. Travel insurance — Blue Cross annual plan..."></textarea></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ESTATE & LEGAL ══════════════ -->
+<div id="tab-estate" class="tab-panel" style="display:none;">
+  <div class="section-card">
+    <div class="section-head"><span class="section-icon">📜</span><div class="section-title">Estate & Legal Documents</div><div class="section-sub">Summary — full details in Estate Planning Review tool</div></div>
+    <div class="section-body">
+      <div class="two-col">
+        <div class="col-panel">
+          <div class="col-head p1"><div class="col-dot p1"></div><div class="col-name p1" id="est-p1-name">Person 1</div></div>
+          <div class="subsec">Will</div>
+          <div class="fg fg-2">
+            <div class="f"><label>Will status</label><select id="p1-will"><option value="">—</option><option>Current and up to date</option><option>Needs review</option><option>Outdated</option><option>No will in place</option></select></div>
+            <div class="f"><label>Date last updated</label><input id="p1-willdate" placeholder="e.g. June 2022"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Executor</label><input id="p1-exec" placeholder="Full name"></div>
+            <div class="f"><label>Alternate executor</label><input id="p1-execalt" placeholder="Full name"></div>
+          </div>
+          <div class="fg"><div class="f"><label>Where is original held?</label><input id="p1-willheld" placeholder="e.g. Smith & Associates Law, Kelowna"></div></div>
+          <div class="subsec">Power of attorney</div>
+          <div class="fg fg-2">
+            <div class="f"><label>POA status</label><select id="p1-poa"><option value="">—</option><option>In place — both types</option><option>Partial</option><option>Needs review</option><option>Not in place</option></select></div>
+            <div class="f"><label>Attorney (property)</label><input id="p1-poaatty" placeholder="Full name"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Attorney (personal care)</label><input id="p1-poacare" placeholder="Full name"></div>
+            <div class="f"><label>Where is original held?</label><input id="p1-poaheld" placeholder="e.g. Lawyer's office"></div>
+          </div>
+          <div class="subsec">Health directive</div>
+          <div class="fg fg-2">
+            <div class="f"><label>Health directive status</label><select id="p1-hd"><option value="">—</option><option>In place and current</option><option>Needs review</option><option>Not in place</option></select></div>
+            <div class="f"><label>Substitute decision maker</label><input id="p1-sdm" placeholder="Full name"></div>
+          </div>
+        </div>
+
+        <div class="col-panel">
+          <div class="col-head p2"><div class="col-dot p2"></div><div class="col-name p2" id="est-p2-name">Person 2</div></div>
+          <div class="subsec">Will</div>
+          <div class="fg fg-2">
+            <div class="f"><label>Will status</label><select id="p2-will"><option value="">—</option><option>Current and up to date</option><option>Needs review</option><option>Outdated</option><option>No will in place</option></select></div>
+            <div class="f"><label>Date last updated</label><input id="p2-willdate" placeholder="e.g. June 2022"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Executor</label><input id="p2-exec" placeholder="Full name"></div>
+            <div class="f"><label>Alternate executor</label><input id="p2-execalt" placeholder="Full name"></div>
+          </div>
+          <div class="fg"><div class="f"><label>Where is original held?</label><input id="p2-willheld" placeholder="e.g. Smith & Associates Law, Kelowna"></div></div>
+          <div class="subsec">Power of attorney</div>
+          <div class="fg fg-2">
+            <div class="f"><label>POA status</label><select id="p2-poa"><option value="">—</option><option>In place — both types</option><option>Partial</option><option>Needs review</option><option>Not in place</option></select></div>
+            <div class="f"><label>Attorney (property)</label><input id="p2-poaatty" placeholder="Full name"></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="f"><label>Attorney (personal care)</label><input id="p2-poacare" placeholder="Full name"></div>
+            <div class="f"><label>Where is original held?</label><input id="p2-poaheld" placeholder="e.g. Lawyer's office"></div>
+          </div>
+          <div class="subsec">Health directive</div>
+          <div class="fg fg-2">
+            <div class="f"><label>Health directive status</label><select id="p2-hd"><option value="">—</option><option>In place and current</option><option>Needs review</option><option>Not in place</option></select></div>
+            <div class="f"><label>Substitute decision maker</label><input id="p2-sdm" placeholder="Full name"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsec" style="margin-top:20px;">Legal advisors & professionals</div>
+      <div class="fg fg-3">
+        <div class="f"><label>Lawyer / Notary</label><input id="leg-lawyer" placeholder="Name & firm"></div>
+        <div class="f"><label>Lawyer phone / email</label><input id="leg-lawyerph" placeholder=""></div>
+        <div class="f"><label>Accountant / CPA</label><input id="leg-acct" placeholder="Name & firm"></div>
+      </div>
+      <div class="fg fg-3">
+        <div class="f"><label>Accountant phone / email</label><input id="leg-acctph" placeholder=""></div>
+        <div class="f"><label>Other advisor (banker, etc.)</label><input id="leg-other" placeholder=""></div>
+        <div class="f"><label>Other advisor contact</label><input id="leg-otherph" placeholder=""></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ NOTES & GOALS ══════════════ -->
+<div id="tab-notes" class="tab-panel" style="display:none;">
+  <div class="section-card">
+    <div class="section-head"><span class="section-icon">📝</span><div class="section-title">Notes, Goals & Advisor Observations</div></div>
+    <div class="section-body">
+      <div class="fg">
+        <div class="f"><label>Short-term goals (1–3 years)</label><textarea id="goal-short" placeholder="e.g. Pay off cottage mortgage by 2026. Max TFSA contributions. Review life insurance coverage..."></textarea></div>
+      </div>
+      <div class="fg">
+        <div class="f"><label>Long-term goals (3–10+ years)</label><textarea id="goal-long" placeholder="e.g. Retire by 65 with $80,000/yr household income. Leave estate for children. Downsize home at 70..."></textarea></div>
+      </div>
+      <div class="fg">
+        <div class="f"><label>Client concerns & priorities noted in meetings</label><textarea id="goal-concerns" placeholder="e.g. Daniel concerned about Olivia's pension indexing. Both want to help children with home purchases. Worried about inflation impact on retirement income..."></textarea></div>
+      </div>
+      <div class="fg">
+        <div class="f"><label>Advisor observations & relationship notes</label><textarea id="goal-advisor" placeholder="e.g. Very engaged clients. Review annually in March. Olivia handles day-to-day finances. Daniel more focused on investment returns. Both value communication and transparency..."></textarea></div>
+      </div>
+      <div class="fg">
+        <div class="f"><label>Next review date & agenda items</label><textarea id="goal-next" placeholder="e.g. Next review: September 2026. Agenda: RRSP contribution room, life insurance review, update beneficiary designations, retirement projection update..."></textarea></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="confidential-bar">🔒 Northstar Vault — ALG Wealth — Confidential Client File — Not for distribution</div>
+
+</div><!-- /content -->
+
+<script>
+// ── INIT ──
+document.getElementById('id-date-display').textContent = 'Today: ' + new Date().toLocaleDateString('en-CA',{month:'long',day:'numeric',year:'numeric'});
+
+// ── TABS ──
+function showTab(id, el){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tab-'+id).style.display='block';
+  el.classList.add('on');
+}
+
+// ── SIN TOGGLE ──
+function toggleSIN(id, btn){
+  const input = document.getElementById(id);
+  const showing = input.type === 'text';
+  input.type = showing ? 'password' : 'text';
+  btn.textContent = showing ? '👁' : '🙈';
+  btn.style.color = showing ? 'var(--txt3)' : 'var(--navy)';
+}
+
+// ── PHONE FORMAT ──
+function fmtPhone(input){
+  let raw = input.value.replace(/\D/g,'').slice(0,10);
+  if(raw.length <= 3)       input.value = raw;
+  else if(raw.length <= 6)  input.value = raw.slice(0,3)+'-'+raw.slice(3);
+  else                      input.value = raw.slice(0,3)+'-'+raw.slice(3,6)+'-'+raw.slice(6);
+}
+
+// ── CURRENCY FORMAT ──
+function fmtCurrency(input){
+  let raw = input.value.replace(/[^0-9]/g,'');
+  if(!raw){ input.value=''; return; }
+  input.value = '$' + parseInt(raw).toLocaleString('en-CA');
+}
+
+// ── CHILDREN ROWS ──
+function buildChildRows(){
+  const num = parseInt(document.getElementById('fam-numchildren').value)||0;
+  const grid = document.getElementById('children-grid');
+  const container = document.getElementById('children-rows');
+  grid.style.display = num > 0 ? 'block' : 'none';
+  const existing = [];
+  container.querySelectorAll('.child-row').forEach(r=>{
+    existing.push({
+      name: r.querySelector('.child-name').value,
+      dob:  r.querySelector('.child-dob').value,
+      dep:  r.querySelector('.child-dep').checked,
+    });
+  });
+  container.innerHTML = '';
+  for(let i=0; i<num; i++){
+    const prev = existing[i]||{};
+    const row = document.createElement('div');
+    row.className = 'child-row';
+    row.style.cssText = 'display:grid;grid-template-columns:2fr 1.4fr 70px 120px;gap:8px;margin-bottom:7px;align-items:center;';
+    const age = prev.dob ? getAge(prev.dob) : '—';
+    const ageBg = age==='—' ? '#F5F6F8' : '#E8F7F7';
+    const ageCol = age==='—' ? '#9AA3B2' : '#0D7377';
+    row.innerHTML = `
+      <input class="child-name" placeholder="Child ${i+1} full name" value="${prev.name||''}"
+        style="padding:7px 9px;border:1.5px solid #DDE1E7;border-radius:6px;font-family:inherit;font-size:12px;color:#1A1E2E;outline:none;width:100%;">
+      <input class="child-dob" placeholder="e.g. Mar 15, 2010" value="${prev.dob||''}"
+        oninput="calcChildAge(this)"
+        style="padding:7px 9px;border:1.5px solid #DDE1E7;border-radius:6px;font-family:inherit;font-size:12px;color:#1A1E2E;outline:none;width:100%;">
+      <div class="child-age-display" style="font-size:13px;font-weight:700;color:${ageCol};text-align:center;padding:7px 4px;background:${ageBg};border-radius:6px;">${age}</div>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#4A5568;justify-content:center;">
+        <input type="checkbox" class="child-dep" ${prev.dep?'checked':''} style="width:15px;height:15px;accent-color:#0B2545;cursor:pointer;">
+        Dependent
+      </label>`;
+    container.appendChild(row);
+  }
+}
+
+function getAge(dobStr){
+  if(!dobStr) return '—';
+  const parsed = Date.parse(dobStr);
+  if(isNaN(parsed)) return '—';
+  const dob = new Date(parsed);
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if(m < 0 || (m===0 && today.getDate() < dob.getDate())) age--;
+  return age >= 0 ? age+'y' : '—';
+}
+
+function calcChildAge(input){
+  const row = input.closest('.child-row');
+  const ageDisplay = row.querySelector('.child-age-display');
+  const age = getAge(input.value);
+  ageDisplay.textContent = age;
+  ageDisplay.style.color = age==='—' ? '#9AA3B2' : '#0D7377';
+  ageDisplay.style.background = age==='—' ? '#F5F6F8' : '#E8F7F7';
+}
+
+// ── MORTGAGE ROWS ──
+const MORT_FREQ = { 'Weekly':52/12, 'Bi-weekly':26/12, 'Semi-monthly':2, 'Monthly':1 };
+
+function isLOC(typeSelect){
+  const v = typeSelect?.value||'';
+  return v==='Home equity LOC'||v==='Line of credit'||v==='Other';
+}
+
+function addMortgageRow(){
+  const tbody = document.getElementById('mortgage-tbody');
+  const tr = document.createElement('tr');
+  tr.style.cssText = 'border-bottom:1px solid #F0F2F5;';
+  const inp = (ph,cls='',extra='') =>
+    `<input placeholder="${ph}" ${cls?`class="${cls}"`:''}
+      ${extra}
+      style="border:none;width:100%;font-family:inherit;font-size:12px;color:#1A1E2E;outline:none;background:transparent;">`;
+
+  tr.innerHTML = `
+    <td style="padding:4px 5px;">${inp('e.g. TD Bank')}</td>
+    <td style="padding:4px 5px;">
+      <select class="mort-type" onchange="onTypeChange(this)" style="border:none;width:100%;font-family:inherit;font-size:11.5px;color:#4A5568;outline:none;background:transparent;cursor:pointer;">
+        <option value="">— Type —</option>
+        <option>Mortgage — 1st</option>
+        <option>Mortgage — 2nd</option>
+        <option>Home equity LOC</option>
+        <option>Line of credit</option>
+        <option>Other</option>
+      </select>
+    </td>
+    <td style="padding:4px 5px;text-align:right;" class="mort-limit-cell">
+      <span style="font-size:10px;color:#9AA3B2;font-style:italic;">—</span>
+    </td>
+    <td style="padding:4px 5px;text-align:right;" class="mort-bal-cell">
+      ${inp('$0','mort-bal','oninput="fmtCurrency(this);updateMortgageTotal()"')}
+    </td>
+    <td style="padding:4px 5px;">
+      <select class="mort-freq" onchange="updateMortgageTotal()" style="border:none;width:100%;font-family:inherit;font-size:11.5px;color:#4A5568;outline:none;background:transparent;cursor:pointer;">
+        <option value="">—</option>
+        <option>Weekly</option>
+        <option>Bi-weekly</option>
+        <option>Semi-monthly</option>
+        <option>Monthly</option>
+      </select>
+    </td>
+    <td style="padding:4px 5px;text-align:right;">
+      ${inp('$0','mort-pmt','oninput="fmtCurrency(this);updateMortgageTotal()"')}
+    </td>
+    <td style="padding:4px 5px;text-align:right;" class="mort-monthly-cell">
+      <span class="mort-monthly" style="font-size:12px;font-weight:600;color:#0B2545;">—</span>
+    </td>
+    <td style="padding:4px 5px;" class="mort-renewal-cell">
+      ${inp('e.g. Aug 2027','mort-renewal')}
+    </td>
+    <td style="padding:3px 2px;text-align:center;">
+      <button onclick="this.closest('tr').remove();updateMortgageTotal()"
+        style="width:22px;height:22px;border:none;background:transparent;cursor:pointer;color:#9AA3B2;font-size:16px;border-radius:3px;">×</button>
+    </td>`;
+  tbody.appendChild(tr);
+  updateMortgageTotal();
+}
+
+function onTypeChange(sel){
+  const tr = sel.closest('tr');
+  const loc = isLOC(sel);
+  const limitCell = tr.querySelector('.mort-limit-cell');
+  const balCell   = tr.querySelector('.mort-bal-cell');
+
+  if(loc){
+    // LOC: show Limit input + Balance input
+    limitCell.innerHTML = `<input placeholder="$0" class="mort-limit"
+      oninput="fmtCurrency(this)"
+      style="border:none;width:100%;font-family:inherit;font-size:12px;color:#1A1E2E;outline:none;background:transparent;text-align:right;">`;
+    balCell.innerHTML = `<input placeholder="$0" class="mort-bal"
+      oninput="fmtCurrency(this);updateMortgageTotal()"
+      style="border:none;width:100%;font-family:inherit;font-size:12px;font-weight:600;color:#1A1E2E;outline:none;background:transparent;text-align:right;">`;
+  } else {
+    // Mortgage: hide Limit, show Balance only
+    limitCell.innerHTML = `<span style="font-size:10px;color:#9AA3B2;font-style:italic;">—</span>`;
+    balCell.innerHTML = `<input placeholder="$0" class="mort-bal"
+      oninput="fmtCurrency(this);updateMortgageTotal()"
+      style="border:none;width:100%;font-family:inherit;font-size:12px;font-weight:600;color:#1A1E2E;outline:none;background:transparent;text-align:right;">`;
+  }
+
+  // Renewal — mortgages show date input, LOC types show N/A
+  const renewalCell = tr.querySelector('.mort-renewal-cell');
+  if(loc){
+    renewalCell.innerHTML = `<span style="font-size:10px;color:#9AA3B2;font-style:italic;">N/A</span>`;
+  } else {
+    if(!renewalCell.querySelector('input')){
+      renewalCell.innerHTML = `<input placeholder="e.g. Aug 2027" class="mort-renewal"
+        style="border:none;width:100%;font-family:inherit;font-size:12px;color:#1A1E2E;outline:none;background:transparent;">`;
+    }
+  }
+  updateMortgageTotal();
+}
+
+function updateMortgageTotal(){
+  let totalBal = 0, totalMonthly = 0;
+  document.querySelectorAll('#mortgage-tbody tr').forEach(tr=>{
+    const bal  = parseFloat((tr.querySelector('.mort-bal')?.value||'').replace(/[$,]/g,''))||0;
+    const pmt  = parseFloat((tr.querySelector('.mort-pmt')?.value||'').replace(/[$,]/g,''))||0;
+    const freq = tr.querySelector('.mort-freq')?.value||'';
+    const mult = MORT_FREQ[freq]||0;
+    const monthly = pmt * mult;
+    totalBal += bal;
+    totalMonthly += monthly;
+    // Update the monthly cell for this row
+    const cell = tr.querySelector('.mort-monthly');
+    if(cell){
+      cell.textContent = monthly > 0 ? '$'+Math.round(monthly).toLocaleString('en-CA') : '—';
+      cell.style.color = monthly > 0 ? '#0B2545' : '#9AA3B2';
+    }
+  });
+  const rows = document.querySelectorAll('#mortgage-tbody tr').length;
+  const totalRow = document.getElementById('mortgage-total-row');
+  totalRow.style.display = rows > 0 ? 'table-row' : 'none';
+  document.getElementById('mortgage-total-bal').textContent =
+    '$' + Math.round(totalBal).toLocaleString('en-CA');
+  document.getElementById('mortgage-total-monthly').innerHTML =
+    '$' + Math.round(totalMonthly).toLocaleString('en-CA') +
+    '<span style="font-size:9px;font-weight:400;">/mo</span>';
+}
+
+// ── PREFERRED CONTACT ──
+function setPref(person, method, btn){
+  const group = document.getElementById(person+'-contact-pref');
+  group.querySelectorAll('.pref-btn').forEach(b=>{
+    b.style.background='white';
+    b.style.borderColor='var(--bdr)';
+    b.style.color='var(--txt2)';
+  });
+  btn.style.background='var(--navy)';
+  btn.style.borderColor='var(--navy)';
+  btn.style.color='white';
+  document.getElementById(person+'-pref-contact').value=method;
+}
+
+// ── SAME HOUSEHOLD / COPY FUNCTIONS ──
+function applySameHousehold(){
+  const checked = document.getElementById('p2-same-household').checked;
+  if(!checked) return;
+  copyAddress();
+  copyField('p1-marital','p2-marital',true);
+  // Mirror mailing address toggle state
+  const p1mail = document.getElementById('p1-mail-diff').checked;
+  document.getElementById('p2-mail-diff').checked = p1mail;
+  toggleMail('p2');
+  if(p1mail) copyMailingAddress();
+}
+
+function copyField(fromId, toId, isSelect=false){
+  const from = document.getElementById(fromId);
+  const to   = document.getElementById(toId);
+  if(!from || !to) return;
+  if(isSelect){
+    const val = from.value;
+    for(let i=0; i<to.options.length; i++){
+      if(to.options[i].value===val || to.options[i].text===val){
+        to.selectedIndex=i; break;
+      }
+    }
+  } else {
+    to.value = from.value;
+  }
+  // Flash highlight
+  to.style.transition='background .15s';
+  to.style.background='#F3E8FD';
+  setTimeout(()=>to.style.background='',600);
+}
+
+function copyAddress(){
+  ['addr','city','prov','postal'].forEach(f=>copyField('p1-'+f,'p2-'+f));
+}
+
+function copyMailingAddress(){
+  ['mailaddr','mailcity','mailprov','mailpostal'].forEach(f=>copyField('p1-'+f,'p2-'+f));
+}
+
+// ── MAILING ADDRESS TOGGLE ──
+function toggleMail(person){
+  const checked=document.getElementById(person+'-mail-diff').checked;
+  document.getElementById(person+'-mail-fields').style.display=checked?'block':'none';
+}
+
+
+function updateTitle(){
+  const fam = document.getElementById('id-family').value;
+  document.title = fam ? `Northstar — ${fam} Client File` : 'Northstar — Client File';
+}
+
+// ── TIER BADGE ──
+function updateTier(){
+  const tier = document.getElementById('id-tier').value;
+}
+
+// ── CLEAR ALL ──
+function clearAll(){
+  if(!confirm('Clear all fields? This cannot be undone.')) return;
+  document.querySelectorAll('input:not([type=checkbox]),select,textarea').forEach(el=>el.value='');
+  document.getElementById('asset-tbody').innerHTML='';
+  document.getElementById('liab-tbody').innerHTML='';
+  document.getElementById('life-ins-rows').innerHTML='';
+  document.getElementById('ci-ins-rows').innerHTML='';
+  document.getElementById('di-ins-rows').innerHTML='';
+  document.getElementById('acct-rows').innerHTML='';
+  updateNW();
+}
+
+// ── ASSET / LIABILITY ROWS ──
+function parseDollar(v){return parseFloat((v||'').replace(/[$,\s]/g,''))||0;}
+function fmtDollar(n){return '$'+Math.round(n).toLocaleString('en-CA');}
+
+// ── CLIENT NAME HELPERS ──
+function getClientNames(){
+  const p1pref = document.getElementById('p1-pref')?.value.trim();
+  const p1first = document.getElementById('p1-first')?.value.trim();
+  const p2pref = document.getElementById('p2-pref')?.value.trim();
+  const p2first = document.getElementById('p2-first')?.value.trim();
+  const n1 = p1pref || p1first || 'Client 1';
+  const n2 = p2pref || p2first || '';
+  return { n1, n2 };
+}
+
+function ownerSelect(includeJoint=true, selected=''){
+  const { n1, n2 } = getClientNames();
+  const joint = includeJoint ? `<option value="Joint"${selected==='Joint'?' selected':''}>Joint</option>` : '';
+  const p2 = n2 ? `<option value="p2"${selected==='p2'?' selected':''}>${n2}</option>` : '';
+  return `<select class="owner-sel" style="border:none;background:transparent;font-family:inherit;font-size:12px;width:100%;">
+    <option value="">—</option>
+    <option value="p1"${selected==='p1'?' selected':''}>${n1}</option>
+    ${p2}
+    ${joint}
+  </select>`;
+}
+
+function insuredSelect(selected=''){
+  const { n1, n2 } = getClientNames();
+  const p2 = n2 ? `<option value="p2"${selected==='p2'?' selected':''}>${n2}</option>` : '';
+  return `<select class="insured-sel" style="border:none;background:transparent;font-family:inherit;font-size:12px;width:100%;">
+    <option value="">—</option>
+    <option value="p1"${selected==='p1'?' selected':''}>${n1}</option>
+    ${p2}
+  </select>`;
+}
+
+// Refresh all owner/insured dropdowns when names change
+function refreshOwnerSelects(){
+  const { n1, n2 } = getClientNames();
+  document.querySelectorAll('.owner-sel').forEach(sel => {
+    const cur = sel.value;
+    const joint = sel.querySelector('option[value="Joint"]') ?
+      `<option value="Joint"${cur==='Joint'?' selected':''}>Joint</option>` : '';
+    const p2opt = n2 ? `<option value="p2"${cur==='p2'?' selected':''}>${n2}</option>` : '';
+    sel.innerHTML = `<option value="">—</option>
+      <option value="p1"${cur==='p1'?' selected':''}>${n1}</option>
+      ${p2opt}${joint}`;
+  });
+  document.querySelectorAll('.insured-sel').forEach(sel => {
+    const cur = sel.value;
+    const p2opt = n2 ? `<option value="p2"${cur==='p2'?' selected':''}>${n2}</option>` : '';
+    sel.innerHTML = `<option value="">—</option>
+      <option value="p1"${cur==='p1'?' selected':''}>${n1}</option>
+      ${p2opt}`;
+  });
+  // Update FIT profile labels
+  const lbl1 = document.getElementById('lbl-p1-risk');
+  const lbl2 = document.getElementById('lbl-p2-risk');
+  if(lbl1) lbl1.textContent = `${n1} — FIT profile`;
+  if(lbl2) lbl2.textContent = `${n2||'Person 2'} — FIT profile`;
+}
+
+function addAssetRow(){
+  const tr = document.createElement('tr');
+  const iSel = `<select style="border:none;background:transparent;font-family:inherit;font-size:11.5px;width:100%;"><option value="">—</option><option>RRSP</option><option>Spousal RRSP</option><option>TFSA</option><option>RRIF</option><option>Spousal RRIF</option><option>LIRA/LIF</option><option>FHSA</option><option>RESP</option><option>Non-registered</option><option>Corporate account</option><option>Real estate</option><option>Business interest</option><option>Cash/savings</option><option>Other</option></select>`;
+  tr.innerHTML = `
+    <td><input placeholder="e.g. RRSP at Manulife, Okanagan cottage" style="font-size:11.5px;"></td>
+    <td>${ownerSelect(true)}</td>
+    <td>${iSel}</td>
+    <td><input placeholder="e.g. Manulife · #ACC-123" style="font-size:11.5px;"></td>
+    <td><input placeholder="e.g. Olivia / children" style="font-size:11.5px;"></td>
+    <td><input class="right" placeholder="$0" oninput="updateNW()" style="font-size:11.5px;"></td>
+    <td><button class="al-del" onclick="this.closest('tr').remove();updateNW()">×</button></td>`;
+  document.getElementById('asset-tbody').appendChild(tr);
+}
+
+function addLiabRow(){
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input placeholder="e.g. Car loan, LOC, Credit card"></td>
+    <td>${ownerSelect(true)}</td>
+    <td><select style="border:none;background:transparent;font-family:inherit;font-size:12px;width:100%;"><option value="">—</option><option>Mortgage</option><option>Line of credit</option><option>Car loan</option><option>Student loan</option><option>Credit card</option><option>Business debt</option><option>Other</option></select></td>
+    <td><input class="right" placeholder="$0" oninput="updateNW()"></td>
+    <td><button class="al-del" onclick="this.closest('tr').remove();updateNW()">×</button></td>`;
+  document.getElementById('liab-tbody').appendChild(tr);
+}
+
+function updateNW(){
+  let assets=0, liabs=0;
+  document.querySelectorAll('#asset-tbody .right').forEach(i=>assets+=parseDollar(i.value));
+  document.querySelectorAll('#liab-tbody .right').forEach(i=>liabs+=parseDollar(i.value));
+  document.getElementById('nw-assets').textContent = fmtDollar(assets);
+  document.getElementById('nw-liabs').textContent = fmtDollar(liabs);
+  const net = assets-liabs;
+  document.getElementById('nw-net').textContent = fmtDollar(net);
+}
+
+// ── INSURANCE ROWS ──
+function addInsRow(type){
+  const div = document.createElement('div');
+  div.className = 'ins-row';
+  if(type==='di'){
+    div.innerHTML = `
+      <input placeholder="e.g. Individual DI policy">
+      ${ownerSelect(false)}
+      ${insuredSelect()}
+      <input placeholder="e.g. $5,500/mo">
+      <select><option>90 days</option><option>60 days</option><option>30 days</option><option>120 days</option><option>180 days</option></select>
+      <input placeholder="e.g. To age 65 · Manulife · #12345">`;
+  } else {
+    div.innerHTML = `
+      <input placeholder="e.g. Whole life · Term 20">
+      ${ownerSelect(false)}
+      ${insuredSelect()}
+      <select><option value="">—</option><option>Term 10</option><option>Term 20</option><option>Term to 65</option><option>Whole life</option><option>Universal life</option><option>Group</option></select>
+      <input placeholder="e.g. $500,000">
+      <input placeholder="e.g. Manulife · #ABC123">`;
+  }
+  document.getElementById(type+'-ins-rows').appendChild(div);
+}
+
+// ── ACCOUNT ROWS ──
+function addAcctRow(){
+  const div = document.createElement('div');
+  div.className = 'acct-row';
+  div.innerHTML = `
+    <select><option value="">—</option><option>RRSP</option><option>Spousal RRSP</option><option>RRIF</option><option>Spousal RRIF</option><option>TFSA</option><option>LIRA</option><option>LIF</option><option>Non-registered</option><option>FHSA</option><option>RESP</option><option>Corporate account</option><option>Other</option></select>
+    ${ownerSelect(true)}
+    <input placeholder="e.g. Manulife · #ACC-12345">
+    <input placeholder="e.g. $180,000">
+    <input placeholder="Beneficiary">`;
+  document.getElementById('acct-rows').appendChild(div);
+}
+
+// ── BOOTSTRAP ──
+// Add a few starter rows for usability
+addAssetRow(); addLiabRow();
+addInsRow('life'); addInsRow('ci'); addInsRow('di');
+addMortgageRow();
+
+// Apply currency input handler to market value
+document.getElementById('res-val').addEventListener('input', function(){ fmtCurrency(this); });
+</script>
+</body>
+</html>

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northstar — Insurance Needs Analysis</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0B2545;--navy2:#1B3A6B;
+  --gold:#B8860B;--gold2:#D4A017;--goldsoft:#FDF6E3;--goldmid:#e8c84a;
+  --teal:#0D7377;--teal2:#14A1A6;--tealsoft:#E8F7F7;
+  --surf:#F5F6F8;--white:#fff;--bdr:#DDE1E7;--bdr2:#C5CAD3;
+  --txt:#1A1E2E;--txt2:#4A5568;--txt3:#9AA3B2;
+  --green:#1A7A2A;--greensoft:#E8F5EB;
+  --amber:#B54708;--ambersoft:#FEF3EA;
+  --red:#9B1C1C;--redsoft:#FEE8E8;
+  --purple:#6A1B9A;--purplesoft:#F3E8FD;
+  --sh:0 1px 4px rgba(0,0,0,.08);--shb:0 2px 12px rgba(0,0,0,.1);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--surf);color:var(--txt);font-size:13px;min-height:100vh;}
+.header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(0,0,0,.25);}
+.hl{display:flex;align-items:center;gap:12px;}
+.star{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.star svg{width:18px;height:18px;fill:white;}
+.htitle{font-family:'Cormorant Garamond',serif;font-size:18px;color:white;font-weight:700;}
+.hsub{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-top:1px;}
+.hbtns{display:flex;gap:7px;}
+.btn-h{padding:6px 13px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-family:inherit;transition:all .15s;}
+.btn-h:hover{background:rgba(255,255,255,.16);}
+.page{max-width:1260px;margin:0 auto;padding:18px 24px 48px;}
+.cbar{background:white;border:1px solid var(--bdr);border-radius:10px;padding:12px 16px;margin-bottom:14px;box-shadow:var(--sh);display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;}
+.cf{display:flex;flex-direction:column;gap:2px;}
+.cf label{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;}
+.cf input,.cf select{border:none;border-bottom:2px solid var(--bdr);padding:3px 0;font-family:inherit;font-size:13px;font-weight:600;color:var(--txt);outline:none;background:transparent;min-width:140px;transition:border-color .15s;}
+.cf input:focus{border-bottom-color:var(--teal);}
+.cf input::placeholder{color:var(--txt3);font-weight:400;}
+.run-btn{margin-left:auto;padding:9px 22px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;background:linear-gradient(180deg,var(--teal2),var(--teal));color:white;box-shadow:var(--shb);}
+.run-btn:hover{filter:brightness(1.08);}
+.grid{display:grid;grid-template-columns:330px 1fr;gap:14px;}
+.inputs{display:flex;flex-direction:column;gap:12px;}
+.panel{background:white;border:1px solid var(--bdr);border-radius:10px;box-shadow:var(--sh);overflow:hidden;}
+.ph{padding:10px 14px;border-bottom:1px solid var(--bdr);background:linear-gradient(180deg,#FAFBFC,white);display:flex;align-items:center;gap:8px;}
+.ph-icon{font-size:14px;}
+.ph-title{font-size:12px;font-weight:700;color:var(--navy);}
+.ph-badge{margin-left:auto;font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--tealsoft);color:var(--teal);border:1px solid rgba(13,115,119,.2);}
+.pb{padding:12px 14px;}
+.ptog{display:flex;border:1px solid var(--bdr);border-radius:7px;overflow:hidden;margin-bottom:10px;}
+.ptog-btn{flex:1;padding:7px;text-align:center;font-size:11px;font-weight:600;cursor:pointer;background:var(--surf);color:var(--txt2);border:none;font-family:inherit;transition:all .15s;}
+.ptog-btn.p1.on{background:var(--tealsoft);color:var(--teal);}
+.ptog-btn.p2.on{background:var(--purplesoft);color:var(--purple);}
+.fg{display:grid;gap:8px;margin-bottom:10px;}
+.fg2{grid-template-columns:1fr 1fr;}
+.f{display:flex;flex-direction:column;gap:2px;}
+.f label{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;}
+.f input,.f select{padding:7px 9px;border:1.5px solid var(--bdr);border-radius:6px;font-family:inherit;font-size:12px;color:var(--txt);outline:none;transition:border-color .15s;background:white;width:100%;}
+.f input:focus,.f select:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(13,115,119,.07);}
+.f input::placeholder{color:var(--txt3);}
+.sub{font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em;margin:10px 0 6px;padding-bottom:4px;border-bottom:1px solid #EBEDF0;}
+.sub:first-child{margin-top:0;}
+
+/* YEARS PILL */
+.yrs-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--greensoft);border:1px solid #a7d5a5;border-radius:6px;font-size:11px;font-weight:600;color:var(--green);margin-top:4px;}
+.yrs-pill.warn{background:var(--ambersoft);border-color:#f9c7a8;color:var(--amber);}
+.yrs-pill.empty{background:var(--surf);border-color:var(--bdr);color:var(--txt3);}
+
+/* SAVINGS HIGHLIGHT */
+.savings-note{font-size:10px;color:var(--amber);font-style:italic;margin-top:3px;line-height:1.4;}
+
+/* OUTPUT */
+.out{display:flex;flex-direction:column;gap:12px;}
+
+/* BIG NUMBER CARDS */
+.big-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.big-card{border-radius:10px;padding:16px 14px;text-align:center;}
+.big-card.life{background:linear-gradient(135deg,var(--navy),var(--navy2));color:white;}
+.big-card.ci{background:linear-gradient(135deg,#6A1B9A,#8E24AA);color:white;}
+.big-card.di{background:linear-gradient(135deg,var(--teal),var(--teal2));color:white;}
+.big-card.ok{background:var(--greensoft);border:1px solid #a7d5a5;}
+.big-card.gap{background:var(--redsoft);border:1px solid #f5b9bc;}
+.big-card.partial{background:var(--ambersoft);border:1px solid #f9c7a8;}
+.bc-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;opacity:.8;}
+.bc-val{font-size:22px;font-weight:700;margin-bottom:3px;line-height:1;}
+.bc-sub{font-size:10px;opacity:.65;line-height:1.4;}
+.big-card.ok .bc-label,.big-card.ok .bc-val,.big-card.ok .bc-sub{color:var(--green);}
+.big-card.gap .bc-label,.big-card.gap .bc-val,.big-card.gap .bc-sub{color:var(--red);}
+.big-card.partial .bc-label,.big-card.partial .bc-val,.big-card.partial .bc-sub{color:var(--amber);}
+
+/* BREAKDOWN TABLE */
+.bd-table{width:100%;border-collapse:collapse;font-size:11.5px;}
+.bd-table th{background:var(--navy);color:white;padding:6px 10px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.04em;}
+.bd-table th:last-child{text-align:right;}
+.bd-table td{padding:6px 10px;border-bottom:1px solid #F0F2F5;}
+.bd-table td:last-child{text-align:right;font-weight:600;}
+.bd-table tr:nth-child(even) td{background:#FAFBFC;}
+.bd-table tr.savings-row td{background:var(--goldsoft);color:var(--amber);}
+.bd-table tr.savings-row td:last-child{color:var(--amber);}
+.bd-table tr.total-row td{background:var(--navy);color:white;font-weight:700;}
+.bd-table tr.existing-row td{color:var(--green);}
+.bd-table tr.gap-row td{background:var(--redsoft);color:var(--red);font-weight:700;}
+.bd-table tr.ok-row td{background:var(--greensoft);color:var(--green);font-weight:700;}
+
+/* FLAGS */
+.flag-list{display:flex;flex-direction:column;gap:7px;}
+.flag{border-radius:8px;padding:10px 13px;font-size:11.5px;line-height:1.6;display:flex;align-items:flex-start;gap:8px;}
+.flag.warn{background:var(--ambersoft);border:1px solid #f9c7a8;color:#7a3800;}
+.flag.alert{background:var(--redsoft);border:1px solid #f5b9bc;color:#6e1a1e;}
+.flag.tip{background:var(--greensoft);border:1px solid #a7d5a5;color:#0a5a0a;}
+.flag.info{background:var(--tealsoft);border:1px solid rgba(13,115,119,.25);color:#0a4e50;}
+.flag-icon{font-size:14px;flex-shrink:0;}
+
+/* COVERAGE BARS */
+.cov-bar-wrap{margin-bottom:9px;}
+.cov-bar-label{display:flex;justify-content:space-between;font-size:10px;color:var(--txt2);margin-bottom:3px;}
+.cov-bar-bg{height:9px;border-radius:5px;background:#eee;overflow:hidden;}
+.cov-bar-fill{height:100%;border-radius:5px;transition:width .4s;}
+.cov-bar-fill.ok{background:var(--green);}
+.cov-bar-fill.partial{background:var(--gold);}
+.cov-bar-fill.gap{background:var(--red);}
+
+.empty{text-align:center;padding:60px 30px;color:var(--txt3);}
+.empty-icon{font-size:44px;opacity:.25;margin-bottom:12px;}
+.disc{font-size:10px;color:var(--txt3);line-height:1.6;padding:4px;}
+
+@media print{
+  .header{background:var(--navy)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .btn-h,.run-btn,.inputs{display:none!important;}
+  .grid{grid-template-columns:1fr!important;}
+  .big-card,.flag,.bd-table tr.total-row,.bd-table tr.savings-row,.bd-table tr.gap-row,.bd-table tr.ok-row,.cov-bar-fill{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">
+    <div class="star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+    <div>
+      <div class="htitle">Northstar — Insurance Needs Analysis</div>
+      <div class="hsub">Life · Critical Illness · Disability · ALG Wealth</div>
+    </div>
+  </div>
+  <div class="hbtns">
+    <span style="font-size:11px;color:rgba(255,255,255,.35);align-self:center;margin-right:4px;" id="hdr-date"></span>
+    <button class="btn-h" onclick="clearAll()">✕ Clear</button>
+    <button class="btn-h" onclick="window.print()">🖨 Print</button>
+  </div>
+</div>
+
+<div class="page">
+
+<div class="cbar">
+  <div class="cf"><label>Client name</label><input id="c-name" placeholder="e.g. Harper, Daniel and Olivia" oninput="run()"></div>
+  <div class="cf"><label>Analysis date</label><input id="c-date" placeholder="e.g. April 2026" oninput="run()"></div>
+  <div class="cf"><label>Advisor</label><input id="c-advisor" placeholder="Andrew Glen" oninput="run()"></div>
+  <button class="run-btn" onclick="run()">▶ Run Analysis</button>
+</div>
+
+<div class="grid">
+<div class="inputs">
+
+  <!-- CLIENT DETAILS -->
+  <div class="panel">
+    <div class="ph"><span class="ph-icon">👤</span><div class="ph-title">Client Details</div></div>
+    <div class="pb">
+      <div class="ptog">
+        <button class="ptog-btn p1 on" id="tog-p1" onclick="switchPerson('p1')">Person 1</button>
+        <button class="ptog-btn p2" id="tog-p2" onclick="switchPerson('p2')">Person 2</button>
+      </div>
+      <!-- PERSON 1 -->
+      <div id="sec-p1">
+        <div class="fg fg2">
+          <div class="f"><label>Name</label><input id="p1-name" placeholder="Daniel" oninput="run()"></div>
+          <div class="f"><label>Occupation</label><input id="p1-occ" placeholder="e.g. Engineer" oninput="run()"></div>
+        </div>
+        <div class="fg fg2">
+          <div class="f"><label>Current age</label><input id="p1-age" placeholder="42" oninput="calcYears('p1');run()"></div>
+          <div class="f"><label>Retirement age</label><input id="p1-ret-age" placeholder="65" oninput="calcYears('p1');run()"></div>
+        </div>
+        <div id="p1-yrs-display" style="margin-bottom:10px;"></div>
+        <div class="fg fg2">
+          <div class="f"><label>Annual income</label><input id="p1-inc" placeholder="120000" oninput="run()"></div>
+          <div class="f"><label>Smoker?</label><select id="p1-smoke" onchange="run()"><option value="no">Non-smoker</option><option value="yes">Smoker</option></select></div>
+        </div>
+        <div class="fg">
+          <div class="f">
+            <label>Annual savings & investment contributions</label>
+            <input id="p1-savings" placeholder="25000" oninput="run()">
+            <div class="savings-note">⚠️ Added to total insurance need — so the family can keep saving for retirement if something happens</div>
+          </div>
+        </div>
+      </div>
+      <!-- PERSON 2 -->
+      <div id="sec-p2" style="display:none;">
+        <div class="fg fg2">
+          <div class="f"><label>Name</label><input id="p2-name" placeholder="Olivia" oninput="run()"></div>
+          <div class="f"><label>Occupation</label><input id="p2-occ" placeholder="e.g. Teacher" oninput="run()"></div>
+        </div>
+        <div class="fg fg2">
+          <div class="f"><label>Current age</label><input id="p2-age" placeholder="39" oninput="calcYears('p2');run()"></div>
+          <div class="f"><label>Retirement age</label><input id="p2-ret-age" placeholder="65" oninput="calcYears('p2');run()"></div>
+        </div>
+        <div id="p2-yrs-display" style="margin-bottom:10px;"></div>
+        <div class="fg fg2">
+          <div class="f"><label>Annual income</label><input id="p2-inc" placeholder="80000" oninput="run()"></div>
+          <div class="f"><label>Smoker?</label><select id="p2-smoke" onchange="run()"><option value="no">Non-smoker</option><option value="yes">Smoker</option></select></div>
+        </div>
+        <div class="fg">
+          <div class="f">
+            <label>Annual savings & investment contributions</label>
+            <input id="p2-savings" placeholder="15000" oninput="run()">
+            <div class="savings-note">⚠️ Added to total insurance need — so the family can keep saving for retirement if something happens</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOUSEHOLD -->
+  <div class="panel">
+    <div class="ph"><span class="ph-icon">🏠</span><div class="ph-title">Household Obligations</div></div>
+    <div class="pb">
+      <div class="sub">Debts & liabilities</div>
+      <div class="fg fg2">
+        <div class="f"><label>Mortgage balance</label><input id="h-mort" placeholder="480000" oninput="run()"></div>
+        <div class="f"><label>Other debts total</label><input id="h-debt" placeholder="0" oninput="run()"></div>
+      </div>
+      <div class="sub">Income replacement</div>
+      <div class="fg fg2">
+        <div class="f"><label>Annual household expenses</label><input id="h-exp" placeholder="90000" oninput="run()"></div>
+        <div class="f"><label>Years income replacement needed</label><input id="h-years" placeholder="10" oninput="run()"></div>
+      </div>
+      <div class="sub">Other needs</div>
+      <div class="fg fg2">
+        <div class="f"><label>Final expenses / estate costs</label><input id="h-final" placeholder="25000" oninput="run()"></div>
+        <div class="f"><label>Education fund needed</label><input id="h-edu" placeholder="100000" oninput="run()"></div>
+      </div>
+      <div class="fg fg2">
+        <div class="f"><label>Number of children</label><input id="h-kids" placeholder="2" oninput="run()"></div>
+        <div class="f"><label>Youngest child age</label><input id="h-youngest" placeholder="6" oninput="run()"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CI RECOVERY -->
+  <div class="panel">
+    <div class="ph"><span class="ph-icon">🏥</span><div class="ph-title">Critical Illness — Recovery Costs</div></div>
+    <div class="pb">
+      <div class="sub">Recovery period costs</div>
+      <div class="fg fg2">
+        <div class="f"><label>Recovery period (months)</label><input id="ci-months" placeholder="12" oninput="run()"></div>
+        <div class="f"><label>Monthly expenses during recovery</label><input id="ci-exp" placeholder="7500" oninput="run()"></div>
+      </div>
+      <div class="fg fg2">
+        <div class="f"><label>Medical / treatment costs</label><input id="ci-medical" placeholder="50000" oninput="run()"></div>
+        <div class="f"><label>Home / caregiver modifications</label><input id="ci-home" placeholder="15000" oninput="run()"></div>
+      </div>
+      <div class="fg fg2">
+        <div class="f"><label>Debt to clear during recovery</label><input id="ci-debt" placeholder="0" oninput="run()"></div>
+        <div class="f"><label>Business continuity costs</label><input id="ci-biz" placeholder="0" oninput="run()"></div>
+      </div>
+      <div style="font-size:10px;color:var(--txt3);margin-top:4px;">Missed annual savings contributions are automatically added to the CI need.</div>
+    </div>
+  </div>
+
+  <!-- EXISTING COVERAGE -->
+  <div class="panel">
+    <div class="ph"><span class="ph-icon">🛡️</span><div class="ph-title">Existing Coverage</div></div>
+    <div class="pb">
+      <div class="sub">Life — <span id="lbl-p1-cov">Person 1</span></div>
+      <div class="fg fg2">
+        <div class="f"><label>Group life (employer)</label><input id="p1-grp-life" placeholder="0" oninput="run()"></div>
+        <div class="f"><label>Personal life policies</label><input id="p1-pers-life" placeholder="0" oninput="run()"></div>
+      </div>
+      <div class="sub">Life — <span id="lbl-p2-cov">Person 2</span></div>
+      <div class="fg fg2">
+        <div class="f"><label>Group life (employer)</label><input id="p2-grp-life" placeholder="0" oninput="run()"></div>
+        <div class="f"><label>Personal life policies</label><input id="p2-pers-life" placeholder="0" oninput="run()"></div>
+      </div>
+      <div class="sub">CI — <span id="lbl-p1-ci">Person 1</span></div>
+      <div class="fg fg2">
+        <div class="f"><label>Group CI (if any)</label><input id="p1-grp-ci" placeholder="0" oninput="run()"></div>
+        <div class="f"><label>Personal CI policy</label><input id="p1-pers-ci" placeholder="0" oninput="run()"></div>
+      </div>
+      <div class="sub">CI — <span id="lbl-p2-ci">Person 2</span></div>
+      <div class="fg fg2">
+        <div class="f"><label>Group CI (if any)</label><input id="p2-grp-ci" placeholder="0" oninput="run()"></div>
+        <div class="f"><label>Personal CI policy</label><input id="p2-pers-ci" placeholder="0" oninput="run()"></div>
+      </div>
+      <div class="sub">Disability — <span id="lbl-p1-di">Person 1</span></div>
+      <div class="fg fg2">
+        <div class="f"><label>Group LTD (monthly)</label><input id="p1-grp-di" placeholder="0" oninput="run()"></div>
+        <div class="f"><label>Personal DI (monthly)</label><input id="p1-pers-di" placeholder="0" oninput="run()"></div>
+      </div>
+      <div class="sub">Disability — <span id="lbl-p2-di">Person 2</span></div>
+      <div class="fg fg2">
+        <div class="f"><label>Group LTD (monthly)</label><input id="p2-grp-di" placeholder="0" oninput="run()"></div>
+        <div class="f"><label>Personal DI (monthly)</label><input id="p2-pers-di" placeholder="0" oninput="run()"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /inputs -->
+
+<!-- OUTPUT -->
+<div class="out" id="out-panel">
+  <div class="panel"><div class="empty">
+    <div class="empty-icon">🛡️</div>
+    <div style="font-size:14px;font-weight:600;color:var(--txt2);margin-bottom:4px;">Ready to analyse</div>
+    <div style="font-size:12px;">Enter client details above and click Run Analysis</div>
+  </div></div>
+</div>
+
+</div><!-- /grid -->
+</div><!-- /page -->
+
+<script>
+document.getElementById('hdr-date').textContent = new Date().toLocaleDateString('en-CA',{weekday:'short',month:'long',day:'numeric',year:'numeric'});
+
+// ── HELPERS ──
+function pv(id){ return parseFloat((document.getElementById(id)?.value||'').replace(/[$,\s]/g,''))||0; }
+function sv(id){ return document.getElementById(id)?.value?.trim()||''; }
+function fmt(n){ return '$'+Math.round(Math.abs(n)).toLocaleString('en-CA'); }
+function fmtm(n){ return '$'+Math.round(Math.abs(n)).toLocaleString('en-CA')+'/mo'; }
+function round25k(n){ return Math.ceil(n/25000)*25000; }
+
+function switchPerson(p){
+  document.getElementById('sec-p1').style.display = p==='p1'?'block':'none';
+  document.getElementById('sec-p2').style.display = p==='p2'?'block':'none';
+  document.getElementById('tog-p1').className = 'ptog-btn p1'+(p==='p1'?' on':'');
+  document.getElementById('tog-p2').className = 'ptog-btn p2'+(p==='p2'?' on':'');
+}
+
+function calcYears(person){
+  const age = parseInt(document.getElementById(`${person}-age`)?.value)||0;
+  const retAge = parseInt(document.getElementById(`${person}-ret-age`)?.value)||0;
+  const disp = document.getElementById(`${person}-yrs-display`);
+  if(!disp) return;
+  if(!age || !retAge){
+    disp.innerHTML = `<span class="yrs-pill empty">Enter age and retirement age above</span>`;
+  } else if(retAge <= age){
+    disp.innerHTML = `<span class="yrs-pill warn">⚠ Retirement age must be greater than current age</span>`;
+  } else {
+    const yrs = retAge - age;
+    disp.innerHTML = `<span class="yrs-pill">✓ ${yrs} years to retirement (age ${age} → ${retAge})</span>`;
+  }
+}
+
+function getYears(person){
+  const age = parseInt(document.getElementById(`${person}-age`)?.value)||0;
+  const retAge = parseInt(document.getElementById(`${person}-ret-age`)?.value)||65;
+  return Math.max(0, retAge - age);
+}
+
+function clearAll(){
+  document.querySelectorAll('input').forEach(el=>el.value='');
+  ['p1','p2'].forEach(p=>{
+    const d=document.getElementById(`${p}-yrs-display`);
+    if(d) d.innerHTML='';
+  });
+  document.getElementById('out-panel').innerHTML=`<div class="panel"><div class="empty"><div class="empty-icon">🛡️</div><div style="font-size:14px;font-weight:600;color:var(--txt2);margin-bottom:4px;">Ready to analyse</div><div style="font-size:12px;">Enter client details above and click Run Analysis</div></div></div>`;
+}
+
+// ── MAIN ANALYSIS ──
+function run(){
+  const p1Name = sv('p1-name') || 'Person 1';
+  const p2Name = sv('p2-name') || 'Person 2';
+  const clientName = sv('c-name') || 'Client';
+
+  // Sync labels
+  ['lbl-p1-cov','lbl-p1-ci','lbl-p1-di'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=p1Name; });
+  ['lbl-p2-cov','lbl-p2-ci','lbl-p2-di'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=p2Name; });
+
+  // Person 1 data
+  const p1Inc     = pv('p1-inc');
+  const p1Age     = pv('p1-age') || 40;
+  const p1Yrs     = getYears('p1');
+  const p1Savings = pv('p1-savings');
+  const p1FutSavings = p1Savings * p1Yrs; // added TO the need
+
+  // Person 2 data
+  const p2Inc     = pv('p2-inc');
+  const p2Age     = pv('p2-age') || 38;
+  const p2Yrs     = getYears('p2');
+  const p2Savings = pv('p2-savings');
+
+  // Household
+  const mortgage   = pv('h-mort');
+  const otherDebt  = pv('h-debt');
+  const hExp       = pv('h-exp') || 80000;
+  const hYears     = pv('h-years') || 10;
+  const finalExp   = pv('h-final') || 25000;
+  const eduFund    = pv('h-edu');
+  const kids       = pv('h-kids');
+
+  // CI recovery data
+  const ciMonths   = pv('ci-months') || 12;
+  const ciExp      = pv('ci-exp') || 7500;
+  const ciMedical  = pv('ci-medical');
+  const ciHome     = pv('ci-home');
+  const ciDebt     = pv('ci-debt');
+  const ciBiz      = pv('ci-biz');
+  const ciMissedSavings = p1Savings * (ciMonths/12); // missed savings during recovery — added to need
+
+  // Existing coverage
+  const p1ExLife = pv('p1-grp-life') + pv('p1-pers-life');
+  const p2ExLife = pv('p2-grp-life') + pv('p2-pers-life');
+  const p1ExCI   = pv('p1-grp-ci')   + pv('p1-pers-ci');
+  const p2ExCI   = pv('p2-grp-ci')   + pv('p2-pers-ci');
+  const p1ExDI   = pv('p1-grp-di')   + pv('p1-pers-di');
+  const p2ExDI   = pv('p2-grp-di')   + pv('p2-pers-di');
+
+  // ── LIFE INSURANCE NEED (DIME + future savings) ──
+  const lifeDebt      = mortgage + otherDebt;
+  const lifeIncome    = hExp * hYears;
+  const lifeEdu       = eduFund;
+  const lifeFinal     = finalExp;
+  // Future savings is IN the need — not an offset
+  const p1LifeNeed    = lifeDebt + lifeIncome + lifeEdu + lifeFinal + p1FutSavings;
+  const p1LifeGap     = Math.max(0, p1LifeNeed - p1ExLife);
+
+  // Person 2 life — shared debt + their income replacement + proportion of savings
+  const p2FutSavings  = p2Savings * p2Yrs;
+  const p2LifeNeed    = (p2Inc>0) ? (mortgage*0.5 + otherDebt*0.5 + p2Inc*hYears + lifeFinal + p2FutSavings) : 0;
+  const p2LifeGap     = Math.max(0, p2LifeNeed - p2ExLife);
+
+  // ── CI NEED — recovery + missed savings ──
+  const ciBaseNeed    = (ciExp * ciMonths) + ciMedical + ciHome + ciDebt + ciBiz;
+  const ciTotalNeed   = ciBaseNeed + ciMissedSavings;
+  const p1CINeed      = round25k(ciTotalNeed);
+  const p1CIGap       = Math.max(0, p1CINeed - p1ExCI);
+
+  // P2 CI — same recovery costs, their savings
+  const p2CIMissed    = p2Savings * (ciMonths/12);
+  const p2CINeed      = p2Inc>0 ? round25k(ciBaseNeed + p2CIMissed) : 0;
+  const p2CIGap       = Math.max(0, p2CINeed - p2ExCI);
+
+  // ── DISABILITY NEED — 70% of monthly income ──
+  const p1DINeed = p1Inc>0 ? Math.round(p1Inc * 0.70 / 12) : 0;
+  const p2DINeed = p2Inc>0 ? Math.round(p2Inc * 0.70 / 12) : 0;
+  const p1DIGap  = Math.max(0, p1DINeed - p1ExDI);
+  const p2DIGap  = Math.max(0, p2DINeed - p2ExDI);
+
+  // Coverage percentages
+  const pct = (have, need) => need>0 ? Math.min(100, Math.round(have/need*100)) : 100;
+  const p1LifePct = pct(p1ExLife, p1LifeNeed);
+  const p1CIPct   = pct(p1ExCI,   p1CINeed);
+  const p1DIPct   = pct(p1ExDI,   p1DINeed);
+  const barCls    = p => p>=90?'ok':p>=50?'partial':'gap';
+  const cardCls   = (gap, pct) => gap===0?'ok':pct>=50?'partial':'gap';
+
+  // ── FLAGS ──
+  const flags = [];
+  if(p1LifeGap>100000) flags.push({t:'alert',i:'🔴',msg:`<strong>${p1Name} — Life insurance gap: ${fmt(p1LifeGap)}.</strong> Current coverage of ${fmt(p1ExLife)} leaves the family exposed. This gap includes ${fmt(p1FutSavings)} to keep the retirement savings plan on track over ${p1Yrs} years at ${fmt(p1Savings)}/yr.`});
+  if(p2LifeGap>100000&&p2Inc>0) flags.push({t:'alert',i:'🔴',msg:`<strong>${p2Name} — Life insurance gap: ${fmt(p2LifeGap)}.</strong> Coverage of ${fmt(p2ExLife)} does not cover the full need of ${fmt(p2LifeNeed)}.`});
+  if(p1CIGap>0&&p1Inc>0) flags.push({t:'warn',i:'⚠️',msg:`<strong>${p1Name} — Critical illness gap: ${fmt(p1CIGap)}.</strong> Need includes ${fmt(ciMissedSavings)} in missed savings during a ${ciMonths}-month recovery — so the retirement plan stays on track even during illness.`});
+  if(p2CIGap>0&&p2Inc>0) flags.push({t:'warn',i:'⚠️',msg:`<strong>${p2Name} — Critical illness gap: ${fmt(p2CIGap)}.</strong> Recommend a CI policy of ${fmt(p2CINeed)} (rounded to nearest $25,000).`});
+  if(p1DIGap>0&&p1Inc>0) flags.push({t:'warn',i:'⚠️',msg:`<strong>${p1Name} — Disability gap: ${fmtm(p1DIGap)}/mo.</strong> Need ${fmtm(p1DINeed)} to replace 70% of income. Currently ${fmtm(p1ExDI)} in place. Disability is the most likely income-disrupting event at working age.`});
+  if(p2DIGap>0&&p2Inc>0) flags.push({t:'warn',i:'⚠️',msg:`<strong>${p2Name} — Disability gap: ${fmtm(p2DIGap)}/mo.</strong> Recommend ${fmtm(p2DINeed)} total DI coverage. Currently ${fmtm(p2ExDI)} in place.`});
+  if(pv('p1-grp-di')>0&&pv('p1-pers-di')===0) flags.push({t:'info',i:'ℹ️',msg:`<strong>${p1Name} — Group-only disability.</strong> Group LTD disappears with the job. A personal portable DI policy protects against this regardless of employer changes.`});
+  if(pv('p2-grp-di')>0&&pv('p2-pers-di')===0&&p2Inc>0) flags.push({t:'info',i:'ℹ️',msg:`<strong>${p2Name} — Group-only disability.</strong> Same portability risk. Personal DI recommended.`});
+  if(pv('p1-grp-life')>0&&pv('p1-pers-life')===0) flags.push({t:'info',i:'ℹ️',msg:`<strong>${p1Name} — Group life only.</strong> Group life ends with employment. At age ${Math.round(p1Age)}, locking in personal coverage now protects future insurability.`});
+  if(p1Savings>0&&p1Yrs>0) flags.push({t:'tip',i:'💡',msg:`<strong>Retirement savings protected.</strong> ${fmt(p1FutSavings)} (${fmt(p1Savings)}/yr × ${p1Yrs} years) is included in ${p1Name}'s life insurance need — ensuring the family can keep building retirement savings even if something happens. This is the correct planning approach.`});
+  if(kids>0&&p1CIGap===0&&p2CIGap===0) flags.push({t:'tip',i:'💡',msg:`<strong>Children's CI rider.</strong> With ${Math.round(kids)} child${kids>1?'ren':''}, a children's CI rider provides coverage at very low cost — giving you financial flexibility if a child is diagnosed with a covered condition.`});
+  if(p1LifeGap===0&&p2LifeGap===0&&p1CIGap===0&&p2CIGap===0&&p1DIGap===0&&p2DIGap===0) flags.push({t:'tip',i:'✅',msg:`<strong>Coverage appears strong.</strong> Based on this analysis, ${clientName} have adequate coverage across all three pillars. Annual review recommended as income, savings, and debt change.`});
+
+  // ── BUILD OUTPUT ──
+  document.getElementById('out-panel').innerHTML = `
+
+    <!-- TOP SUMMARY CARDS -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">📊</span><div class="ph-title">Insurance Needs Summary — ${clientName}</div><div class="ph-badge">${sv('c-date')||'Today'}</div></div>
+      <div class="pb">
+        <div class="big-cards" style="margin-bottom:14px;">
+          <div class="big-card ${p1LifeGap>0?(p1LifeGap>300000?'gap':'partial'):'ok'}">
+            <div class="bc-label">Additional Life Insurance Needed</div>
+            <div class="bc-val">${p1LifeGap>0?fmt(p1LifeGap):'✓ Covered'}</div>
+            <div class="bc-sub">${p1Name} · Need ${fmt(p1LifeNeed)} · Have ${fmt(p1ExLife)}</div>
+          </div>
+          <div class="big-card ${p1CIGap>0?'partial':'ok'}">
+            <div class="bc-label">Additional Critical Illness Coverage Needed</div>
+            <div class="bc-val">${p1CIGap>0?fmt(p1CIGap):'✓ Covered'}</div>
+            <div class="bc-sub">${p1Name} · Need ${fmt(p1CINeed)} · Have ${fmt(p1ExCI)}</div>
+          </div>
+          <div class="big-card ${p1DIGap>0?'partial':'ok'}">
+            <div class="bc-label">Additional Monthly Disability Benefit Needed</div>
+            <div class="bc-val">${p1DIGap>0?fmtm(p1DIGap):'✓ Covered'}</div>
+            <div class="bc-sub">${p1Name} · Need ${fmtm(p1DINeed)} · Have ${fmtm(p1ExDI)}</div>
+          </div>
+        </div>
+        ${p2Inc>0?`<div class="big-cards">
+          <div class="big-card ${p2LifeGap>0?(p2LifeGap>300000?'gap':'partial'):'ok'}">
+            <div class="bc-label">Additional Life Insurance Needed</div>
+            <div class="bc-val">${p2LifeGap>0?fmt(p2LifeGap):'✓ Covered'}</div>
+            <div class="bc-sub">${p2Name} · Need ${fmt(p2LifeNeed)} · Have ${fmt(p2ExLife)}</div>
+          </div>
+          <div class="big-card ${p2CIGap>0?'partial':'ok'}">
+            <div class="bc-label">Additional Critical Illness Coverage Needed</div>
+            <div class="bc-val">${p2CIGap>0?fmt(p2CIGap):'✓ Covered'}</div>
+            <div class="bc-sub">${p2Name} · Need ${fmt(p2CINeed)} · Have ${fmt(p2ExCI)}</div>
+          </div>
+          <div class="big-card ${p2DIGap>0?'partial':'ok'}">
+            <div class="bc-label">Additional Monthly Disability Benefit Needed</div>
+            <div class="bc-val">${p2DIGap>0?fmtm(p2DIGap):'✓ Covered'}</div>
+            <div class="bc-sub">${p2Name} · Need ${fmtm(p2DINeed)} · Have ${fmtm(p2ExDI)}</div>
+          </div>
+        </div>`:''}
+      </div>
+    </div>
+
+    <!-- LIFE INSURANCE BREAKDOWN -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">📋</span><div class="ph-title">Life Insurance — Needs Breakdown</div><div class="ph-badge">DIME + Future Savings</div></div>
+      <div class="pb">
+        <table class="bd-table">
+          <thead><tr><th>Component</th><th style="text-align:right;">${p1Name}</th>${p2Inc>0?`<th style="text-align:right;">${p2Name}</th>`:''}</tr></thead>
+          <tbody>
+            <tr><td>Debt elimination (mortgage + other)</td><td>${fmt(lifeDebt)}</td>${p2Inc>0?`<td>${fmt(mortgage*0.5+otherDebt*0.5)}</td>`:''}</tr>
+            <tr><td>Income replacement (${Math.round(hYears)} yrs × ${fmt(hExp)}/yr)</td><td>${fmt(lifeIncome)}</td>${p2Inc>0?`<td>${fmt(p2Inc*hYears)}</td>`:''}</tr>
+            ${eduFund>0?`<tr><td>Education fund</td><td>${fmt(lifeEdu)}</td>${p2Inc>0?`<td>${fmt(lifeEdu*0.5)}</td>`:''}</tr>`:''}
+            <tr><td>Final expenses / estate costs</td><td>${fmt(lifeFinal)}</td>${p2Inc>0?`<td>${fmt(lifeFinal)}</td>`:''}</tr>
+            ${p1Savings>0&&p1Yrs>0?`<tr class="savings-row"><td>⚠ Future savings plan (${fmt(p1Savings)}/yr × ${p1Yrs} yrs) — added to need</td><td>${fmt(p1FutSavings)}</td>${p2Inc>0?`<td>${p2Savings>0?fmt(p2FutSavings):'—'}</td>`:''}</tr>`:''}
+            <tr class="total-row"><td>Total need</td><td>${fmt(p1LifeNeed)}</td>${p2Inc>0?`<td>${fmt(p2LifeNeed)}</td>`:''}</tr>
+            <tr class="existing-row"><td>Less: existing coverage</td><td>− ${fmt(p1ExLife)}</td>${p2Inc>0?`<td>− ${fmt(p2ExLife)}</td>`:''}</tr>
+            <tr class="${p1LifeGap>0?'gap-row':'ok-row'}"><td><strong>Additional life insurance needed</strong></td><td><strong>${p1LifeGap>0?fmt(p1LifeGap):'✓ Covered'}</strong></td>${p2Inc>0?`<td><strong>${p2LifeGap>0?fmt(p2LifeGap):'✓ Covered'}</strong></td>`:''}</tr>
+          </tbody>
+        </table>
+        ${p1Savings>0&&p1Yrs>0?`<div style="background:var(--goldsoft);border-left:3px solid var(--gold);padding:9px 12px;border-radius:0 7px 7px 0;margin-top:10px;font-size:11.5px;color:var(--amber);line-height:1.6;"><strong>Why future savings is included in the need:</strong> The ${fmt(p1FutSavings)} represents retirement contributions that must continue even if ${p1Name} is no longer alive. The insurance replaces income so the family can keep saving — not spend the existing retirement accounts just to get by. This protects the retirement plan.</div>`:''}
+      </div>
+    </div>
+
+    <!-- CI BREAKDOWN -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">🏥</span><div class="ph-title">Critical Illness — Needs Breakdown</div><div class="ph-badge">Rounded to nearest $25,000</div></div>
+      <div class="pb">
+        <table class="bd-table">
+          <thead><tr><th>Component</th><th style="text-align:right;">${p1Name}</th>${p2Inc>0?`<th style="text-align:right;">${p2Name}</th>`:''}</tr></thead>
+          <tbody>
+            <tr><td>Monthly expenses during recovery (${ciMonths} months)</td><td>${fmt(ciExp*ciMonths)}</td>${p2Inc>0?`<td>${fmt(ciExp*ciMonths)}</td>`:''}</tr>
+            ${ciMedical>0?`<tr><td>Medical / treatment costs</td><td>${fmt(ciMedical)}</td>${p2Inc>0?`<td>${fmt(ciMedical)}</td>`:''}</tr>`:''}
+            ${ciHome>0?`<tr><td>Home / caregiver modifications</td><td>${fmt(ciHome)}</td>${p2Inc>0?`<td>${fmt(ciHome)}</td>`:''}</tr>`:''}
+            ${ciDebt>0?`<tr><td>Debt to clear during recovery</td><td>${fmt(ciDebt)}</td>${p2Inc>0?`<td>${fmt(ciDebt)}</td>`:''}</tr>`:''}
+            ${ciBiz>0?`<tr><td>Business continuity costs</td><td>${fmt(ciBiz)}</td>${p2Inc>0?`<td>${fmt(ciBiz)}</td>`:''}</tr>`:''}
+            ${ciMissedSavings>0?`<tr class="savings-row"><td>⚠ Missed savings during recovery (${fmt(p1Savings)}/yr × ${ciMonths} months) — added to need</td><td>${fmt(ciMissedSavings)}</td>${p2Inc>0?`<td>${fmt(p2CIMissed)}</td>`:''}</tr>`:''}
+            <tr class="total-row"><td>Total need (rounded to nearest $25,000)</td><td>${fmt(p1CINeed)}</td>${p2Inc>0?`<td>${fmt(p2CINeed)}</td>`:''}</tr>
+            <tr class="existing-row"><td>Less: existing CI coverage</td><td>− ${fmt(p1ExCI)}</td>${p2Inc>0?`<td>− ${fmt(p2ExCI)}</td>`:''}</tr>
+            <tr class="${p1CIGap>0?'gap-row':'ok-row'}"><td><strong>Additional critical illness coverage needed</strong></td><td><strong>${p1CIGap>0?fmt(p1CIGap):'✓ Covered'}</strong></td>${p2Inc>0?`<td><strong>${p2CIGap>0?fmt(p2CIGap):'✓ Covered'}</strong></td>`:''}</tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DI BREAKDOWN -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">💼</span><div class="ph-title">Disability Income — Needs Breakdown</div><div class="ph-badge">70% income replacement</div></div>
+      <div class="pb">
+        <table class="bd-table">
+          <thead><tr><th>Component</th><th style="text-align:right;">${p1Name}</th>${p2Inc>0?`<th style="text-align:right;">${p2Name}</th>`:''}</tr></thead>
+          <tbody>
+            <tr><td>Annual income</td><td>${fmt(p1Inc)}/yr</td>${p2Inc>0?`<td>${fmt(p2Inc)}/yr</td>`:''}</tr>
+            <tr><td>Monthly income</td><td>${fmtm(p1Inc/12)}</td>${p2Inc>0?`<td>${fmtm(p2Inc/12)}</td>`:''}</tr>
+            <tr class="total-row"><td>Target monthly benefit (70% of income)</td><td>${fmtm(p1DINeed)}</td>${p2Inc>0?`<td>${fmtm(p2DINeed)}</td>`:''}</tr>
+            <tr class="existing-row"><td>Less: existing DI coverage</td><td>− ${fmtm(p1ExDI)}</td>${p2Inc>0?`<td>− ${fmtm(p2ExDI)}</td>`:''}</tr>
+            <tr class="${p1DIGap>0?'gap-row':'ok-row'}"><td><strong>Additional monthly disability benefit needed</strong></td><td><strong>${p1DIGap>0?fmtm(p1DIGap):'✓ Covered'}</strong></td>${p2Inc>0?`<td><strong>${p2DIGap>0?fmtm(p2DIGap):'✓ Covered'}</strong></td>`:''}</tr>
+          </tbody>
+        </table>
+        <div style="font-size:10.5px;color:var(--txt2);margin-top:8px;line-height:1.6;">At 70% income replacement, ${p1Name} can continue living expenses and maintain retirement savings contributions during a disability. Group LTD typically covers 60–66% only — and only while employed.</div>
+      </div>
+    </div>
+
+    <!-- COVERAGE METERS -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">📈</span><div class="ph-title">Coverage Adequacy at a Glance</div></div>
+      <div class="pb">
+        ${[
+          {label:`Life insurance — ${p1Name}`,     pct:p1LifePct},
+          ...(p2Inc>0?[{label:`Life insurance — ${p2Name}`, pct:pct(p2ExLife,p2LifeNeed)}]:[]),
+          {label:`Critical illness — ${p1Name}`,   pct:p1CIPct},
+          ...(p2Inc>0?[{label:`Critical illness — ${p2Name}`, pct:pct(p2ExCI,p2CINeed)}]:[]),
+          {label:`Disability income — ${p1Name}`,  pct:p1DIPct},
+          ...(p2Inc>0?[{label:`Disability income — ${p2Name}`, pct:pct(p2ExDI,p2DINeed)}]:[]),
+        ].map(m=>`
+          <div class="cov-bar-wrap">
+            <div class="cov-bar-label"><span>${m.label}</span><span style="font-weight:700;color:${m.pct>=90?'var(--green)':m.pct>=50?'var(--amber)':'var(--red)'};">${m.pct}% covered</span></div>
+            <div class="cov-bar-bg"><div class="cov-bar-fill ${barCls(m.pct)}" style="width:${m.pct}%"></div></div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- FLAGS -->
+    ${flags.length>0?`
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">🚦</span><div class="ph-title">Planning Observations & Recommendations</div></div>
+      <div class="pb"><div class="flag-list">${flags.map(f=>`<div class="flag ${f.t}"><span class="flag-icon">${f.i}</span><span>${f.msg}</span></div>`).join('')}</div></div>
+    </div>`:''}
+
+    <div class="disc">⚠️ For planning purposes only. Insurance needs calculations use industry guidelines. Actual coverage requirements depend on personal circumstances, health, insurability, and full underwriting. Not a substitute for a formal needs analysis or licensed advice. Review existing policy documents before making any coverage decisions.</div>
+  `;
+}
+</script>
+</body>
+</html>
