@@ -382,19 +382,8 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
         <button class="filt" onclick="fT('andy',this)">Andy</button>
         <button class="filt" onclick="fT('jenn',this)">Jenn</button>
       </div>
-      <div class="ch-table">
-        <div class="tk-hdr-row">
-          <div class="thl">Task &amp; Notes</div>
-          <div class="thl">Client</div>
-          <div class="thl">Owner</div>
-          <div class="thl">Due</div>
-          <div class="thl">Priority</div>
-          <div class="thl">Actions</div>
-        </div>
-        <div id="tk-rows"></div>
-      </div>
-      <div style="margin-top:14px;background:var(--surf);border-radius:9px;padding:12px 14px;">
-        <div style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Add New Task</div>
+      <div style="margin-bottom:14px;background:var(--surf);border-radius:9px;padding:12px 14px;border:1.5px solid var(--bdr);">
+        <div style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">+ Add New Task</div>
         <div style="display:grid;grid-template-columns:1fr 180px 90px 130px 140px auto;gap:8px;margin-bottom:8px;">
           <input class="at-in" id="nt-t" placeholder="Task description...">
           <input class="at-in" id="nt-c" placeholder="Client name">
@@ -408,8 +397,20 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
           </select>
           <button class="at-btn" onclick="addTask()">+ Add</button>
         </div>
-        <textarea class="at-in" id="nt-n" placeholder="Notes — what happened, dates, context, history..." style="width:100%;resize:none;height:56px;line-height:1.5;"></textarea>
+        <textarea class="at-in" id="nt-n" placeholder="Notes — what happened, dates, context, history..." style="width:100%;resize:none;height:52px;line-height:1.5;"></textarea>
       </div>
+      <div class="ch-table">
+        <div class="tk-hdr-row">
+          <div class="thl">Task &amp; Notes</div>
+          <div class="thl">Client</div>
+          <div class="thl">Owner</div>
+          <div class="thl">Due</div>
+          <div class="thl">Priority</div>
+          <div class="thl">Actions</div>
+        </div>
+        <div id="tk-rows"></div>
+      </div>
+      
     </div>
   </div>
 
