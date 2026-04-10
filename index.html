@@ -159,6 +159,39 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
 .btn-p{padding:9px 22px;border-radius:7px;background:var(--teal);color:white;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
 .btn-g{padding:9px 16px;border-radius:7px;background:white;color:var(--txt2);border:1px solid var(--bdr);font-family:inherit;font-size:13px;cursor:pointer;}
 .empty{text-align:center;padding:20px;color:var(--txt3);font-size:12px;}
+
+/* TASK ROWS EXPANDED */
+.tk-hdr-row{display:grid;grid-template-columns:1fr 160px 70px 100px 100px 160px;gap:6px;align-items:center;background:var(--navy);padding:7px 12px;border-radius:7px 7px 0 0;}
+.tk-item{border-bottom:0.5px solid var(--bdr);padding:10px 12px;}
+.tk-item:last-child{border-bottom:none;}
+.tk-item:hover{background:var(--surf);}
+.tk-main{display:grid;grid-template-columns:1fr 160px 70px 100px 100px 160px;gap:6px;align-items:start;margin-bottom:6px;}
+.tk-title{font-size:12px;font-weight:600;color:var(--txt);cursor:pointer;}
+.tk-title:hover{color:var(--teal);}
+.tk-client{font-size:11px;color:var(--txt2);}
+.tk-owner{font-size:11px;font-weight:600;color:var(--navy);}
+.tk-due{font-size:11px;color:var(--txt2);}
+.tk-notes-row{display:flex;gap:8px;align-items:flex-start;margin-top:6px;}
+.tk-notes-display{flex:1;font-size:11px;color:var(--txt2);line-height:1.6;background:var(--surf);border-radius:6px;padding:6px 10px;min-height:32px;cursor:pointer;border:1px solid transparent;}
+.tk-notes-display:hover{border-color:var(--bdr);}
+.tk-notes-edit{flex:1;font-family:inherit;font-size:11px;color:var(--txt);line-height:1.6;background:white;border-radius:6px;padding:6px 10px;border:1.5px solid var(--teal);resize:none;min-height:52px;outline:none;}
+.tk-actions{display:flex;flex-direction:column;gap:4px;}
+.tk-btn{font-size:10px;font-weight:600;padding:4px 8px;border-radius:5px;border:none;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.tk-btn.complete{background:var(--greensoft);color:var(--green);}
+.tk-btn.complete:hover{background:var(--green);color:white;}
+.tk-btn.delete{background:var(--redsoft);color:var(--red);}
+.tk-btn.delete:hover{background:var(--red);color:white;}
+.tk-btn.save{background:var(--tealsoft);color:var(--teal);}
+.tk-btn.save:hover{background:var(--teal);color:white;}
+
+/* ARCHIVE ROWS */
+.arc-item{border-bottom:0.5px solid var(--bdr);padding:10px 12px;background:var(--surf);}
+.arc-item:last-child{border-bottom:none;}
+.arc-title{font-size:12px;font-weight:600;color:var(--txt2);text-decoration:line-through;}
+.arc-meta{font-size:10px;color:var(--txt3);margin-top:2px;}
+.arc-notes{font-size:11px;color:var(--txt2);line-height:1.6;margin-top:6px;background:white;border-radius:6px;padding:7px 10px;}
+.arc-copy{font-size:10px;font-weight:600;padding:4px 10px;border-radius:5px;border:1px solid var(--bdr);background:white;color:var(--teal);cursor:pointer;font-family:inherit;margin-top:6px;}
+.arc-copy:hover{background:var(--teal);color:white;border-color:var(--teal);}
 </style>
 </head>
 <body>
@@ -335,32 +368,68 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
 
 <!-- TASK SYSTEM -->
 <div id="view-tasks" class="view">
+
   <div class="panel">
-    <div class="ph"><span class="ph-i">✓</span><div class="ph-t">Task System</div><div class="ph-s" id="tk-s"></div></div>
+    <div class="ph"><span class="ph-i">&#10003;</span><div class="ph-t">Active Tasks</div><div class="ph-s" id="tk-s"></div></div>
     <div class="pb">
       <div class="filters" style="margin-bottom:10px">
         <button class="filt on" onclick="fT('all',this)">All open</button>
-        <button class="filt" onclick="fT('overdue',this)">● Overdue</button>
-        <button class="filt" onclick="fT('urgent',this)">● Urgent</button>
-        <button class="filt" onclick="fT('important',this)">● Important</button>
-        <button class="filt" onclick="fT('lookat',this)">● Look-at</button>
-        <button class="filt" onclick="fT('canwait',this)">● Can-wait</button>
+        <button class="filt" onclick="fT('overdue',this)">Overdue</button>
+        <button class="filt" onclick="fT('urgent',this)">Urgent</button>
+        <button class="filt" onclick="fT('important',this)">Important</button>
+        <button class="filt" onclick="fT('lookat',this)">Look-at</button>
+        <button class="filt" onclick="fT('canwait',this)">Can-wait</button>
+        <button class="filt" onclick="fT('andy',this)">Andy</button>
+        <button class="filt" onclick="fT('jenn',this)">Jenn</button>
       </div>
       <div class="ch-table">
-        <div class="t-row hdr">
-          <div class="thl">Task</div><div class="thl">Client</div>
-          <div class="thl">Due date</div><div class="thl">Urgency</div><div></div>
+        <div class="tk-hdr-row">
+          <div class="thl">Task &amp; Notes</div>
+          <div class="thl">Client</div>
+          <div class="thl">Owner</div>
+          <div class="thl">Due</div>
+          <div class="thl">Priority</div>
+          <div class="thl">Actions</div>
         </div>
         <div id="tk-rows"></div>
       </div>
-      <div class="add-t">
-        <input class="at-in" id="nt-t" placeholder="New task...">
-        <input class="at-in" id="nt-c" placeholder="Client (optional)">
-        <input class="at-in" id="nt-d" type="date">
-        <button class="at-btn" onclick="addTask()">+ Add</button>
+      <div style="margin-top:14px;background:var(--surf);border-radius:9px;padding:12px 14px;">
+        <div style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Add New Task</div>
+        <div style="display:grid;grid-template-columns:1fr 180px 90px 130px 140px auto;gap:8px;margin-bottom:8px;">
+          <input class="at-in" id="nt-t" placeholder="Task description...">
+          <input class="at-in" id="nt-c" placeholder="Client name">
+          <select class="at-in" id="nt-o"><option value="Andy">Andy</option><option value="Jenn">Jenn</option></select>
+          <input class="at-in" id="nt-d" type="date">
+          <select class="at-in" id="nt-p">
+            <option value="urgent">Urgent</option>
+            <option value="important" selected>Important</option>
+            <option value="lookat">Look-at</option>
+            <option value="canwait">Can-wait</option>
+          </select>
+          <button class="at-btn" onclick="addTask()">+ Add</button>
+        </div>
+        <textarea class="at-in" id="nt-n" placeholder="Notes — what happened, dates, context, history..." style="width:100%;resize:none;height:56px;line-height:1.5;"></textarea>
       </div>
     </div>
   </div>
+
+  <div class="panel" style="margin-top:14px;">
+    <div class="ph" style="cursor:pointer;" onclick="toggleArchive()">
+      <span class="ph-i">&#128193;</span>
+      <div class="ph-t">Completed &amp; Archived Tasks</div>
+      <div class="ph-s" id="arc-s">0 completed</div>
+      <div style="margin-left:auto;font-size:11px;color:var(--txt3);" id="arc-lbl">&#9660; Show</div>
+    </div>
+    <div id="arc-body" style="display:none;">
+      <div class="pb">
+        <div style="font-size:11px;color:var(--teal);background:var(--tealsoft);border-radius:7px;padding:9px 12px;margin-bottom:10px;line-height:1.6;">
+          Completed tasks are preserved here with all notes and history. Click <strong>Copy Record</strong> to copy the full record to your clipboard, then paste into the client's SharePoint folder.
+        </div>
+        <div id="arc-rows"></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- 5-MIN RESET -->
@@ -456,28 +525,77 @@ const CLIENTS=[
 ];
 
 let TASKS=[
-{id:1,title:"Send Term 20 illustration",client:"Fielding, Ron & Sue",due:"2026-04-02",done:false},
-{id:2,title:"Follow up on CI application",client:"Campbell, Ross & Andrea",due:"2026-04-05",done:false},
-{id:3,title:"POA referral to lawyer",client:"Bannister, Reg & Helen",due:"2026-04-08",done:false},
-{id:4,title:"CPP timing analysis",client:"Blackwood, James & Ruth",due:"2026-04-10",done:false},
-{id:5,title:"Complete client file",client:"Harper, Daniel & Olivia",due:"2026-04-14",done:false},
-{id:6,title:"Beneficiary designation update",client:"Bowen, Sandra",due:"2026-04-18",done:false},
-{id:7,title:"Retirement projection update",client:"Brennan, Patrick & Kate",due:"2026-04-25",done:false},
-{id:8,title:"Annual review prep",client:"Cameron, Ewan & Moira",due:"2026-05-02",done:false}
+{id:1,title:"Money Deposited — need it invested",client:"Turpin, Gregory",owner:"Andy",due:"",priority:"urgent",notes:"As per email and notes. 02-04-2026 Jenn has sent for the money. 02-11-2026 Contribution deposited 02/05/2026. $15K sitting in cash, needs investing. 02/18/2026",done:false},
+{id:2,title:"1 million term 20 application",client:"Gerber, Adrian and Steph",owner:"Andy",due:"",priority:"urgent",notes:"Met with Adrian and Steph, decided to look at 20yr term, sent quotes 02-25-2026. Sent follow up about decision 03-10-2026. They would like to do the application — need to set up a time. 03-20-2026. Did the app, all in, need to send additional docs for signatures for client file. 03-26-2026",done:false},
+{id:3,title:"Look at all accounts and see where we are at",client:"Neumann, Hans and Marion",owner:"Andy",due:"",priority:"urgent",notes:"Time blocked off Thursday Apr 2 2026. 04-01-2026",done:false},
+{id:4,title:"Meet with Alanna and Lucas",client:"Mason, Alanna",owner:"Andy",due:"2026-04-14",priority:"urgent",notes:"Set up a time 01/15/2026. Sent email to let me know a good time 02-11-2026. Sent follow up meeting to book 03-10-2026. Emailed again 04-01-2026. Confirmed appointment for Tues Apr 14th 2026 in Kamloops 04-10-2026",done:false},
+{id:5,title:"What happened to the Wealthsimple money",client:"French, Daryl",owner:"Andy",due:"",priority:"urgent",notes:"Look into 04-01-2026",done:false},
+{id:6,title:"Insurance and Investment discussion",client:"Mercer, Ward and Alica",owner:"Andy",due:"",priority:"urgent",notes:"Prepare for meeting 04-10-2026",done:false},
+{id:7,title:"Prestige Deregister",client:"Bentham, Paul",owner:"Andy",due:"",priority:"important",notes:"Can set up Prestige to deregister once we have the cash back from Westbow. 01/15/2026",done:false},
+{id:8,title:"Transfer cash from RSP at Olympia",client:"Elder, Darcy",owner:"Jenn",due:"",priority:"important",notes:"Need to send transfer docs for cash at Olympia, Statement in Clients folder 04-01-2026. Docusign has been sent. 04-10-2026 transfer sent to your docusign inbox.",done:false},
+{id:9,title:"Move cash to aligned in Olympia RSP",client:"Bentham, Paula",owner:"Jenn",due:"",priority:"important",notes:"See highlighted Mar Olympia Statement in clients folder. Approx 21k Cash Balance. 04-01-2026. Docusign has been sent. 04-09-2026 transfer sent to your docusign inbox.",done:false},
+{id:10,title:"Move cash to aligned in Olympia RSP",client:"Bentham, Paul",owner:"Jenn",due:"",priority:"important",notes:"See highlighted Mar Olympia Statement in clients folder. Approx 20k Cash Balance. 04-01-2026. Docusign has been sent. 04-09-2026 transfer sent to your docusign inbox.",done:false},
+{id:11,title:"1,000,000 10 year term",client:"Henwood, Mitch and Maya",owner:"Andy",due:"",priority:"important",notes:"Met with Mitch and Maya Feb 28 2026 at their home in Ladysmith. They felt they should have some coverage in place. Doing quotes 03-10-2026. Sent quotes 03-11-2026. Need to follow up 04-01-2026",done:false},
+{id:12,title:"300-400k CI coverage",client:"Henwood, Mitch",owner:"Andy",due:"",priority:"important",notes:"Met with Mitch and Maya Feb 28 2026. Sent quotes 03-11-2026. Need to follow up this week 04-01-2026",done:false},
+{id:13,title:"Move RSP at Olympia over",client:"Galloway, Joanne",owner:"Jenn",due:"",priority:"important",notes:"Will follow up with Jenn 12/16/2025. Transfer form received and submitted 12/19/2025. Still pending — submitted amended transfer form 01/28/2026. Asked Jenn to cancel transfer as too many issues 04-01-2026. Andy still needs to explain to Joanne we have stopped the transfer 04-01-2026",done:false},
+{id:14,title:"Send in TFSA closure form",client:"Kelpin, Siri",owner:"Andy",due:"",priority:"important",notes:"Look in docusign and send early next week 03-26-2026. Will go through with Jenn 03-30-2026. Doc has been sent to Olympia 04-01-2026",done:false},
+{id:15,title:"Set up meeting with Gary, Mike, Scott re: Insurance specifics",client:"Peckford, Scott",owner:"Andy",due:"",priority:"important",notes:"Waiting for Scott re: application 02-18-2026. Back and forth with Gary and Mike about possible meeting next week 03-10-2026. Meeting set for Apr 2 2026",done:false},
+{id:16,title:"Set up meeting about investment",client:"Peckford, Scott",owner:"Andy",due:"",priority:"important",notes:"Waiting for Scott re: application. Same as life insurance conversation 03-10-2026. Meeting set for Apr 2 2026",done:false},
+{id:17,title:"Set up meeting with Newlook or Guardian re: Investment Allocation",client:"Peckford, Scott",owner:"Andy",due:"",priority:"important",notes:"Will take place after discussion around numbers for perm life coverage and investment etc 03-10-2026",done:false},
+{id:18,title:"Change risk tolerance — set up asset allocation meeting",client:"Gerber, Adrian and Steph",owner:"Andy",due:"",priority:"important",notes:"Need to set up meeting in next few weeks 02-25-2026. Emailed about insurance, TFSA and time for meeting 03-10-2026. Had the meeting — now need approval to make necessary changes to accounts 04-01-2026",done:false},
+{id:19,title:"Do some planning in 2026",client:"Weisbeck, John",owner:"Andy",due:"",priority:"important",notes:"John is nervous about money. Need to set up meeting when back from Mexico middle of March 03-10-2026. Will reach out next week 04-01-2026",done:false},
+{id:20,title:"Planning to be done",client:"Wilson, Jay",owner:"Andy",due:"",priority:"important",notes:"Will look at meeting in Feb or Mar on Island 12/16/2025. Met with Jay at his home on the Island Mar 1 2026. Need to follow up on planning meeting 04-01-2026",done:false},
+{id:21,title:"Wants less paper sent to her — need to look into",client:"Galloway, Joanne",owner:"Andy",due:"",priority:"important",notes:"Need to look into statements and extra paper 03-31-2026. 04/10/2026 This seems to be a duplicate.",done:false},
+{id:22,title:"Set up call for portfolio allocation discussion",client:"Henwood, Mitch and Maya",owner:"Andy",due:"",priority:"lookat",notes:"Get an accurate report on their feelings around risk and the portfolio that suits them 03-10-2026",done:false},
+{id:23,title:"Move Olympia RIF",client:"Castagne, Bryan (Allan)",owner:"Andy",due:"",priority:"lookat",notes:"Forwarded ID and Void for Bryan Castagne 12/16/2025. Andy to finish KYC and check in with Allan 01/14/2026. Emailed Allan, have not heard back 02-18-2026",done:false},
+{id:24,title:"Transfer small RSP from his bank to Newport",client:"Zagrodney, Ken",owner:"Andy",due:"",priority:"lookat",notes:"Email sent to Katia 01/20/2026. Ken sent ID and Statement — will send to Katia 02-11-2026. Sent 02-19-2026. They have everything to open TFSA and transfer RSP 02-25-2026",done:false},
+{id:25,title:"Moving Aligned account over to Guardian",client:"Walton, Kirk",owner:"Andy",due:"",priority:"lookat",notes:"",done:false},
+{id:26,title:"Redeem Newlook Dental",client:"Wilson, Jay",owner:"Jenn",due:"",priority:"lookat",notes:"",done:false},
+{id:27,title:"Invico redeem RSP Olympia $6,408.24",client:"Neumann, Hans",owner:"Andy",due:"",priority:"lookat",notes:"",done:false},
+{id:28,title:"Redeem Invico Corp around $14k",client:"Neumann, HPNA",owner:"Andy",due:"",priority:"lookat",notes:"",done:false},
+{id:29,title:"Transfer over his Olympia",client:"French, Daryl",owner:"Andy",due:"",priority:"lookat",notes:"",done:false},
+{id:30,title:"Meet with Bonnie and Dave",client:"Lundquist, Bonita",owner:"Andy",due:"",priority:"lookat",notes:"",done:false},
+{id:31,title:"Meet with Bonnie and Dave",client:"Lundquist, David",owner:"Andy",due:"",priority:"lookat",notes:"",done:false},
+{id:32,title:"Regimen Redemption",client:"Neumann, Marion",owner:"Andy",due:"",priority:"lookat",notes:"",done:false},
+{id:33,title:"Have $200k to invest — do a plan",client:"Weisbeck, John and Alli",owner:"Andy",due:"",priority:"lookat",notes:"",done:false},
+{id:34,title:"Life Insurance 300k 10 year term",client:"Zagrodney, Ken",owner:"Andy",due:"",priority:"lookat",notes:"",done:false},
+{id:35,title:"Planning meeting — life, investment plan and Estate",client:"Gerber, Stephanie",owner:"Andy",due:"",priority:"lookat",notes:"",done:false},
+{id:36,title:"Planning meeting — life, investment plan and Estate",client:"Gerber, Adrian",owner:"Andy",due:"",priority:"lookat",notes:"",done:false},
+{id:37,title:"Redeem Durum Non reg",client:"Elder, Darcy",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:38,title:"Redeem Centurion approx $32k",client:"Neumann, HPNA",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:39,title:"Redeem Newlook Dental",client:"Bentham, Paula",owner:"Jenn",due:"",priority:"canwait",notes:"",done:false},
+{id:40,title:"Redeem Newlook Dental",client:"Neumann, Hans",owner:"Jenn",due:"",priority:"canwait",notes:"",done:false},
+{id:41,title:"Redeem ICM $22k",client:"Neumann, HPNA",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:42,title:"Had a call with Siri — sent off request for info",client:"Kelpin, Siri",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:43,title:"Redeem Westbow approx $14k",client:"Neumann, HPNA",owner:"Jenn",due:"",priority:"canwait",notes:"",done:false},
+{id:44,title:"Need to get his accounts moved over",client:"Foster, Lucas",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:45,title:"Did Plan — now set up redemptions",client:"Neumann, Marion",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:46,title:"Did Plan — now set up redemptions",client:"Neumann, Architect HPNA",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:47,title:"Did Plan — now set up redemptions",client:"Neumann, Hans",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:48,title:"Gather info for Newport — send notes to Jordan, set up tasks",client:"Bazzana, Patrice and Gordon",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:49,title:"Inheritance planning meeting",client:"Bazzana, Patrice and Gordon",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:50,title:"Transfer over remaining assets",client:"Turpin, Gregory",owner:"Jenn",due:"",priority:"canwait",notes:"",done:false},
+{id:51,title:"Redeem Avenue Living back to cash (stays in Olympia Trust RSP)",client:"Neumann, Hans",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:52,title:"Move Personal Money to Guardian",client:"French, Linda",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:53,title:"Planning with Willful",client:"Baker, Ronald",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:54,title:"Follow up",client:"Glen, Anthony",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:55,title:"Set up Estate meeting for May or June",client:"Gerber, Adrian and Steph",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:56,title:"Get LTD calculation for file",client:"Gerber, Steph",owner:"Andy",due:"",priority:"canwait",notes:"",done:false},
+{id:57,title:"Move cash from SRSP end of year",client:"Stockdale, June",owner:"Andy",due:"",priority:"canwait",notes:"",done:false}
 ];
 const WI5=[
-{n:"Fielding, Ron & Sue",a:"Annual review overdue — schedule immediately",tag:"t-urg",lbl:"Escalated",done:false},
-{n:"Campbell, Ross & Andrea",a:"CI application — follow up with underwriter",tag:"t-rev",lbl:"Revenue",done:false},
-{n:"Bannister, Reg & Helen",a:"POA update — refer to lawyer this week",tag:"t-plan",lbl:"Planning",done:false},
-{n:"Blackwood, James & Ruth",a:"CPP timing — run analysis before next meeting",tag:"t-rev2",lbl:"Review",done:false},
-{n:"Harper, Daniel & Olivia",a:"New client onboarding — complete information file",tag:"t-new",lbl:"New client",done:true}
+{n:"Mercer, Ward and Alica",a:"Insurance and Investment discussion — prepare for meeting today",tag:"t-rev",lbl:"Revenue",done:false},
+{n:"Mason, Alanna",a:"Meeting confirmed Apr 14 Kamloops — prep Northstar onboarding",tag:"t-new",lbl:"New client",done:false},
+{n:"Gerber, Adrian and Steph",a:"CI application in — follow up on additional docs for signatures",tag:"t-rev",lbl:"Revenue",done:false},
+{n:"Henwood, Mitch and Maya",a:"Follow up on term life and CI quotes sent Mar 11",tag:"t-rev",lbl:"Revenue",done:false},
+{n:"Peckford, Scott",a:"8M life app — send docs for file, confirm medical appointment done",tag:"t-urg",lbl:"Urgent",done:false}
 ];
 let nextId=9,cFilt='all',cQ='',tFilt='all';
 
 document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('en-CA',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
 
-function urg(due){if(!due)return'canwait';const t=new Date();t.setHours(0,0,0,0);const d=new Date(due);d.setHours(0,0,0,0);const diff=Math.round((d-t)/864e5);if(diff<0)return'overdue';if(diff<=2)return'urgent';if(diff<=10)return'important';if(diff<=30)return'lookat';return'canwait';}
-function ubadge(u){return{overdue:'<span class="ubadge ub-ov">Overdue</span>',urgent:'<span class="ubadge ub-ur">Urgent</span>',important:'<span class="ubadge ub-im">Important</span>',lookat:'<span class="ubadge ub-la">Look-at</span>',canwait:'<span class="ubadge ub-cw">Can-wait</span>'}[u]||'';}
+function urg(due, priority){if(!due){return priority||'canwait';}const t=new Date();t.setHours(0,0,0,0);const d=new Date(due);d.setHours(0,0,0,0);const diff=Math.round((d-t)/864e5);if(diff<0)return'overdue';if(diff<=2)return'urgent';if(diff<=10)return'important';if(diff<=30)return'lookat';return'canwait';}
+function ubadge(u){return{overdue:'<span class="ubadge ub-ov">Overdue</span>',urgent:'<span class="ubadge ub-ur">Urgent</span>',important:'<span class="ubadge ub-im">Important</span>',lookat:'<span class="ubadge ub-la">Look-at</span>',canwait:'<span class="ubadge ub-cw">Can-wait</span>'}[u]||'<span class="ubadge ub-cw">Can-wait</span>';}
 function tStar(t){return{gold:'<span style="color:var(--sg)">★</span>',silver:'<span style="color:var(--ss)">★</span>',bronze:'<span style="color:var(--sb)">★</span>'}[t]||'';}
 function ptd(v,col){const bg=v===2?`background:${col}`:v===1?'background:var(--gold)':'background:var(--bdr)';return`<div class="pt-dot" style="${bg}"></div>`;}
 
@@ -534,18 +652,137 @@ function renderCH(){
 function fC(f,btn,q){if(btn){document.querySelectorAll('.filters .filt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');cFilt=f;}if(q!==undefined)cQ=q;renderCH();}
 
 function renderTasks(){
-  const op=TASKS.filter(t=>!t.done);
-  let L=tFilt==='all'?op:op.filter(t=>urg(t.due)===tFilt);
+  const op = TASKS.filter(t=>!t.done);
+  const f = tFilt;
+  let L = op;
+  if(f==='all') L=op;
+  else if(f==='andy') L=op.filter(t=>(t.owner||'Andy').toLowerCase()==='andy');
+  else if(f==='jenn') L=op.filter(t=>(t.owner||'').toLowerCase()==='jenn');
+  else L=op.filter(t=>urg(t.due)===f);
   L.sort((a,b)=>{const o={overdue:0,urgent:1,important:2,lookat:3,canwait:4};return(o[urg(a.due)]||5)-(o[urg(b.due)]||5);});
   document.getElementById('tk-s').textContent=op.length+' open task'+(op.length!==1?'s':'');
-  document.getElementById('tk-rows').innerHTML=L.map(t=>`<div class="t-row"><div><div class="t-title" onclick="cTask(${t.id})">☐ ${t.title}</div><div class="t-cli">${t.client||'—'}</div></div><div class="t-due">${t.due||'—'}</div>${ubadge(urg(t.due))}<button class="t-del" onclick="dTask(${t.id})">×</button></div>`).join('')||'<div class="empty">No tasks in this category.</div>';
+  document.getElementById('tk-rows').innerHTML=L.map(t=>`
+    <div class="tk-item" id="tki-${t.id}">
+      <div class="tk-main">
+        <div>
+          <div class="tk-title" onclick="completeTask(${t.id})">&#9744; ${t.title}</div>
+        </div>
+        <div class="tk-client">${t.client||'&mdash;'}</div>
+        <div class="tk-owner">${t.owner||'Andy'}</div>
+        <div class="tk-due">${t.due||'&mdash;'}</div>
+        <div>${ubadge(urg(t.due))}</div>
+        <div class="tk-actions">
+          <button class="tk-btn complete" onclick="completeTask(${t.id})">&#10003; Complete</button>
+          <button class="tk-btn save" onclick="saveNote(${t.id})">&#128190; Save Note</button>
+          <button class="tk-btn delete" onclick="dTask(${t.id})">&#10005; Delete</button>
+        </div>
+      </div>
+      <div class="tk-notes-row">
+        <div class="tk-notes-display" id="nd-${t.id}" onclick="editNote(${t.id})" title="Click to edit notes">${t.notes||('<span style=\"color:var(--txt3)\">Click to add notes — what happened, dates, context...\"</span>')}</div>
+        <textarea class="tk-notes-edit" id="ne-${t.id}" style="display:none;" onblur="saveNote(${t.id})" placeholder="Notes — what happened, dates, context, history...">${t.notes||''}</textarea>
+      </div>
+    </div>`).join('') || '<div class="empty">No tasks in this category.</div>';
 }
+
+function editNote(id){
+  document.getElementById('nd-'+id).style.display='none';
+  const ta=document.getElementById('ne-'+id);
+  ta.style.display='block';
+  ta.focus();
+}
+
+function saveNote(id){
+  const ta=document.getElementById('ne-'+id);
+  const nd=document.getElementById('nd-'+id);
+  if(!ta||!nd) return;
+  const t=TASKS.find(t=>t.id===id);
+  if(t){
+    t.notes=ta.value.trim();
+    nd.innerHTML=t.notes||('<span style="color:var(--txt3)">Click to add notes...</span>');
+  }
+  ta.style.display='none';
+  nd.style.display='block';
+}
+
+function toggleArchive(){
+  const body=document.getElementById('arc-body');
+  const lbl=document.getElementById('arc-lbl');
+  const open=body.style.display==='none';
+  body.style.display=open?'block':'none';
+  lbl.textContent=open?'&#9650; Hide':'&#9660; Show';
+  if(open) renderArchive();
+}
+
+function renderArchive(){
+  const done=TASKS.filter(t=>t.done);
+  document.getElementById('arc-s').textContent=done.length+' completed';
+  document.getElementById('arc-rows').innerHTML=done.length?done.map(t=>`
+    <div class="arc-item">
+      <div class="arc-title">${t.title}</div>
+      <div class="arc-meta">${t.client||''} &nbsp;|&nbsp; ${t.owner||'Andy'} &nbsp;|&nbsp; Completed: ${t.completedDate||'—'} &nbsp;|&nbsp; Priority: ${t.priority||'—'}</div>
+      ${t.notes?`<div class="arc-notes">${t.notes}</div>`:''}
+      <button class="arc-copy" onclick="copyRecord(${t.id})">&#128203; Copy Record</button>
+    </div>`).join(''): '<div class="empty">No completed tasks yet.</div>';
+}
+
+function copyRecord(id){
+  const t=TASKS.find(t=>t.id===id);
+  if(!t) return;
+  const text=[
+    'COMPLETED TASK RECORD',
+    '===================',
+    'Client: '+(t.client||'—'),
+    'Task: '+t.title,
+    'Owner: '+(t.owner||'Andy'),
+    'Priority: '+(t.priority||'—'),
+    'Due Date: '+(t.due||'—'),
+    'Completed: '+(t.completedDate||'—'),
+    '',
+    'NOTES & HISTORY:',
+    t.notes||'No notes recorded.',
+    '',
+    'Saved from Northstar Command Center — northstar-lovat.vercel.app'
+  ].join('\n');
+  navigator.clipboard.writeText(text).then(()=>{
+    alert('Record copied to clipboard. Paste it into the client\'s SharePoint folder.');
+  }).catch(()=>{
+    prompt('Copy this record:', text);
+  });
+}
+
 function fT(f,btn){document.querySelectorAll('#view-tasks .filt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');tFilt=f;renderTasks();}
-function addTask(){const t=document.getElementById('nt-t').value.trim();if(!t)return;TASKS.push({id:nextId++,title:t,client:document.getElementById('nt-c').value.trim(),due:document.getElementById('nt-d').value,done:false});['nt-t','nt-c','nt-d'].forEach(id=>document.getElementById(id).value='');renderTasks();renderDashTasks();updMetrics();updBadge();}
-function cTask(id){const t=TASKS.find(t=>t.id===id);if(t)t.done=true;renderTasks();renderDashTasks();renderAlerts();updMetrics();updBadge();}
+
+function addTask(){
+  const title=document.getElementById('nt-t').value.trim();
+  if(!title) return;
+  const priority=document.getElementById('nt-p').value;
+  TASKS.push({
+    id:nextId++,
+    title,
+    client:document.getElementById('nt-c').value.trim(),
+    owner:document.getElementById('nt-o').value,
+    due:document.getElementById('nt-d').value,
+    priority,
+    notes:document.getElementById('nt-n').value.trim(),
+    done:false
+  });
+  ['nt-t','nt-c','nt-d','nt-n'].forEach(id=>document.getElementById(id).value='');
+  renderTasks();renderDashTasks();updMetrics();updBadge();
+}
+
+function completeTask(id){
+  const t=TASKS.find(t=>t.id===id);
+  if(t){
+    t.done=true;
+    t.completedDate=new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
+  }
+  renderTasks();renderDashTasks();renderAlerts();updMetrics();updBadge();
+  renderArchive();
+  document.getElementById('arc-s').textContent=TASKS.filter(t=>t.done).length+' completed';
+}
+
 function dTask(id){TASKS=TASKS.filter(t=>t.id!==id);renderTasks();renderDashTasks();updMetrics();updBadge();}
-function updMetrics(){document.getElementById('m-urg').textContent=TASKS.filter(t=>!t.done&&['overdue','urgent'].includes(urg(t.due))).length;}
-function updBadge(){const n=TASKS.filter(t=>!t.done&&['overdue','urgent'].includes(urg(t.due))).length;const b=document.getElementById('sb-badge');b.textContent=n;b.style.display=n>0?'inline':'none';}
+
 function doReset(){const cli=document.getElementById('r-cli').value.trim();if(!cli){alert('Please enter the client name.');return;}document.getElementById('r-tsk').value.trim().split('\n').filter(l=>l.trim()).forEach(l=>TASKS.push({id:nextId++,title:l.trim(),client:cli,due:'',done:false}));const ns=document.getElementById('r-ns').value.trim();if(ns){const c=CLIENTS.find(c=>c.name.toLowerCase().includes(cli.toLowerCase()));if(c)c.next=ns;}renderTasks();renderDashTasks();renderCH();updMetrics();updBadge();alert('Reset complete for '+cli+'. Tasks added.');clrReset();}
 function clrReset(){['r-cli','r-cap','r-tsk','r-ns','r-nd'].forEach(id=>document.getElementById(id).value='');}
 init();
