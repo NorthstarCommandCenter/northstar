@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northstar — Estate Planning Review</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0B2545;--navy2:#1B3A6B;
+  --gold:#B8860B;--gold2:#D4A017;--goldsoft:#FDF6E3;--goldmid:#e8c84a;
+  --teal:#0D7377;--tealsoft:#E8F7F7;
+  --surf:#F5F6F8;--white:#fff;--bdr:#DDE1E7;--bdr2:#C5CAD3;
+  --txt:#1A1E2E;--txt2:#4A5568;--txt3:#9AA3B2;
+  --green:#1A7A2A;--greensoft:#E8F5EB;
+  --amber:#B54708;--ambersoft:#FEF3EA;
+  --red:#9B1C1C;--redsoft:#FEE8E8;
+  --sh:0 1px 4px rgba(0,0,0,.08);--shb:0 2px 12px rgba(0,0,0,.1);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--surf);color:var(--txt);font-size:13px;min-height:100vh;}
+.header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(0,0,0,.25);}
+.hl{display:flex;align-items:center;gap:12px;}
+.star{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.star svg{width:18px;height:18px;fill:white;}
+.htitle{font-family:'Cormorant Garamond',serif;font-size:18px;color:white;font-weight:700;}
+.hsub{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-top:1px;}
+.hbtns{display:flex;gap:7px;}
+.btn-h{padding:6px 13px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-family:inherit;transition:all .15s;}
+.btn-h:hover{background:rgba(255,255,255,.16);}
+.btn-h.gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:white;border-color:var(--gold);}
+.page{max-width:1000px;margin:0 auto;padding:20px 24px 60px;}
+.cbar{background:white;border:1px solid var(--bdr);border-radius:10px;padding:12px 16px;margin-bottom:14px;box-shadow:var(--sh);display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;}
+.cf{display:flex;flex-direction:column;gap:2px;}
+.cf label{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;}
+.cf input{border:none;border-bottom:2px solid var(--bdr);padding:3px 0;font-family:inherit;font-size:13px;font-weight:600;color:var(--txt);outline:none;background:transparent;min-width:140px;transition:border-color .15s;}
+.cf input:focus{border-bottom-color:var(--gold);}
+.cf input::placeholder{color:var(--txt3);font-weight:400;}
+
+/* STATUS OVERVIEW */
+.status-ov{background:white;border:1px solid var(--bdr);border-radius:10px;padding:12px 16px;margin-bottom:14px;box-shadow:var(--sh);display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.so-item{border-radius:8px;padding:10px 13px;display:flex;align-items:center;gap:9px;}
+.so-item.green{background:var(--greensoft);border:1px solid #a7d5a5;}
+.so-item.amber{background:var(--ambersoft);border:1px solid #f9c7a8;}
+.so-item.red{background:var(--redsoft);border:1px solid #f5b9bc;}
+.so-item.grey{background:var(--surf);border:1px solid var(--bdr);}
+.so-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.so-item.green .so-dot{background:var(--green);}
+.so-item.amber .so-dot{background:var(--amber);}
+.so-item.red .so-dot{background:var(--red);}
+.so-item.grey .so-dot{background:var(--bdr2);}
+.so-label{font-size:11px;font-weight:700;}
+.so-item.green .so-label{color:var(--green);}
+.so-item.amber .so-label{color:var(--amber);}
+.so-item.red .so-label{color:var(--red);}
+.so-item.grey .so-label{color:var(--txt3);}
+.so-val{font-size:10px;color:var(--txt2);margin-top:1px;}
+
+/* MAIN TABS */
+.main-tabs{display:flex;background:white;border:1px solid var(--bdr);border-radius:10px 10px 0 0;overflow:hidden;border-bottom:none;}
+.main-tab{flex:1;padding:13px 16px;text-align:center;cursor:pointer;font-size:13px;font-weight:500;color:var(--txt2);border-bottom:3px solid transparent;transition:all .15s;background:var(--surf);}
+.main-tab:hover{background:white;color:var(--navy);}
+.main-tab.on{background:white;color:var(--navy);font-weight:700;border-bottom-color:var(--gold);}
+
+/* ALERT BANNER */
+.alert-banner{padding:10px 16px;font-size:12px;font-weight:500;line-height:1.5;border-left:4px solid;display:flex;align-items:center;gap:9px;}
+.alert-banner.green{background:var(--greensoft);border-color:var(--green);color:var(--green);}
+.alert-banner.amber{background:var(--ambersoft);border-color:var(--amber);color:var(--amber);}
+.alert-banner.red{background:var(--redsoft);border-color:var(--red);color:var(--red);}
+.alert-banner.grey{background:var(--surf);border-color:var(--bdr2);color:var(--txt3);}
+
+/* TAB CONTENT */
+.tab-content{background:white;border:1px solid var(--bdr);border-top:none;border-radius:0 0 10px 10px;overflow:hidden;margin-bottom:14px;}
+
+/* SUB TABS */
+.sub-tabs{display:flex;border-bottom:1px solid var(--bdr);background:var(--surf);}
+.sub-tab{padding:9px 18px;font-size:12px;font-weight:500;cursor:pointer;color:var(--txt2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.sub-tab:hover{color:var(--navy);}
+.sub-tab.on{color:var(--navy);font-weight:700;border-bottom-color:var(--teal);background:white;}
+.sub-tab.guide-tab.on{border-bottom-color:var(--gold);}
+.guide-badge{background:linear-gradient(180deg,var(--gold2),var(--gold));color:white;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;}
+.sub-content{padding:16px 20px;}
+
+/* FIELDS */
+.fg{display:grid;gap:10px;margin-bottom:12px;}
+.fg2{grid-template-columns:1fr 1fr;}
+.fg3{grid-template-columns:1fr 1fr 1fr;}
+.f{display:flex;flex-direction:column;gap:3px;}
+.f label{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;}
+.f input,.f select,.f textarea{padding:7px 9px;border:1.5px solid var(--bdr);border-radius:6px;font-family:inherit;font-size:12.5px;color:var(--txt);outline:none;transition:border-color .15s;background:white;width:100%;}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(184,134,11,.07);}
+.f input::placeholder,.f textarea::placeholder{color:var(--txt3);}
+.f textarea{resize:vertical;min-height:70px;line-height:1.6;}
+.sub-head{font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid #EBEDF0;}
+.sub-head:first-child{margin-top:0;}
+select.s-green{color:var(--green);font-weight:600;}
+select.s-amber{color:var(--amber);font-weight:600;}
+select.s-red{color:var(--red);font-weight:600;}
+select.s-grey{color:var(--txt3);}
+
+/* CONVERSATION GUIDE */
+.guide-intro{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:9px;padding:14px 18px;margin-bottom:16px;color:white;}
+.guide-intro-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;margin-bottom:5px;}
+.guide-intro-body{font-size:12px;color:rgba(255,255,255,.75);line-height:1.7;}
+.q-item{border-radius:8px;border:1px solid var(--bdr);background:white;margin-bottom:10px;overflow:hidden;}
+.q-header{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;}
+.q-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--navy);color:white;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.q-text{font-size:13px;font-weight:600;color:var(--txt);line-height:1.5;flex:1;}
+.q-note{font-size:11px;color:var(--txt2);font-style:italic;line-height:1.6;padding:0 14px 12px 48px;}
+.ai-prompt{background:var(--goldsoft);border:1.5px solid var(--goldmid);border-radius:9px;padding:14px 16px;margin-top:16px;}
+.ai-prompt-title{font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;}
+.ai-prompt-text{font-size:11.5px;color:var(--txt2);line-height:1.7;font-style:italic;}
+
+/* NOTES TAB */
+.notes-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+.notes-area{padding:12px 14px;border:1.5px solid var(--bdr);border-radius:8px;font-family:inherit;font-size:12.5px;color:var(--txt);outline:none;transition:border-color .15s;background:white;width:100%;resize:vertical;min-height:280px;line-height:1.8;}
+.notes-area:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(184,134,11,.07);}
+.notes-area::placeholder{color:var(--txt3);}
+.notes-tip{background:var(--tealsoft);border:1px solid rgba(13,115,119,.2);border-radius:7px;padding:10px 13px;font-size:11px;color:var(--teal);line-height:1.6;margin-top:10px;}
+
+@media print{
+  .header{background:var(--navy)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .btn-h{display:none!important;}
+  .so-item,.alert-banner,.q-item,.ai-prompt,.guide-intro{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">
+    <div class="star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+    <div>
+      <div class="htitle">Northstar — Estate Planning Review</div>
+      <div class="hsub">Will · Power of Attorney · Health Directive · ALG Wealth</div>
+    </div>
+  </div>
+  <div class="hbtns">
+    <span style="font-size:11px;color:rgba(255,255,255,.35);align-self:center;margin-right:4px;" id="hdr-date"></span>
+    <button class="btn-h" onclick="clearAll()">✕ Clear</button>
+    <button class="btn-h" onclick="window.print()">🖨 Print Review</button>
+    <button class="btn-h gold">★ Save to Vault</button>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- CLIENT BAR -->
+<div class="cbar">
+  <div class="cf"><label>Client name</label><input id="c-name" placeholder="e.g. Harper, Daniel and Olivia"></div>
+  <div class="cf"><label>Person 1</label><input id="c-p1" placeholder="Daniel"></div>
+  <div class="cf"><label>Person 2</label><input id="c-p2" placeholder="Olivia"></div>
+  <div class="cf"><label>Review date</label><input id="c-date" placeholder="April 2026"></div>
+  <div class="cf"><label>Advisor</label><input id="c-advisor" placeholder="Andrew Glen"></div>
+</div>
+
+<!-- STATUS OVERVIEW -->
+<div class="status-ov">
+  <div class="so-item grey" id="so-will"><div class="so-dot"></div><div><div class="so-label">📜 Will</div><div class="so-val" id="so-will-val">Not yet reviewed</div></div></div>
+  <div class="so-item grey" id="so-poa"><div class="so-dot"></div><div><div class="so-label">⚖️ Power of Attorney</div><div class="so-val" id="so-poa-val">Not yet reviewed</div></div></div>
+  <div class="so-item grey" id="so-hd"><div class="so-dot"></div><div><div class="so-label">🏥 Health Directive</div><div class="so-val" id="so-hd-val">Not yet reviewed</div></div></div>
+</div>
+
+<!-- MAIN TABS -->
+<div class="main-tabs">
+  <div class="main-tab on" id="mtab-will" onclick="showMain('will')">📜 Will</div>
+  <div class="main-tab" id="mtab-poa" onclick="showMain('poa')">⚖️ Power of Attorney</div>
+  <div class="main-tab" id="mtab-hd" onclick="showMain('hd')">🏥 Health Directive</div>
+</div>
+
+<!-- ══ WILL ══ -->
+<div class="tab-content" id="main-will">
+  <div id="will-alert" class="alert-banner grey">📜 Will status not yet selected — complete the Document Details tab to begin.</div>
+  <div class="sub-tabs">
+    <div class="sub-tab on" id="stab-will-details" onclick="showSub('will','details')">📋 Document Details</div>
+    <div class="sub-tab guide-tab" id="stab-will-guide" onclick="showSub('will','guide')">💬 Conversation Guide <span class="guide-badge">10 Questions</span></div>
+    <div class="sub-tab" id="stab-will-notes" onclick="showSub('will','notes')">📝 Summary Notes</div>
+  </div>
+
+  <div class="sub-content" id="sub-will-details">
+    <div class="sub-head">Document status</div>
+    <div class="fg fg3">
+      <div class="f"><label>Will status</label>
+        <select id="will-status" onchange="updateStatus(this,'will')" class="s-grey">
+          <option value="">— Select status —</option>
+          <option value="current">✓ Current and up to date</option>
+          <option value="review">⚠ Needs review</option>
+          <option value="outdated">⚠ Outdated</option>
+          <option value="none">✗ No will in place</option>
+        </select>
+      </div>
+      <div class="f"><label>Date last updated</label><input placeholder="e.g. June 2022"></div>
+      <div class="f"><label>Where is original held?</label><input placeholder="e.g. Smith & Associates Law, Kelowna"></div>
+    </div>
+    <div class="sub-head">Lawyer / Notary</div>
+    <div class="fg fg3">
+      <div class="f"><label>Lawyer / notary name & firm</label><input placeholder="Full name & firm"></div>
+      <div class="f"><label>Phone</label><input placeholder="250-555-0000"></div>
+      <div class="f"><label>Email</label><input placeholder="lawyer@firm.com"></div>
+    </div>
+    <div class="sub-head">Executor(s)</div>
+    <div class="fg fg3">
+      <div class="f"><label>Primary executor</label><input placeholder="Full name"></div>
+      <div class="f"><label>Relationship to client</label><input placeholder="e.g. Spouse, adult child"></div>
+      <div class="f"><label>Executor contact</label><input placeholder="Phone / email"></div>
+    </div>
+    <div class="fg fg3">
+      <div class="f"><label>Alternate executor</label><input placeholder="Full name"></div>
+      <div class="f"><label>Relationship</label><input placeholder="e.g. Sibling, trusted friend"></div>
+      <div class="f"><label>Alternate contact</label><input placeholder="Phone / email"></div>
+    </div>
+    <div class="sub-head">Beneficiaries</div>
+    <div class="fg fg2">
+      <div class="f"><label>Primary beneficiary(ies) & share</label><textarea placeholder="e.g. Olivia Harper — 100% of estate on primary death&#10;Children equally if both deceased"></textarea></div>
+      <div class="f"><label>Secondary / contingent beneficiaries</label><textarea placeholder="e.g. Children equally — Lucas (50%) and Sophia (50%)&#10;If a child predeceases, their share to their children"></textarea></div>
+    </div>
+    <div class="sub-head">Specific bequests & guardianship</div>
+    <div class="fg fg2">
+      <div class="f"><label>Specific bequests or gifts</label><textarea placeholder="e.g. Wedding ring to daughter. Lake lot to be divided equally between children. Hunting rifle to brother James."></textarea></div>
+      <div class="f"><label>Guardian for minor children (if applicable)</label><textarea placeholder="e.g. Guardian: James and Sarah Harper (Daniel's brother)&#10;Alternate: Robert and Catherine Mills (Olivia's parents)"></textarea></div>
+    </div>
+    <div class="sub-head">Advisor follow-up</div>
+    <div class="fg fg2">
+      <div class="f"><label>Action required</label><input placeholder="e.g. Book appointment with lawyer to update — children not named"></div>
+      <div class="f"><label>Target date</label><input placeholder="e.g. June 2026"></div>
+    </div>
+  </div>
+
+  <div class="sub-content" id="sub-will-guide" style="display:none;">
+    <div class="guide-intro">
+      <div class="guide-intro-title">Will Conversation Guide</div>
+      <div class="guide-intro-body">These questions are designed to be asked in conversation — not answered on a form. Record the session in Otter, then paste the AI summary into the Summary Notes tab. The goal is to capture intent, not just facts — so the family understands the decisions when it matters most.</div>
+    </div>
+    <div class="q-item"><div class="q-header"><div class="q-num">1</div><div class="q-text">Can you walk me through how you've decided to divide your estate — and what was behind those decisions?</div></div><div class="q-note">This opens the conversation broadly and lets the client lead. You're listening for the reasoning — who they trust, who they feel responsible for, and what fairness means to them.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">2</div><div class="q-text">Are there any decisions in your will that might surprise the people you love — and is that intentional?</div></div><div class="q-note">This surfaces uncomfortable truths gently. If someone is treated differently — less, or left out entirely — there's usually a reason. The question lets the client name it without being asked directly.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">3</div><div class="q-text">What do you want your family to understand about why you made the choices you made?</div></div><div class="q-note">This is the legacy message question. Some clients want their children to know "this was about fairness, not favouritism." This is where a letter of wishes or ethical will might come from.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">4</div><div class="q-text">Are there any family dynamics — relationships, situations, or histories — that could affect how your estate is received?</div></div><div class="q-note">Blended families, estrangements, family members with financial difficulties — this question allows the client to flag complexity without being asked to name specific conflicts.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">5</div><div class="q-text">Is there anything you own that has significant sentimental value — something that matters more for what it represents than what it's worth?</div></div><div class="q-note">A lake property, a piece of jewellery, a family heirloom. These often create the most conflict because the will treats them like financial assets when they carry emotional weight.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">6</div><div class="q-text">Does your executor know they've been named — and have you talked with them about what's actually involved?</div></div><div class="q-note">Many people are named as executor without being told. The job can take months or years. This question often reveals the conversation hasn't happened yet.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">7</div><div class="q-text">How do you feel about leaving a large lump sum to your beneficiaries — is there anything about timing or conditions you've thought about?</div></div><div class="q-note">For clients with young adult children or a beneficiary who struggles with money — a testamentary trust or staggered distributions may be worth exploring.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">8</div><div class="q-text">Is there a cause, a community, or an institution you want to remember in your will?</div></div><div class="q-note">Charitable bequests are often something clients want but haven't been asked about. A percentage of residue or a named gift to a hospital or foundation — this question surfaces intention that might otherwise go unrecorded.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">9</div><div class="q-text">If both of you were gone at the same time — what would you want the world to look like for the people you're leaving behind?</div></div><div class="q-note">This is the hardest question and the most important. It gets at guardianship, the kids' education, the family home, who holds things together. The conversation often reveals the will doesn't yet reflect these wishes clearly.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">10</div><div class="q-text">When this is all said and done — what do you want your legacy to feel like to the people you love most?</div></div><div class="q-note">This is the closing question. Not what they own — who they are and what they stood for. Some clients have strong feelings here. That's the right answer. Record it carefully.</div></div>
+    <div class="ai-prompt">
+      <div class="ai-prompt-title">📋 AI Summary Prompt — paste into Claude or ChatGPT after your Otter session</div>
+      <div class="ai-prompt-text">"I have a transcript from a conversation with a client about their will and estate intentions. Please summarize the key points in clear, professional language — capturing their stated wishes, the reasoning behind their decisions, any family dynamics or sensitivities mentioned, specific bequests discussed, and follow-up actions identified. Keep the summary to one page. Here is the transcript: [paste transcript here]"</div>
+    </div>
+  </div>
+
+  <div class="sub-content" id="sub-will-notes" style="display:none;">
+    <div class="notes-meta">
+      <div class="f"><label>Conversation date</label><input placeholder="e.g. April 7, 2026"></div>
+      <div class="f"><label>Recorded by</label><input placeholder="e.g. Andrew Glen"></div>
+      <div class="f"><label>Recording stored in</label><input placeholder="e.g. Otter · SharePoint · Client folder"></div>
+    </div>
+    <textarea class="notes-area" placeholder="Paste the AI-generated summary of the will conversation here.
+
+Format suggested:
+
+INTENTIONS & DIVISION OF ESTATE
+[Client's own words about how and why they've divided things]
+
+KEY DECISIONS & REASONING
+[Specific bequests, family considerations, executor choice]
+
+SENSITIVITIES & FAMILY DYNAMICS
+[Anything that might affect how the estate lands]
+
+FOLLOW-UP ACTIONS
+[What needs to happen next and by when]"></textarea>
+    <div class="notes-tip">💡 This record is kept in the Northstar vault alongside the client file. It is not a legal document — it is a record of stated intentions to guide the executor, advisor, and family when the time comes. Review annually.</div>
+  </div>
+</div>
+
+<!-- ══ POA ══ -->
+<div class="tab-content" id="main-poa" style="display:none;">
+  <div id="poa-alert" class="alert-banner grey">⚖️ POA status not yet selected — complete the Document Details tab to begin.</div>
+  <div class="sub-tabs">
+    <div class="sub-tab on" id="stab-poa-details" onclick="showSub('poa','details')">📋 Document Details</div>
+    <div class="sub-tab guide-tab" id="stab-poa-guide" onclick="showSub('poa','guide')">💬 Conversation Guide <span class="guide-badge">10 Questions</span></div>
+    <div class="sub-tab" id="stab-poa-notes" onclick="showSub('poa','notes')">📝 Summary Notes</div>
+  </div>
+
+  <div class="sub-content" id="sub-poa-details">
+    <div class="sub-head">Document status</div>
+    <div class="fg fg3">
+      <div class="f"><label>POA status</label>
+        <select id="poa-status" onchange="updateStatus(this,'poa')" class="s-grey">
+          <option value="">— Select status —</option>
+          <option value="both">✓ In place — both types</option>
+          <option value="partial">⚠ Partial — one type only</option>
+          <option value="review">⚠ Needs review</option>
+          <option value="none">✗ Not in place</option>
+        </select>
+      </div>
+      <div class="f"><label>Date signed</label><input placeholder="e.g. June 2022"></div>
+      <div class="f"><label>Where is original held?</label><input placeholder="e.g. Smith & Associates Law"></div>
+    </div>
+    <div class="fg fg3">
+      <div class="f"><label>Prepared by (lawyer / notary)</label><input placeholder="Full name & firm"></div>
+      <div class="f"><label>Phone</label><input placeholder="250-555-0000"></div>
+      <div class="f"><label>Email</label><input placeholder="lawyer@firm.com"></div>
+    </div>
+    <div class="sub-head">Attorney — Property (Financial Decisions)</div>
+    <div class="fg fg3">
+      <div class="f"><label>Primary attorney (property)</label><input placeholder="Full name"></div>
+      <div class="f"><label>Relationship</label><input placeholder="e.g. Spouse, adult child"></div>
+      <div class="f"><label>Contact</label><input placeholder="Phone / email"></div>
+    </div>
+    <div class="fg fg3">
+      <div class="f"><label>Alternate attorney (property)</label><input placeholder="Full name"></div>
+      <div class="f"><label>Relationship</label><input placeholder="e.g. Sibling, trusted friend"></div>
+      <div class="f"><label>Contact</label><input placeholder="Phone / email"></div>
+    </div>
+    <div class="fg"><div class="f"><label>Conditions or limitations on property POA</label><input placeholder="e.g. Joint signing required for transactions over $50,000. Cannot gift assets without family consent."></div></div>
+    <div class="sub-head">Attorney — Personal Care (Health Decisions)</div>
+    <div class="fg fg3">
+      <div class="f"><label>Primary attorney (personal care)</label><input placeholder="Full name"></div>
+      <div class="f"><label>Relationship</label><input placeholder="e.g. Spouse, adult child"></div>
+      <div class="f"><label>Contact</label><input placeholder="Phone / email"></div>
+    </div>
+    <div class="fg fg3">
+      <div class="f"><label>Alternate attorney (personal care)</label><input placeholder="Full name"></div>
+      <div class="f"><label>Relationship</label><input placeholder="e.g. Sibling, close friend"></div>
+      <div class="f"><label>Contact</label><input placeholder="Phone / email"></div>
+    </div>
+    <div class="fg"><div class="f"><label>Conditions or limitations on personal care POA</label><input placeholder="e.g. Must consult all adult children before major medical decisions."></div></div>
+    <div class="sub-head">Advisor follow-up</div>
+    <div class="fg fg2">
+      <div class="f"><label>Action required</label><input placeholder="e.g. POA not in place — urgent. Book with lawyer immediately."></div>
+      <div class="f"><label>Target date</label><input placeholder="e.g. June 2026"></div>
+    </div>
+  </div>
+
+  <div class="sub-content" id="sub-poa-guide" style="display:none;">
+    <div class="guide-intro">
+      <div class="guide-intro-title">Power of Attorney Conversation Guide</div>
+      <div class="guide-intro-body">The POA conversation is about trust, values, and preparation. You're capturing why they chose their attorney and whether that person is actually ready for the responsibility. Record in Otter, summarize with AI, paste into Summary Notes.</div>
+    </div>
+    <div class="q-item"><div class="q-header"><div class="q-num">1</div><div class="q-text">If you were in an accident tomorrow and couldn't make financial or medical decisions — who do you trust most to step in?</div></div><div class="q-note">This is deliberately direct. It removes the legal language and gets straight to the human reality. Listen for who they name instinctively — and whether that matches who's currently on the document.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">2</div><div class="q-text">Why did you choose this person specifically? What is it about them that makes you confident they'd make good decisions on your behalf?</div></div><div class="q-note">This surfaces the qualities the client values — judgment, trustworthiness, level-headedness, financial familiarity. It can also reveal the choice was made out of obligation rather than genuine confidence.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">3</div><div class="q-text">Does your attorney know they've been named — and have you actually had the conversation with them about what you'd want?</div></div><div class="q-note">Many people are named as attorney without being told. The POA document alone isn't enough — the attorney needs to know the client's wishes, values, and expectations. This question often reveals the conversation is overdue.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">4</div><div class="q-text">When it comes to managing your finances, what would you want your attorney to know about how you think about money?</div></div><div class="q-note">Values around spending, saving, risk, family support, charitable giving — these don't appear in the legal document but matter enormously when someone manages your affairs.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">5</div><div class="q-text">Are there any financial decisions you'd want your attorney to consult others about before acting?</div></div><div class="q-note">Some clients want a second opinion required for large gifts, property sales, or investment decisions. Others want full authority given. This surfaces conditions or limitations that should be built into the document.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">6</div><div class="q-text">If you needed to move to a care facility, what would you want your attorney to know about your wishes for your quality of life?</div></div><div class="q-note">Level of care, where they'd want to live, maintaining dignity and independence, staying close to family — these personal care decisions go beyond the legal document. A well-prepared attorney needs to know these things.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">7</div><div class="q-text">Is there anyone in your life you specifically would NOT want involved in your financial or personal affairs — and why?</div></div><div class="q-note">Family conflict, estrangements, a person who might unduly influence decisions — sometimes the most important thing a POA does is exclude certain people. The client needs to be able to name this.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">8</div><div class="q-text">What does maintaining your independence look like to you — and how long would you want to fight for it?</div></div><div class="q-note">Some clients want every measure taken to remain independent. Others would rather transition to supported care earlier and focus on quality of life. This shapes how the attorney approaches decisions about living arrangements and resources.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">9</div><div class="q-text">Are you aware that your POA can be activated while you're still alive and capable, if you choose — not just when incapacity occurs?</div></div><div class="q-note">Many clients don't know this. A continuing POA can be used proactively — during travel, illness, or for convenience. This often opens a practical conversation about whether they want to activate it sooner than planned.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">10</div><div class="q-text">What's the one thing you'd most want the person holding your POA to remember when they're making decisions for you?</div></div><div class="q-note">This closing question often produces the most important answer. It's direct, personal, and gets to the heart of what the client trusts this person to honour. Record it carefully.</div></div>
+    <div class="ai-prompt">
+      <div class="ai-prompt-title">📋 AI Summary Prompt — paste into Claude or ChatGPT after your Otter session</div>
+      <div class="ai-prompt-text">"I have a transcript from a conversation with a client about their Power of Attorney. Please summarize the key points in clear, professional language — capturing why they chose their attorney, their values around financial decisions, their wishes for personal care and independence, conditions or limitations discussed, people they would not want involved, and follow-up actions identified. Keep the summary to one page. Here is the transcript: [paste transcript here]"</div>
+    </div>
+  </div>
+
+  <div class="sub-content" id="sub-poa-notes" style="display:none;">
+    <div class="notes-meta">
+      <div class="f"><label>Conversation date</label><input placeholder="e.g. April 7, 2026"></div>
+      <div class="f"><label>Recorded by</label><input placeholder="e.g. Andrew Glen"></div>
+      <div class="f"><label>Recording stored in</label><input placeholder="e.g. Otter · SharePoint · Client folder"></div>
+    </div>
+    <textarea class="notes-area" placeholder="Paste the AI-generated summary of the POA conversation here.
+
+Format suggested:
+
+WHY THEY CHOSE THIS PERSON
+[Client's reasoning for their choice of attorney]
+
+FINANCIAL VALUES & WISHES
+[How they think about money, what they'd want their attorney to know]
+
+PERSONAL CARE WISHES
+[Independence, quality of life, care preferences]
+
+CONDITIONS OR LIMITATIONS DISCUSSED
+[Any constraints they'd want built into the document]
+
+FOLLOW-UP ACTIONS
+[What needs to happen next and by when]"></textarea>
+    <div class="notes-tip">💡 This record captures the spirit of the POA — not just who's named, but why, and what the client wants their attorney to understand. Review annually or after any major life change.</div>
+  </div>
+</div>
+
+<!-- ══ HEALTH DIRECTIVE ══ -->
+<div class="tab-content" id="main-hd" style="display:none;">
+  <div id="hd-alert" class="alert-banner grey">🏥 Health directive status not yet selected — complete the Document Details tab to begin.</div>
+  <div class="sub-tabs">
+    <div class="sub-tab on" id="stab-hd-details" onclick="showSub('hd','details')">📋 Document Details</div>
+    <div class="sub-tab guide-tab" id="stab-hd-guide" onclick="showSub('hd','guide')">💬 Conversation Guide <span class="guide-badge">10 Questions</span></div>
+    <div class="sub-tab" id="stab-hd-notes" onclick="showSub('hd','notes')">📝 Summary Notes</div>
+  </div>
+
+  <div class="sub-content" id="sub-hd-details">
+    <div class="sub-head">Document status</div>
+    <div class="fg fg3">
+      <div class="f"><label>Health directive status</label>
+        <select id="hd-status" onchange="updateStatus(this,'hd')" class="s-grey">
+          <option value="">— Select status —</option>
+          <option value="current">✓ In place and current</option>
+          <option value="review">⚠ Needs review</option>
+          <option value="none">✗ Not in place</option>
+        </select>
+      </div>
+      <div class="f"><label>Date signed</label><input placeholder="e.g. March 2020"></div>
+      <div class="f"><label>Where is original held?</label><input placeholder="e.g. Lawyer's office · Home filing"></div>
+    </div>
+    <div class="fg fg3">
+      <div class="f"><label>Registered with provincial registry?</label>
+        <select class="s-grey">
+          <option value="">— Select —</option>
+          <option>✓ Yes — registered</option>
+          <option>✗ Not registered</option>
+          <option>N/A — province has no registry</option>
+        </select>
+      </div>
+      <div class="f"><label>Family doctor name</label><input placeholder="Dr. Full Name"></div>
+      <div class="f"><label>Doctor phone / clinic</label><input placeholder="250-555-0000 · Clinic name"></div>
+    </div>
+    <div class="sub-head">Substitute Decision Maker</div>
+    <div class="fg fg3">
+      <div class="f"><label>Primary SDM</label><input placeholder="Full name"></div>
+      <div class="f"><label>Relationship</label><input placeholder="e.g. Spouse, adult child"></div>
+      <div class="f"><label>Contact details</label><input placeholder="Phone / email"></div>
+    </div>
+    <div class="fg fg3">
+      <div class="f"><label>Alternate SDM</label><input placeholder="Full name"></div>
+      <div class="f"><label>Relationship</label><input placeholder="e.g. Sibling, close friend"></div>
+      <div class="f"><label>Contact details</label><input placeholder="Phone / email"></div>
+    </div>
+    <div class="sub-head">Stated wishes</div>
+    <div class="fg fg3">
+      <div class="f"><label>Life support wishes</label>
+        <select class="s-grey">
+          <option value="">— Select —</option>
+          <option>All measures — sustain life as long as possible</option>
+          <option>Measures if reasonable recovery is possible</option>
+          <option>Comfort care only — no extraordinary measures</option>
+          <option>As directed by SDM</option>
+        </select>
+      </div>
+      <div class="f"><label>CPR / resuscitation wishes</label>
+        <select class="s-grey">
+          <option value="">— Select —</option>
+          <option>Full resuscitation — all efforts</option>
+          <option>Resuscitation if reasonable chance of recovery</option>
+          <option>DNR — do not resuscitate</option>
+          <option>As directed by SDM</option>
+        </select>
+      </div>
+      <div class="f"><label>Organ donation registered?</label>
+        <select class="s-grey">
+          <option value="">— Select —</option>
+          <option>✓ Yes — registered donor</option>
+          <option>No — not registered</option>
+          <option>Partial — specific organs only</option>
+          <option>To be discussed with SDM</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><div class="f"><label>Additional wishes (pain management, location of care, cultural / religious considerations)</label><textarea placeholder="e.g. Wishes to remain at home as long as safely possible. No extended ICU stays if quality of life is not recoverable. Catholic faith important — last rites should be arranged. Pain management prioritized."></textarea></div></div>
+    <div class="sub-head">Advisor follow-up</div>
+    <div class="fg fg2">
+      <div class="f"><label>Action required</label><input placeholder="e.g. Health directive not in place — refer to lawyer. Discuss SDM with family."></div>
+      <div class="f"><label>Target date</label><input placeholder="e.g. June 2026"></div>
+    </div>
+  </div>
+
+  <div class="sub-content" id="sub-hd-guide" style="display:none;">
+    <div class="guide-intro">
+      <div class="guide-intro-title">Health Directive Conversation Guide</div>
+      <div class="guide-intro-body">This is the most personal conversation of the three — and the most important. You're giving someone the chance to be heard about what matters most when they can no longer speak for themselves. Go slowly. Let silence sit. Record in Otter, summarize with AI, paste into Summary Notes.</div>
+    </div>
+    <div class="q-item"><div class="q-header"><div class="q-num">1</div><div class="q-text">Have you ever watched someone go through a serious health crisis or end-of-life situation — and did it change how you think about your own wishes?</div></div><div class="q-note">This opens through lived experience rather than abstract planning. It's much easier to talk about what you witnessed and felt than to answer hypothetical questions cold. This often becomes the frame for everything that follows.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">2</div><div class="q-text">What does quality of life mean to you — what would have to be true for life to still feel worth living?</div></div><div class="q-note">This is the foundational question for any health directive. The answer is completely personal — for one person it's recognising their family, for another it's physical independence. There's no right answer, but there's usually a clear one.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">3</div><div class="q-text">If you were seriously ill with no reasonable chance of recovery — what would you want your medical care to focus on?</div></div><div class="q-note">Comfort, pain management, time to say goodbye, being at home — this question gets at the end-of-life priorities that the health directive should reflect.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">4</div><div class="q-text">How do you feel about life support and resuscitation — under what circumstances would you want everything done, and when would you want it stopped?</div></div><div class="q-note">The DNR question — framed with compassion. Many people want "everything done if there's a real chance" but not "everything done to extend dying." That distinction matters enormously and needs to be on the record.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">5</div><div class="q-text">Who in your life do you trust most to make medical decisions for you when you cannot — and what makes you confident in that choice?</div></div><div class="q-note">The SDM is often chosen by default rather than design. This question helps the client think through whether the right person is named — and whether that person knows what they'd want.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">6</div><div class="q-text">Have you talked to your substitute decision maker about your wishes — do they actually know what you'd want?</div></div><div class="q-note">Being named as SDM without context is one of the hardest positions to be in. This question often reveals the conversation is overdue — and becomes an action item out of the meeting.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">7</div><div class="q-text">Where would you want to be cared for — and where would you want to be when you die, if you had a choice?</div></div><div class="q-note">Home, a hospice, near family — these deeply personal wishes rarely make it into legal documents. Capturing this creates a roadmap for the SDM that goes beyond any form.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">8</div><div class="q-text">Are there any cultural, spiritual, or religious wishes that should shape the decisions made on your behalf?</div></div><div class="q-note">Faith traditions, rituals, prayers, cultural practices around death and dying — these matter deeply to some clients and are invisible to the healthcare system unless they're on record.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">9</div><div class="q-text">Is there a message you want to leave for the people you love — something you'd want them to know or remember?</div></div><div class="q-note">This question surfaces what the client most wants honoured at the end of their life. Some clients write letters. Some record a video. Some just want the answer on file with someone who cares. Record it as they give it.</div></div>
+    <div class="q-item"><div class="q-header"><div class="q-num">10</div><div class="q-text">What would a good death look like to you — and what would feel like a hard one?</div></div><div class="q-note">This is the most direct question and also the most important. It removes euphemism and gets to the heart of what the health directive is for. Many clients have never been asked this. Give them time. The answer is the most important thing you'll write down today.</div></div>
+    <div class="ai-prompt">
+      <div class="ai-prompt-title">📋 AI Summary Prompt — paste into Claude or ChatGPT after your Otter session</div>
+      <div class="ai-prompt-text">"I have a transcript from a conversation with a client about their health directive and end-of-life wishes. Please summarize the key points in clear, compassionate language — capturing their wishes about life support and resuscitation, their definition of quality of life, care and location preferences, spiritual or cultural considerations, their substitute decision maker and whether that person is prepared, any messages they want recorded, and follow-up actions identified. Keep the summary to one page. Here is the transcript: [paste transcript here]"</div>
+    </div>
+  </div>
+
+  <div class="sub-content" id="sub-hd-notes" style="display:none;">
+    <div class="notes-meta">
+      <div class="f"><label>Conversation date</label><input placeholder="e.g. April 7, 2026"></div>
+      <div class="f"><label>Recorded by</label><input placeholder="e.g. Andrew Glen"></div>
+      <div class="f"><label>Recording stored in</label><input placeholder="e.g. Otter · SharePoint · Client folder"></div>
+    </div>
+    <textarea class="notes-area" placeholder="Paste the AI-generated summary of the health directive conversation here.
+
+Format suggested:
+
+QUALITY OF LIFE & END-OF-LIFE WISHES
+[What matters most to the client — in their own words as much as possible]
+
+LIFE SUPPORT & RESUSCITATION
+[Specific wishes — under what conditions, what they would and would not want]
+
+CARE PREFERENCES
+[Where, how, with whom — location, pain management, cultural or spiritual needs]
+
+MESSAGE TO FAMILY
+[Anything they want recorded for the people they love]
+
+FOLLOW-UP ACTIONS
+[Document updates, SDM conversations, registry registration, etc.]"></textarea>
+    <div class="notes-tip">💡 This is the most personal record in the client file. It represents what the client wants honoured when they can no longer speak for themselves. Handle with care. Review annually and after any serious health event.</div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+document.getElementById('hdr-date').textContent = new Date().toLocaleDateString('en-CA',{weekday:'short',month:'long',day:'numeric',year:'numeric'});
+
+function showMain(tab){
+  ['will','poa','hd'].forEach(t=>{
+    document.getElementById(`main-${t}`).style.display = t===tab?'block':'none';
+    document.getElementById(`mtab-${t}`).className = 'main-tab'+(t===tab?' on':'');
+  });
+}
+
+function showSub(main, sub){
+  ['details','guide','notes'].forEach(s=>{
+    const c=document.getElementById(`sub-${main}-${s}`);
+    const b=document.getElementById(`stab-${main}-${s}`);
+    if(c) c.style.display = s===sub?'block':'none';
+    if(b) b.className = 'sub-tab'+(s==='guide'?' guide-tab':'')+(s===sub?' on':'');
+  });
+}
+
+function updateStatus(sel, section){
+  const val = sel.value;
+  const good = val==='current'||val==='both';
+  const warn = val==='review'||val==='partial';
+  const bad  = val==='none'||val==='outdated';
+  sel.className = good?'s-green':warn?'s-amber':bad?'s-red':'s-grey';
+
+  const cls = good?'green':warn?'amber':bad?'red':'grey';
+  const card = document.getElementById(`so-${section}`);
+  const valEl = document.getElementById(`so-${section}-val`);
+  const map = {current:'Current and up to date',both:'In place — both types',review:'Needs review',partial:'Partial — one type only',outdated:'Outdated',none:'Not in place','':'Not yet reviewed'};
+  if(card) card.className = `so-item ${cls}`;
+  if(valEl) valEl.textContent = map[val]||'Not yet reviewed';
+
+  const banner = document.getElementById(`${section}-alert`);
+  const icons = {will:'📜',poa:'⚖️',hd:'🏥'};
+  const msgs = {
+    current:`${icons[section]} Will is current and up to date. Review at next annual meeting or after any major life change.`,
+    both:`${icons[section]} Power of Attorney is in place for both property and personal care. Review annually.`,
+    review:`${icons[section]} This document needs review. Book an appointment with the lawyer before the next client meeting.`,
+    partial:`${icons[section]} Only one type of POA is in place. Both property and personal care are essential — the missing type should be added.`,
+    outdated:`${icons[section]} This document is outdated. Circumstances may have changed significantly since it was prepared. Book with lawyer urgently.`,
+    none:`${icons[section]} This document is not in place. Without it, a court may need to appoint someone to act — at significant cost and delay. Urgent priority.`,
+    '':'Status not yet selected — complete the Document Details tab.',
+  };
+  const hdSpecific = {
+    'hd-current':`${icons.hd} Health directive is in place and current. Review annually and after any serious health event.`,
+    'hd-none':`${icons.hd} No health directive in place. Medical staff and family will make decisions without knowing the client's wishes. Urgent priority.`,
+  };
+  const text = hdSpecific[`${section}-${val}`] || msgs[val] || msgs[''];
+  if(banner){ banner.className=`alert-banner ${cls}`; banner.textContent=text; }
+}
+
+function clearAll(){
+  if(!confirm('Clear all fields? This cannot be undone.')) return;
+  document.querySelectorAll('input,textarea').forEach(el=>el.value='');
+  document.querySelectorAll('select').forEach(sel=>{sel.selectedIndex=0;sel.className='s-grey';});
+  ['will','poa','hd'].forEach(s=>{
+    const card=document.getElementById(`so-${s}`);
+    const val=document.getElementById(`so-${s}-val`);
+    const banner=document.getElementById(`${s}-alert`);
+    if(card) card.className='so-item grey';
+    if(val) val.textContent='Not yet reviewed';
+    if(banner){banner.className='alert-banner grey';banner.textContent='Status not yet selected — complete the Document Details tab.';}
+  });
+}
+</script>
+</body>
+</html>
