@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northstar Command Center</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0B2545;--navy2:#1B3A6B;
+  --gold:#B8860B;--gold2:#D4A017;--goldsoft:#FDF6E3;
+  --teal:#0D7377;--teal2:#14A1A6;--tealsoft:#E8F7F7;
+  --surf:#F5F6F8;--bdr:#DDE1E7;
+  --txt:#1A1E2E;--txt2:#4A5568;--txt3:#9AA3B2;
+  --green:#1A7A2A;--greensoft:#E8F5EB;
+  --amber:#B54708;--ambersoft:#FEF3EA;
+  --red:#9B1C1C;--redsoft:#FEE8E8;
+  --blue:#1565C0;--bluesoft:#E3F0FF;
+  --p1:#1565C0;--p2:#B8860B;--p3:#0D7377;--p4:#6A1B9A;--p5:#1A7A2A;
+  --sg:#D4A017;--ss:#9AA3B2;--sb:#CD7F32;
+}
+html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--txt);background:var(--surf);}
+.app{display:grid;grid-template-columns:240px 1fr;grid-template-rows:58px 1fr;height:100vh;}
+.header{grid-column:1/-1;background:linear-gradient(135deg,var(--navy),var(--navy2));display:flex;align-items:center;justify-content:space-between;padding:0 22px;box-shadow:0 2px 16px rgba(0,0,0,.25);z-index:100;}
+.hl{display:flex;align-items:center;gap:12px;}
+.hstar{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.hstar svg{width:18px;height:18px;fill:white;}
+.htitle{font-family:'Cormorant Garamond',serif;font-size:18px;color:white;font-weight:700;}
+.hsub{font-size:9.5px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-top:1px;}
+.hr{display:flex;align-items:center;gap:10px;}
+.hdate{font-size:11px;color:rgba(255,255,255,.35);}
+.hsearch{background:rgba(255,255,255,.1);border:0.5px solid rgba(255,255,255,.2);border-radius:7px;padding:6px 12px;color:white;font-family:inherit;font-size:12px;outline:none;width:200px;}
+.hsearch::placeholder{color:rgba(255,255,255,.3);}
+.hpill{background:rgba(255,255,255,.1);border:0.5px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:10px;padding:4px 10px;border-radius:10px;}
+
+/* SIDEBAR */
+.sidebar{background:var(--navy);overflow-y:auto;display:flex;flex-direction:column;padding-bottom:8px;}
+.sb-sec{padding:14px 14px 5px;font-size:9px;font-weight:600;color:rgba(255,255,255,.22);text-transform:uppercase;letter-spacing:.12em;}
+.sb-nav{display:flex;align-items:center;gap:9px;padding:8px 14px;cursor:pointer;border-radius:6px;margin:1px 6px;color:rgba(255,255,255,.6);font-size:12px;transition:background .12s;}
+.sb-nav:hover{background:rgba(255,255,255,.08);color:white;}
+.sb-nav.on{background:rgba(255,255,255,.12);color:white;font-weight:600;}
+.sb-icon{font-size:13px;width:18px;text-align:center;flex-shrink:0;}
+.sb-badge{margin-left:auto;background:var(--red);color:white;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;display:none;}
+.sb-div{height:0.5px;background:rgba(255,255,255,.07);margin:7px 14px;}
+.sb-tool{display:flex;align-items:center;gap:8px;padding:6px 14px;cursor:pointer;color:rgba(255,255,255,.48);font-size:11.5px;margin:1px 6px;border-radius:5px;transition:all .12s;position:relative;}
+.sb-tool:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);}
+.sb-tip{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);background:#1a2e4a;border:1px solid rgba(255,255,255,.15);border-radius:7px;padding:7px 12px;font-size:11px;color:rgba(255,255,255,.9);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.sb-tip::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);border:5px solid transparent;border-right-color:#1a2e4a;}
+.sb-tool:hover .sb-tip{opacity:1;}
+.sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.sb-ico{font-size:12px;flex-shrink:0;opacity:.6;}
+.sb-sp{flex:1;}
+.sb-bot{padding:12px 14px;border-top:0.5px solid rgba(255,255,255,.07);}
+.sb-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.7);}
+.sb-role{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;}
+
+/* MAIN */
+.main{overflow-y:auto;padding:18px 20px 40px;}
+.view{display:none;}
+.view.on{display:block;}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;}
+.metric{background:white;border:1px solid var(--bdr);border-radius:9px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+.metric.t-teal{border-top:3px solid var(--teal);}
+.metric.t-red{border-top:3px solid var(--red);}
+.mv{font-size:22px;font-weight:600;color:var(--navy);line-height:1.1;}
+.ml{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}
+
+/* PANELS */
+.panel{background:white;border:1px solid var(--bdr);border-radius:11px;box-shadow:0 1px 4px rgba(0,0,0,.07);overflow:hidden;margin-bottom:14px;}
+.ph{padding:11px 16px;border-bottom:1px solid var(--bdr);background:linear-gradient(180deg,#FAFBFC,white);display:flex;align-items:center;gap:8px;}
+.ph-i{font-size:15px;}
+.ph-t{font-size:12px;font-weight:700;color:var(--navy);flex:1;}
+.ph-s{font-size:10.5px;color:var(--txt3);}
+.pb{padding:14px 16px;}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* WI5 */
+.wi5-row{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--bdr);}
+.wi5-row:last-child{border-bottom:none;}
+.wi5-c{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;}
+.wi5-c.todo{background:var(--navy);color:white;}
+.wi5-c.done{background:var(--green);color:white;}
+.wi5-n{font-size:12px;font-weight:600;color:var(--navy);}
+.wi5-a{font-size:11px;color:var(--txt2);margin-top:1px;}
+.wi5-n.s{text-decoration:line-through;color:var(--txt3);}
+.tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;white-space:nowrap;}
+.t-rev{background:#FEF3EA;color:var(--amber);}
+.t-rev2{background:var(--tealsoft);color:var(--teal);}
+.t-plan{background:var(--bluesoft);color:var(--blue);}
+.t-new{background:var(--greensoft);color:var(--green);}
+.t-urg{background:var(--redsoft);color:var(--red);}
+
+/* TASK ROWS */
+.t-row{display:grid;grid-template-columns:1fr 160px 120px 110px 28px;gap:8px;align-items:center;padding:8px 12px;border-bottom:0.5px solid var(--bdr);}
+.t-row:last-child{border-bottom:none;}
+.t-row.hdr{background:var(--navy);border-radius:7px 7px 0 0;padding:7px 12px;}
+.thl{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.07em;}
+.t-title{font-size:12px;font-weight:500;color:var(--txt);cursor:pointer;}
+.t-title:hover{color:var(--teal);}
+.t-cli{font-size:11px;color:var(--txt2);}
+.t-due{font-size:11.5px;color:var(--txt2);}
+.t-del{border:none;background:none;cursor:pointer;color:var(--txt3);font-size:16px;}
+.t-del:hover{color:var(--red);}
+.ubadge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap;}
+.ub-ov{background:var(--red);color:white;}
+.ub-ur{background:var(--redsoft);color:var(--red);}
+.ub-im{background:var(--ambersoft);color:var(--amber);}
+.ub-la{background:#FEFCE8;color:#854F0B;}
+.ub-cw{background:var(--bluesoft);color:var(--blue);}
+
+/* ADD TASK */
+.add-t{display:grid;grid-template-columns:1fr 180px 140px auto;gap:8px;padding:10px 0 0;}
+.at-in{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:6px;font-family:inherit;font-size:12px;outline:none;width:100%;}
+.at-in:focus{border-color:var(--teal);}
+.at-btn{padding:7px 16px;border-radius:6px;background:var(--teal);color:white;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;}
+
+/* ALERTS */
+.al-row{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:0.5px solid var(--bdr);}
+.al-row:last-child{border-bottom:none;}
+.al-i{font-size:14px;flex-shrink:0;margin-top:1px;}
+.al-cli{font-size:12px;font-weight:600;color:var(--navy);}
+.al-msg{font-size:11px;color:var(--txt2);}
+
+/* CLIENT HUB */
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px;}
+.filt{padding:5px 11px;border-radius:20px;border:1px solid var(--bdr);background:white;font-family:inherit;font-size:11px;font-weight:500;cursor:pointer;color:var(--txt2);}
+.filt:hover{border-color:var(--teal);color:var(--teal);}
+.filt.on{background:var(--navy);border-color:var(--navy);color:white;}
+.ch-search{padding:6px 12px;border:1.5px solid var(--bdr);border-radius:7px;font-family:inherit;font-size:12px;outline:none;flex:1;max-width:220px;}
+.ch-search:focus{border-color:var(--teal);}
+.ch-table{border:1px solid var(--bdr);border-radius:8px;overflow:hidden;}
+.ch-hdr{display:grid;grid-template-columns:190px 44px 110px 28px 28px 28px 28px 28px 1fr 90px;gap:6px;align-items:center;background:var(--navy);padding:7px 12px;}
+.chl{font-size:9px;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em;}
+.ch-row{display:grid;grid-template-columns:190px 44px 110px 28px 28px 28px 28px 28px 1fr 90px;gap:6px;align-items:center;padding:7px 12px;border-bottom:0.5px solid var(--bdr);cursor:pointer;}
+.ch-row:hover{background:var(--surf);}
+.ch-row:last-child{border-bottom:none;}
+.ch-name{font-size:12px;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ch-stage{font-size:10.5px;color:var(--txt2);}
+.pt-dot{width:10px;height:10px;border-radius:50%;margin:0 auto;}
+.ch-next{font-size:11px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sp-lnk{font-size:10.5px;font-weight:600;color:var(--teal);text-decoration:none;}
+.pt-leg{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.ptl{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--txt2);}
+.ptld{width:8px;height:8px;border-radius:50%;}
+
+/* 5-MIN RESET */
+.rs-step{display:flex;gap:13px;padding:12px 0;border-bottom:0.5px solid var(--bdr);align-items:flex-start;}
+.rs-step:last-child{border-bottom:none;}
+.rs-num{width:26px;height:26px;border-radius:50%;background:var(--navy);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.rs-lbl{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:3px;}
+.rs-desc{font-size:11px;color:var(--txt2);line-height:1.5;margin-bottom:6px;}
+.rs-ta{width:100%;padding:8px 10px;border:1.5px solid var(--bdr);border-radius:6px;font-family:inherit;font-size:12px;outline:none;resize:vertical;min-height:56px;line-height:1.5;}
+.rs-ta:focus,.rs-in:focus{border-color:var(--teal);}
+.rs-in{padding:8px 10px;border:1.5px solid var(--bdr);border-radius:6px;font-family:inherit;font-size:12px;outline:none;width:100%;}
+.rs-row{display:grid;grid-template-columns:1fr 200px;gap:10px;margin-top:6px;}
+.btn-p{padding:9px 22px;border-radius:7px;background:var(--teal);color:white;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
+.btn-g{padding:9px 16px;border-radius:7px;background:white;color:var(--txt2);border:1px solid var(--bdr);font-family:inherit;font-size:13px;cursor:pointer;}
+.empty{text-align:center;padding:20px;color:var(--txt3);font-size:12px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <div class="hl">
+    <div class="hstar"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+    <div><div class="htitle">Northstar Command Center</div><div class="hsub">ALG Wealth · Andrew Louis Glen</div></div>
+  </div>
+  <div class="hr">
+    <input class="hsearch" placeholder="Search clients..." oninput="gSearch(this.value)">
+    <span class="hdate" id="hdr-date"></span>
+    <span class="hpill" id="hdr-pill"></span>
+  </div>
+</div>
+
+<div class="sidebar">
+  <div class="sb-sec">Navigate</div>
+  <div class="sb-nav on" onclick="goView('dashboard',this)"><span class="sb-icon">⬛</span>Dashboard</div>
+  <div class="sb-nav" onclick="goView('clients',this)"><span class="sb-icon">👥</span>Client Hub</div>
+  <div class="sb-nav" onclick="goView('tasks',this)"><span class="sb-icon">✓</span>Task System<span class="sb-badge" id="sb-badge"></span></div>
+  <div class="sb-nav" onclick="goView('reset',this)"><span class="sb-icon">⏱</span>5-Min Reset</div>
+
+  <div class="sb-div"></div>
+  <div class="sb-sec">Planning Tools</div>
+  <div class="sb-tool" onclick="oT('Client Information Files.html')">
+    <span class="sb-dot" style="background:var(--p1)"></span>① Client Information Files
+  </div>
+  <div class="sb-tool" onclick="oT('CLARITY A Clear What and Why.html')">
+    <span class="sb-dot" style="background:var(--p1)"></span>① CLARITY
+    <span class="sb-tip">A Clear What and Why</span>
+  </div>
+  <div class="sb-tool" onclick="oT('FOCUS Five Year Lens.html')">
+    <span class="sb-dot" style="background:var(--p2)"></span>② FOCUS
+    <span class="sb-tip">The Five-Year Lens</span>
+  </div>
+  <div class="sb-tool" onclick="oT('FIT Investment Philosophy.html')">
+    <span class="sb-dot" style="background:var(--p3)"></span>③ FIT
+    <span class="sb-tip">Investment Philosophy</span>
+  </div>
+  <div class="sb-tool" onclick="oT('STABILITY Needs Analysis.html')">
+    <span class="sb-dot" style="background:var(--p4)"></span>④ STABILITY
+    <span class="sb-tip">Needs Analysis</span>
+  </div>
+  <div class="sb-tool" onclick="oT('Legacy Estate Planning.html')">
+    <span class="sb-dot" style="background:var(--p5)"></span>⑤ LEGACY
+    <span class="sb-tip">Estate Planning</span>
+  </div>
+
+  <div class="sb-div"></div>
+  <div class="sb-sec">Calculators</div>
+  <div class="sb-tool" onclick="oT('Retirement Projection.html')">
+    <span class="sb-ico">📊</span>Retirement Projection
+  </div>
+  <div class="sb-tool" onclick="oT('Intelligent Decumulation.html')">
+    <span class="sb-ico">📊</span>Intelligent Decumulation
+  </div>
+  <div class="sb-tool" onclick="oT('CPP OAS Timing.html')">
+    <span class="sb-ico">📊</span>CPP &amp; OAS Timing
+  </div>
+  <div class="sb-tool" onclick="oT('Compounding Calculator.html')">
+    <span class="sb-ico">📊</span>Compounding Calculator
+  </div>
+  <div class="sb-tool" onclick="oT('Financial Plan.html')">
+    <span class="sb-ico">📄</span>Personal Financial Plan
+  </div>
+  <div class="sb-tool" onclick="oT('Portfolio Summary.xlsx')">
+    <span class="sb-ico">📊</span>Portfolio Summary
+  </div>
+
+  <div class="sb-div"></div>
+  <div class="sb-sec">Resources</div>
+  <div class="sb-tool" onclick="oT('Northstar Presentation.pptx')">
+    <span class="sb-ico">📑</span>Northstar Presentation
+  </div>
+  <div class="sb-tool" onclick="oT('Northstar Presentation Script.docx')">
+    <span class="sb-ico">📝</span>Presentation Script
+  </div>
+  <div class="sb-tool" onclick="oT('Northstar Workbook.pdf')">
+    <span class="sb-ico">📚</span>Client Workbook
+  </div>
+
+  <div class="sb-div"></div>
+  <div class="sb-sec">Quick Links</div>
+  <div class="sb-tool" onclick="window.open('https://outlook.office.com','_blank')">
+    <span class="sb-ico">📧</span>Outlook Email
+  </div>
+  <div class="sb-tool" onclick="window.open('https://outlook.office.com/calendar','_blank')">
+    <span class="sb-ico">📅</span>Outlook Calendar
+  </div>
+  <div class="sb-tool" onclick="window.open('https://sharepoint.com','_blank')">
+    <span class="sb-ico">🔒</span>SharePoint Vault
+  </div>
+
+  <div class="sb-sp"></div>
+  <div class="sb-bot">
+    <div class="sb-name">Andrew Louis Glen</div>
+    <div class="sb-role">ALG Wealth · West Kelowna BC</div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- DASHBOARD -->
+<div id="view-dashboard" class="view on">
+  <div class="metrics">
+    <div class="metric t-teal"><div class="mv" id="m-tot">62</div><div class="ml">Total clients</div></div>
+    <div class="metric"><div class="mv"><span style="color:var(--sg)">★</span> <span id="m-g">0</span></div><div class="ml">Gold</div></div>
+    <div class="metric"><div class="mv"><span style="color:var(--ss)">★</span> <span id="m-s">0</span></div><div class="ml">Silver</div></div>
+    <div class="metric"><div class="mv"><span style="color:var(--sb)">★</span> <span id="m-b">0</span></div><div class="ml">Bronze</div></div>
+    <div class="metric t-red"><div class="mv" id="m-urg" style="color:var(--red)">0</div><div class="ml">Urgent tasks</div></div>
+  </div>
+  <div class="dash-grid">
+    <div class="panel">
+      <div class="ph"><span class="ph-i">⭐</span><div class="ph-t">Weekly Impact 5</div><div class="ph-s" id="wi5-s">0 of 5</div></div>
+      <div class="pb" id="wi5-b"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="ph-i">🔔</span><div class="ph-t">Client Care Alerts</div><div class="ph-s" id="al-s"></div></div>
+      <div class="pb" id="al-b"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="ph-i">✓</span><div class="ph-t">Open Tasks</div><div class="ph-s" id="dt-s"></div></div>
+      <div class="pb" id="dt-b"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="ph-i">📅</span><div class="ph-t">Today's Agenda</div></div>
+      <div class="pb"><div class="empty">Connect Outlook Calendar to see your schedule here.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT HUB -->
+<div id="view-clients" class="view">
+  <div class="panel">
+    <div class="ph"><span class="ph-i">👥</span><div class="ph-t">Client Hub</div><div class="ph-s" id="ch-s">62 clients</div></div>
+    <div class="pb">
+      <div class="filters">
+        <button class="filt on" onclick="fC('all',this)">All</button>
+        <button class="filt" onclick="fC('gold',this)"><span style="color:var(--sg)">★</span> Gold</button>
+        <button class="filt" onclick="fC('silver',this)"><span style="color:var(--ss)">★</span> Silver</button>
+        <button class="filt" onclick="fC('bronze',this)"><span style="color:var(--sb)">★</span> Bronze</button>
+        <button class="filt" onclick="fC('ov',this)">⚠ Review overdue</button>
+        <button class="filt" onclick="fC('ns',this)">📌 No next step</button>
+        <input class="ch-search" placeholder="Search..." oninput="fC('q',null,this.value)">
+      </div>
+      <div class="pt-leg">
+        <div class="ptl"><div class="ptld" style="background:var(--p1)"></div>Clarity</div>
+        <div class="ptl"><div class="ptld" style="background:var(--p2)"></div>Focus</div>
+        <div class="ptl"><div class="ptld" style="background:var(--p3)"></div>Fit</div>
+        <div class="ptl"><div class="ptld" style="background:var(--p4)"></div>Stability</div>
+        <div class="ptl"><div class="ptld" style="background:var(--p5)"></div>Legacy</div>
+        <div class="ptl"><div class="ptld" style="background:var(--green)"></div>Complete</div>
+        <div class="ptl"><div class="ptld" style="background:var(--gold)"></div>In progress</div>
+        <div class="ptl"><div class="ptld" style="background:var(--bdr)"></div>Not started</div>
+      </div>
+      <div class="ch-table">
+        <div class="ch-hdr">
+          <div class="chl">Client</div><div class="chl" style="text-align:center">Tier</div>
+          <div class="chl">Life stage</div>
+          <div class="chl" style="text-align:center;font-size:8px">CL</div>
+          <div class="chl" style="text-align:center;font-size:8px">FO</div>
+          <div class="chl" style="text-align:center;font-size:8px">FI</div>
+          <div class="chl" style="text-align:center;font-size:8px">ST</div>
+          <div class="chl" style="text-align:center;font-size:8px">LE</div>
+          <div class="chl">Next step</div><div class="chl">Vault</div>
+        </div>
+        <div id="ch-rows"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TASK SYSTEM -->
+<div id="view-tasks" class="view">
+  <div class="panel">
+    <div class="ph"><span class="ph-i">✓</span><div class="ph-t">Task System</div><div class="ph-s" id="tk-s"></div></div>
+    <div class="pb">
+      <div class="filters" style="margin-bottom:10px">
+        <button class="filt on" onclick="fT('all',this)">All open</button>
+        <button class="filt" onclick="fT('overdue',this)">● Overdue</button>
+        <button class="filt" onclick="fT('urgent',this)">● Urgent</button>
+        <button class="filt" onclick="fT('important',this)">● Important</button>
+        <button class="filt" onclick="fT('lookat',this)">● Look-at</button>
+        <button class="filt" onclick="fT('canwait',this)">● Can-wait</button>
+      </div>
+      <div class="ch-table">
+        <div class="t-row hdr">
+          <div class="thl">Task</div><div class="thl">Client</div>
+          <div class="thl">Due date</div><div class="thl">Urgency</div><div></div>
+        </div>
+        <div id="tk-rows"></div>
+      </div>
+      <div class="add-t">
+        <input class="at-in" id="nt-t" placeholder="New task...">
+        <input class="at-in" id="nt-c" placeholder="Client (optional)">
+        <input class="at-in" id="nt-d" type="date">
+        <button class="at-btn" onclick="addTask()">+ Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 5-MIN RESET -->
+<div id="view-reset" class="view">
+  <div class="panel">
+    <div class="ph"><span class="ph-i">⏱</span><div class="ph-t">5-Minute Reset — Post-Meeting Workflow</div><div class="ph-s">Three steps. Every meeting.</div></div>
+    <div class="pb">
+      <div style="background:var(--navy);border-radius:8px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:rgba(255,255,255,.8);line-height:1.7">After every client meeting, take five minutes before moving on. Capture → Create Tasks → Update Client.</div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Client name</div>
+        <input class="rs-in" id="r-cli" placeholder="e.g. Harper, Daniel and Olivia" style="max-width:340px">
+      </div>
+      <div class="rs-step"><div class="rs-num">1</div><div style="flex:1"><div class="rs-lbl">Capture</div><div class="rs-desc">Paste Otter transcript or brief meeting notes.</div><textarea class="rs-ta" id="r-cap" placeholder="Paste transcript or notes..."></textarea></div></div>
+      <div class="rs-step"><div class="rs-num">2</div><div style="flex:1"><div class="rs-lbl">Create Tasks</div><div class="rs-desc">Two or three next steps from this meeting. One per line.</div><textarea class="rs-ta" id="r-tsk" placeholder="e.g. Send term life illustration&#10;Book CI conversation&#10;Refer to lawyer re: POA"></textarea></div></div>
+      <div class="rs-step"><div class="rs-num">3</div><div style="flex:1"><div class="rs-lbl">Update Client</div><div class="rs-desc">Set the one next step and next review date.</div><div class="rs-row"><input class="rs-in" id="r-ns" placeholder="Next step — one clear sentence"><input class="rs-in" id="r-nd" placeholder="Next review date"></div></div></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn-p" onclick="doReset()">✓ Complete Reset</button>
+        <button class="btn-g" onclick="clrReset()">Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+const PC=['var(--p1)','var(--p2)','var(--p3)','var(--p4)','var(--p5)'];
+const CLIENTS=[
+{name:"Abramowitz, David & Sarah",tier:"gold",ls:"Pre-retirement",p:[2,2,2,1,0],next:"Annual review overdue",sp:"#"},
+{name:"Aldridge, Frank & Carol",tier:"silver",ls:"Retirement",p:[2,1,2,1,1],next:"Review income strategy",sp:"#"},
+{name:"Babcock, Neil",tier:"bronze",ls:"Accumulation",p:[1,0,1,0,0],next:"Complete client file",sp:"#"},
+{name:"Bannister, Reg & Helen",tier:"gold",ls:"Pre-retirement",p:[2,2,2,2,1],next:"Estate docs — update POA",sp:"#"},
+{name:"Barker, Jason & Tanya",tier:"silver",ls:"Accumulation",p:[2,1,2,1,0],next:"FIT conversation pending",sp:"#"},
+{name:"Beaumont, Claire",tier:"silver",ls:"Pre-retirement",p:[2,2,1,1,0],next:"Insurance review — CI gap",sp:"#"},
+{name:"Bedford, Harold & Irene",tier:"gold",ls:"Retirement",p:[2,2,2,2,2],next:"Annual review — March 2027",sp:"#"},
+{name:"Bergman, Karl & Lisa",tier:"silver",ls:"Accumulation",p:[1,1,2,1,0],next:"Open TFSA account",sp:"#"},
+{name:"Bishop, Wayne",tier:"bronze",ls:"Accumulation",p:[1,0,0,0,0],next:"Book discovery meeting",sp:"#"},
+{name:"Blackwood, James & Ruth",tier:"gold",ls:"Pre-retirement",p:[2,2,2,1,1],next:"CPP timing conversation",sp:"#"},
+{name:"Bowen, Sandra",tier:"silver",ls:"Retirement",p:[2,1,2,2,1],next:"Review beneficiary designations",sp:"#"},
+{name:"Bradford, Tim & Wendy",tier:"bronze",ls:"Accumulation",p:[1,1,1,0,0],next:"Disability insurance application",sp:"#"},
+{name:"Brennan, Patrick & Kate",tier:"gold",ls:"Pre-retirement",p:[2,2,2,2,1],next:"Decumulation strategy review",sp:"#"},
+{name:"Caldwell, Bruce & Janet",tier:"silver",ls:"Retirement",p:[2,2,2,1,2],next:"Annual review scheduled May",sp:"#"},
+{name:"Callahan, Dennis",tier:"bronze",ls:"Accumulation",p:[2,0,1,0,0],next:"Investment account transfer",sp:"#"},
+{name:"Cameron, Ewan & Moira",tier:"gold",ls:"Pre-retirement",p:[2,2,2,2,2],next:"Next review April 2027",sp:"#"},
+{name:"Campbell, Ross & Andrea",tier:"silver",ls:"Accumulation",p:[1,1,2,1,0],next:"Term life application pending",sp:"#"},
+{name:"Cartwright, Ellen",tier:"silver",ls:"Pre-retirement",p:[2,2,1,1,1],next:"POA update — refer to lawyer",sp:"#"},
+{name:"Chambers, Bob & Linda",tier:"gold",ls:"Retirement",p:[2,2,2,2,2],next:"Review quarterly — June",sp:"#"},
+{name:"Chapman, Gareth & Sue",tier:"silver",ls:"Accumulation",p:[1,0,1,1,0],next:"Focus — five year lens",sp:"#"},
+{name:"Clarke, Nigel",tier:"bronze",ls:"Accumulation",p:[1,0,0,0,0],next:"Send onboarding package",sp:"#"},
+{name:"Connelly, Brian & Fiona",tier:"gold",ls:"Pre-retirement",p:[2,2,2,1,1],next:"RRSP contribution strategy",sp:"#"},
+{name:"Conway, Phil & Deborah",tier:"silver",ls:"Retirement",p:[2,1,2,2,1],next:"OAS application follow-up",sp:"#"},
+{name:"Croft, Alan & Beverley",tier:"bronze",ls:"Accumulation",p:[1,1,0,0,0],next:"Complete KYC update",sp:"#"},
+{name:"Cunningham, Stuart & Jane",tier:"gold",ls:"Pre-retirement",p:[2,2,2,2,1],next:"Legacy planning — will review",sp:"#"},
+{name:"Davidson, Ian & Mary",tier:"silver",ls:"Retirement",p:[2,2,2,1,2],next:"Annual review — October",sp:"#"},
+{name:"Davies, Roger & Gillian",tier:"bronze",ls:"Accumulation",p:[2,0,1,0,0],next:"Investment model review",sp:"#"},
+{name:"Dixon, Colin & Margaret",tier:"gold",ls:"Pre-retirement",p:[2,2,2,2,2],next:"Next review scheduled",sp:"#"},
+{name:"Donaldson, Grant & Karen",tier:"silver",ls:"Accumulation",p:[1,1,1,1,0],next:"CI insurance conversation",sp:"#"},
+{name:"Duncan, Angus",tier:"bronze",ls:"Accumulation",p:[1,0,0,0,0],next:"Discovery meeting booked",sp:"#"},
+{name:"Edwards, Martin & Carol",tier:"gold",ls:"Pre-retirement",p:[2,2,1,2,1],next:"FIT profile — transcript pending",sp:"#"},
+{name:"Elliott, Sandra",tier:"silver",ls:"Pre-retirement",p:[2,2,2,1,0],next:"Estate planning referral",sp:"#"},
+{name:"Ellis, Ray & Joanne",tier:"silver",ls:"Retirement",p:[2,2,2,2,1],next:"Decumulation — income split",sp:"#"},
+{name:"Evans, Trevor & Pauline",tier:"bronze",ls:"Accumulation",p:[1,0,1,0,0],next:"TFSA contribution room check",sp:"#"},
+{name:"Fielding, Ron & Sue",tier:"gold",ls:"Retirement",p:[2,2,2,2,1],next:"Annual review OVERDUE",sp:"#"},
+{name:"Fisher, Colin & Dawn",tier:"silver",ls:"Accumulation",p:[2,1,2,1,0],next:"Employer group plan review",sp:"#"},
+{name:"Fletcher, Norman & Pat",tier:"bronze",ls:"Pre-retirement",p:[1,1,1,0,0],next:"Book annual review",sp:"#"},
+{name:"Ford, Steve & Marilyn",tier:"gold",ls:"Pre-retirement",p:[2,2,2,2,2],next:"Review scheduled — July",sp:"#"},
+{name:"Franklin, Roy & Doris",tier:"silver",ls:"Retirement",p:[2,2,2,1,2],next:"Beneficiary update confirmed",sp:"#"},
+{name:"Fraser, Hamish & Catherine",tier:"gold",ls:"Pre-retirement",p:[2,2,2,1,1],next:"Life insurance renewal",sp:"#"},
+{name:"Gibson, Paul & Alison",tier:"silver",ls:"Accumulation",p:[1,1,1,1,0],next:"RRSP transfer in progress",sp:"#"},
+{name:"Gordon, Bruce & Heather",tier:"bronze",ls:"Accumulation",p:[1,0,0,0,0],next:"Needs analysis pending",sp:"#"},
+{name:"Grant, Malcolm & Shirley",tier:"gold",ls:"Retirement",p:[2,2,2,2,2],next:"Quarterly check-in — May",sp:"#"},
+{name:"Gray, Kenneth & Irene",tier:"silver",ls:"Pre-retirement",p:[2,1,2,1,1],next:"Critical illness conversation",sp:"#"},
+{name:"Green, Darren & Mandy",tier:"silver",ls:"Accumulation",p:[1,1,2,1,0],next:"Investment transfer complete",sp:"#"},
+{name:"Griffiths, Huw & Cerys",tier:"bronze",ls:"Accumulation",p:[1,0,0,0,0],next:"First meeting scheduled",sp:"#"},
+{name:"Hall, Derek & Norma",tier:"gold",ls:"Retirement",p:[2,2,2,2,1],next:"CPP/OAS optimisation review",sp:"#"},
+{name:"Hamilton, James & Lynne",tier:"silver",ls:"Pre-retirement",p:[2,2,1,1,0],next:"Disability review — gaps noted",sp:"#"},
+{name:"Harper, Daniel & Olivia",tier:"bronze",ls:"Accumulation",p:[0,0,0,0,0],next:"New client — onboarding",sp:"#"},
+{name:"Harris, Clive & Brenda",tier:"silver",ls:"Retirement",p:[2,2,2,2,1],next:"Estate docs — all in order",sp:"#"},
+{name:"Harrison, Wayne & Tracey",tier:"bronze",ls:"Accumulation",p:[1,1,0,0,0],next:"TFSA account opened",sp:"#"},
+{name:"Henderson, Gordon & Frances",tier:"gold",ls:"Pre-retirement",p:[2,2,2,2,1],next:"Retirement income strategy",sp:"#"},
+{name:"Hill, Adrian & Shirley",tier:"silver",ls:"Accumulation",p:[2,1,2,1,0],next:"Mortgage renewal — flag",sp:"#"},
+{name:"Hughes, Gareth & Sian",tier:"bronze",ls:"Accumulation",p:[1,0,1,0,0],next:"Group benefits review",sp:"#"},
+{name:"Hunter, Scott & Wendy",tier:"gold",ls:"Pre-retirement",p:[2,2,2,1,1],next:"Life insurance — conversion",sp:"#"},
+{name:"Jackson, Trevor & Christine",tier:"silver",ls:"Pre-retirement",p:[2,2,1,1,1],next:"Will update — referred",sp:"#"},
+{name:"Johnston, Neil & Elspeth",tier:"gold",ls:"Retirement",p:[2,2,2,2,2],next:"Annual review — September",sp:"#"},
+{name:"Jones, Gareth & Nia",tier:"silver",ls:"Accumulation",p:[1,1,2,0,0],next:"FIT profile complete — invest",sp:"#"},
+{name:"Kelly, Patrick & Siobhan",tier:"bronze",ls:"Accumulation",p:[1,0,0,0,0],next:"Discovery call scheduled",sp:"#"},
+{name:"Kennedy, Brian & Sandra",tier:"gold",ls:"Pre-retirement",p:[2,2,2,2,1],next:"Decumulation plan — draft",sp:"#"},
+{name:"King, Graham & Vivienne",tier:"silver",ls:"Retirement",p:[2,2,2,1,2],next:"OAS clawback review",sp:"#"},
+{name:"Lawson, Mike & Janice",tier:"gold",ls:"Pre-retirement",p:[2,2,2,2,2],next:"Next review — November",sp:"#"},
+{name:"Lewis, Dai & Nerys",tier:"bronze",ls:"Accumulation",p:[1,1,0,0,0],next:"Insurance needs analysis",sp:"#"}
+];
+
+let TASKS=[
+{id:1,title:"Send Term 20 illustration",client:"Fielding, Ron & Sue",due:"2026-04-02",done:false},
+{id:2,title:"Follow up on CI application",client:"Campbell, Ross & Andrea",due:"2026-04-05",done:false},
+{id:3,title:"POA referral to lawyer",client:"Bannister, Reg & Helen",due:"2026-04-08",done:false},
+{id:4,title:"CPP timing analysis",client:"Blackwood, James & Ruth",due:"2026-04-10",done:false},
+{id:5,title:"Complete client file",client:"Harper, Daniel & Olivia",due:"2026-04-14",done:false},
+{id:6,title:"Beneficiary designation update",client:"Bowen, Sandra",due:"2026-04-18",done:false},
+{id:7,title:"Retirement projection update",client:"Brennan, Patrick & Kate",due:"2026-04-25",done:false},
+{id:8,title:"Annual review prep",client:"Cameron, Ewan & Moira",due:"2026-05-02",done:false}
+];
+const WI5=[
+{n:"Fielding, Ron & Sue",a:"Annual review overdue — schedule immediately",tag:"t-urg",lbl:"Escalated",done:false},
+{n:"Campbell, Ross & Andrea",a:"CI application — follow up with underwriter",tag:"t-rev",lbl:"Revenue",done:false},
+{n:"Bannister, Reg & Helen",a:"POA update — refer to lawyer this week",tag:"t-plan",lbl:"Planning",done:false},
+{n:"Blackwood, James & Ruth",a:"CPP timing — run analysis before next meeting",tag:"t-rev2",lbl:"Review",done:false},
+{n:"Harper, Daniel & Olivia",a:"New client onboarding — complete information file",tag:"t-new",lbl:"New client",done:true}
+];
+let nextId=9,cFilt='all',cQ='',tFilt='all';
+
+document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('en-CA',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+
+function urg(due){if(!due)return'canwait';const t=new Date();t.setHours(0,0,0,0);const d=new Date(due);d.setHours(0,0,0,0);const diff=Math.round((d-t)/864e5);if(diff<0)return'overdue';if(diff<=2)return'urgent';if(diff<=10)return'important';if(diff<=30)return'lookat';return'canwait';}
+function ubadge(u){return{overdue:'<span class="ubadge ub-ov">Overdue</span>',urgent:'<span class="ubadge ub-ur">Urgent</span>',important:'<span class="ubadge ub-im">Important</span>',lookat:'<span class="ubadge ub-la">Look-at</span>',canwait:'<span class="ubadge ub-cw">Can-wait</span>'}[u]||'';}
+function tStar(t){return{gold:'<span style="color:var(--sg)">★</span>',silver:'<span style="color:var(--ss)">★</span>',bronze:'<span style="color:var(--sb)">★</span>'}[t]||'';}
+function ptd(v,col){const bg=v===2?`background:${col}`:v===1?'background:var(--gold)':'background:var(--bdr)';return`<div class="pt-dot" style="${bg}"></div>`;}
+
+function goView(id,el){
+  document.querySelectorAll('.view').forEach(v=>{v.style.display='none';v.classList.remove('on');});
+  document.querySelectorAll('.sb-nav').forEach(b=>b.classList.remove('on'));
+  const v=document.getElementById('view-'+id);
+  v.style.display='block';v.classList.add('on');el.classList.add('on');
+}
+function oT(f){window.open(f,'_blank');}
+function gSearch(v){if(v.length>1){cQ=v;cFilt='all';renderCH();goView('clients',document.querySelector('.sb-nav[onclick*="clients"]'));}}
+
+function init(){
+  document.getElementById('m-g').textContent=CLIENTS.filter(c=>c.tier==='gold').length;
+  document.getElementById('m-s').textContent=CLIENTS.filter(c=>c.tier==='silver').length;
+  document.getElementById('m-b').textContent=CLIENTS.filter(c=>c.tier==='bronze').length;
+  renderWI5();renderAlerts();renderDashTasks();renderCH();renderTasks();updBadge();
+  document.getElementById('hdr-pill').textContent=CLIENTS.length+' clients';
+}
+
+function renderWI5(){
+  const d=WI5.filter(w=>w.done).length;
+  document.getElementById('wi5-s').textContent=d+' of 5';
+  document.getElementById('wi5-b').innerHTML=WI5.map((w,i)=>`<div class="wi5-row"><div class="wi5-c ${w.done?'done':'todo'}" onclick="tWI5(${i})">${w.done?'✓':i+1}</div><div><div class="wi5-n ${w.done?'s':''}">${w.n}</div><div class="wi5-a">${w.a}</div></div><span class="tag ${w.tag}">${w.lbl}</span></div>`).join('');
+}
+function tWI5(i){WI5[i].done=!WI5[i].done;renderWI5();}
+
+function renderAlerts(){
+  const al=[];
+  TASKS.filter(t=>!t.done&&urg(t.due)==='overdue').forEach(t=>al.push({i:'🔴',c:t.client,m:'Task overdue: '+t.title}));
+  CLIENTS.filter(c=>c.next&&c.next.toUpperCase().includes('OVERDUE')).forEach(c=>al.push({i:'📅',c:c.name,m:'Review overdue — '+c.next}));
+  CLIENTS.filter(c=>c.tier==='gold'&&c.p.some(v=>v===0)).slice(0,3).forEach(c=>{const pts=['Clarity','Focus','Fit','Stability','Legacy'];const ms=pts.filter((_,i)=>c.p[i]===0);al.push({i:'⭐',c:c.name,m:'Gold client — '+ms.join(', ')+' not started'});});
+  document.getElementById('al-s').textContent=al.length+' item'+(al.length!==1?'s':'');
+  document.getElementById('al-b').innerHTML=al.length?al.slice(0,6).map(a=>`<div class="al-row"><span class="al-i">${a.i}</span><div><div class="al-cli">${a.c}</div><div class="al-msg">${a.m}</div></div></div>`).join(''):'<div class="empty">No alerts — every client has a next step. ✓</div>';
+}
+
+function renderDashTasks(){
+  const op=TASKS.filter(t=>!t.done).sort((a,b)=>{const o={overdue:0,urgent:1,important:2,lookat:3,canwait:4};return(o[urg(a.due)]||5)-(o[urg(b.due)]||5);}).slice(0,5);
+  document.getElementById('dt-s').textContent=TASKS.filter(t=>!t.done).length+' open';
+  document.getElementById('dt-b').innerHTML=op.length?op.map(t=>`<div class="al-row"><span class="al-i" style="cursor:pointer" onclick="cTask(${t.id})">☐</span><div><div class="al-cli">${t.title}</div><div class="al-msg">${t.client} · ${t.due||'—'}</div></div>${ubadge(urg(t.due))}</div>`).join(''):'<div class="empty">No open tasks. ✓</div>';
+}
+
+function renderCH(){
+  let L=CLIENTS;
+  if(cFilt==='gold')L=L.filter(c=>c.tier==='gold');
+  else if(cFilt==='silver')L=L.filter(c=>c.tier==='silver');
+  else if(cFilt==='bronze')L=L.filter(c=>c.tier==='bronze');
+  else if(cFilt==='ov')L=L.filter(c=>c.next&&c.next.toUpperCase().includes('OVERDUE'));
+  else if(cFilt==='ns')L=L.filter(c=>!c.next||!c.next.trim());
+  if(cQ)L=L.filter(c=>c.name.toLowerCase().includes(cQ.toLowerCase()));
+  document.getElementById('ch-s').textContent=L.length+' clients';
+  document.getElementById('ch-rows').innerHTML=L.map(c=>`<div class="ch-row"><div class="ch-name">${c.name}</div><div style="text-align:center">${tStar(c.tier)}</div><div class="ch-stage">${c.ls}</div>${c.p.map((v,i)=>`<div style="text-align:center">${ptd(v,PC[i])}</div>`).join('')}<div class="ch-next">${c.next||'—'}</div><div><a class="sp-lnk" href="${c.sp}" target="_blank">🔒 Open</a></div></div>`).join('')||'<div class="empty">No clients match.</div>';
+}
+function fC(f,btn,q){if(btn){document.querySelectorAll('.filters .filt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');cFilt=f;}if(q!==undefined)cQ=q;renderCH();}
+
+function renderTasks(){
+  const op=TASKS.filter(t=>!t.done);
+  let L=tFilt==='all'?op:op.filter(t=>urg(t.due)===tFilt);
+  L.sort((a,b)=>{const o={overdue:0,urgent:1,important:2,lookat:3,canwait:4};return(o[urg(a.due)]||5)-(o[urg(b.due)]||5);});
+  document.getElementById('tk-s').textContent=op.length+' open task'+(op.length!==1?'s':'');
+  document.getElementById('tk-rows').innerHTML=L.map(t=>`<div class="t-row"><div><div class="t-title" onclick="cTask(${t.id})">☐ ${t.title}</div><div class="t-cli">${t.client||'—'}</div></div><div class="t-due">${t.due||'—'}</div>${ubadge(urg(t.due))}<button class="t-del" onclick="dTask(${t.id})">×</button></div>`).join('')||'<div class="empty">No tasks in this category.</div>';
+}
+function fT(f,btn){document.querySelectorAll('#view-tasks .filt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');tFilt=f;renderTasks();}
+function addTask(){const t=document.getElementById('nt-t').value.trim();if(!t)return;TASKS.push({id:nextId++,title:t,client:document.getElementById('nt-c').value.trim(),due:document.getElementById('nt-d').value,done:false});['nt-t','nt-c','nt-d'].forEach(id=>document.getElementById(id).value='');renderTasks();renderDashTasks();updMetrics();updBadge();}
+function cTask(id){const t=TASKS.find(t=>t.id===id);if(t)t.done=true;renderTasks();renderDashTasks();renderAlerts();updMetrics();updBadge();}
+function dTask(id){TASKS=TASKS.filter(t=>t.id!==id);renderTasks();renderDashTasks();updMetrics();updBadge();}
+function updMetrics(){document.getElementById('m-urg').textContent=TASKS.filter(t=>!t.done&&['overdue','urgent'].includes(urg(t.due))).length;}
+function updBadge(){const n=TASKS.filter(t=>!t.done&&['overdue','urgent'].includes(urg(t.due))).length;const b=document.getElementById('sb-badge');b.textContent=n;b.style.display=n>0?'inline':'none';}
+function doReset(){const cli=document.getElementById('r-cli').value.trim();if(!cli){alert('Please enter the client name.');return;}document.getElementById('r-tsk').value.trim().split('\n').filter(l=>l.trim()).forEach(l=>TASKS.push({id:nextId++,title:l.trim(),client:cli,due:'',done:false}));const ns=document.getElementById('r-ns').value.trim();if(ns){const c=CLIENTS.find(c=>c.name.toLowerCase().includes(cli.toLowerCase()));if(c)c.next=ns;}renderTasks();renderDashTasks();renderCH();updMetrics();updBadge();alert('Reset complete for '+cli+'. Tasks added.');clrReset();}
+function clrReset(){['r-cli','r-cap','r-tsk','r-ns','r-nd'].forEach(id=>document.getElementById(id).value='');}
+init();
+</script>
+</body>
+</html>
