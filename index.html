@@ -633,9 +633,9 @@ function renderAlerts(){
 }
 
 function renderDashTasks(){
-  const op=TASKS.filter(t=>!t.done).sort((a,b)=>{const o={overdue:0,urgent:1,important:2,lookat:3,canwait:4};return(o[urg(a.due)]||5)-(o[urg(b.due)]||5);}).slice(0,5);
+  const op=TASKS.filter(t=>!t.done).sort((a,b)=>{const o={overdue:0,urgent:1,important:2,lookat:3,canwait:4};return(o[urg(a.due,a.priority)]||5)-(o[urg(b.due,b.priority)]||5);}).slice(0,5);
   document.getElementById('dt-s').textContent=TASKS.filter(t=>!t.done).length+' open';
-  document.getElementById('dt-b').innerHTML=op.length?op.map(t=>`<div class="al-row"><span class="al-i" style="cursor:pointer" onclick="cTask(${t.id})">☐</span><div><div class="al-cli">${t.title}</div><div class="al-msg">${t.client} · ${t.due||'—'}</div></div>${ubadge(urg(t.due))}</div>`).join(''):'<div class="empty">No open tasks. ✓</div>';
+  document.getElementById('dt-b').innerHTML=op.length?op.map(t=>`<div class="al-row"><span class="al-i" style="cursor:pointer" onclick="cTask(${t.id})">☐</span><div><div class="al-cli">${t.title}</div><div class="al-msg">${t.client} · ${t.due||'—'}</div></div>${ubadge(urg(t.due,t.priority))}</div>`).join(''):'<div class="empty">No open tasks. ✓</div>';
 }
 
 function renderCH(){
@@ -658,8 +658,8 @@ function renderTasks(){
   if(f==='all') L=op;
   else if(f==='andy') L=op.filter(t=>(t.owner||'Andy').toLowerCase()==='andy');
   else if(f==='jenn') L=op.filter(t=>(t.owner||'').toLowerCase()==='jenn');
-  else L=op.filter(t=>urg(t.due)===f);
-  L.sort((a,b)=>{const o={overdue:0,urgent:1,important:2,lookat:3,canwait:4};return(o[urg(a.due)]||5)-(o[urg(b.due)]||5);});
+  else L=op.filter(t=>urg(t.due,t.priority)===f);
+  L.sort((a,b)=>{const o={overdue:0,urgent:1,important:2,lookat:3,canwait:4};return(o[urg(a.due,a.priority)]||5)-(o[urg(b.due,b.priority)]||5);});
   document.getElementById('tk-s').textContent=op.length+' open task'+(op.length!==1?'s':'');
   document.getElementById('tk-rows').innerHTML=L.map(t=>`
     <div class="tk-item" id="tki-${t.id}">
